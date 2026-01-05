@@ -5,6 +5,13 @@ model: "sonnet-4-5 for analysis and guidance, any model for simple section addit
 
 # Migrate/Update Copilot Instructions
 
+> **Template Reference:**
+> - The canonical template for copilot-instructions.md is at:
+>   `projects/ubod/templates/copilot-instructions.template.md`
+> - If you do not have this file, download it from:
+>   https://github.com/johnnyicon/ubod/blob/main/templates/copilot-instructions.template.md
+> - This prompt will never overwrite your existing file—copy the template manually if you want to start fresh.
+
 ## Purpose
 
 This prompt helps you **update existing** `.github/copilot-instructions.md` files to follow the Ubod navigation index pattern.
@@ -67,7 +74,7 @@ Use `multi_replace_string_in_file` to add these sections:
    **Location:** `.github/prompts/ubod/*.prompt.md`
    ```
 
-3. **Find "## 🔧 Always-On Instructions"**, add under "Universal (all files):":
+3. **Find "## 🔧 Always-On Instructions"**, add under "Universal (all files):"
    ```markdown
    
    **Ubod Framework:**
