@@ -186,6 +186,7 @@ if [ -d "$MONOREPO_DIR/.github/prompts/ubod" ]; then
     check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-create-instruction.prompt.md" "Create instruction prompt deployed"
     check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-bootstrap-app-context.prompt.md" "Bootstrap app context prompt deployed"
     check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-generate-complexity-matrix.prompt.md" "Complexity matrix prompt deployed"
+    check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-migrate-copilot-instructions.prompt.md" "Migrate copilot-instructions prompt deployed"
     check_file "$MONOREPO_DIR/.github/instructions/ubod/ubod-model-recommendations.instructions.md" "Model recommendations instruction deployed"
 else
     echo -e "${YELLOW}⚠${NC} Meta content not yet deployed (run Phase 3 from UBOD_SETUP_GUIDE.md)"
