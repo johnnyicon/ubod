@@ -386,9 +386,11 @@ Generated via: Ubod Prompt 2 (App-Specific Customization)"
 
 ---
 
-## Phase 3: Update Copilot Navigation (5 minutes)
+## Phase 3: Create Copilot Navigation (5 minutes)
 
-**Why this phase?** `.github/copilot-instructions.md` is the main entry point for GitHub Copilot. It acts as a navigation index that references all your instruction files, agents, and prompts. After deploying Ubod, update this file so Copilot knows about the new resources.
+**Why this phase?** `.github/copilot-instructions.md` is the main entry point for GitHub Copilot. It acts as a navigation index that references all your instruction files, agents, and prompts. This file makes Ubod resources discoverable.
+
+**Ubod provides a template** at `templates/copilot-instructions.template.md` that follows the framework structure.
 
 ### Step 3.1: Understand copilot-instructions.md
 
@@ -401,9 +403,29 @@ This file is a **high-level index** that:
 
 **It's NOT where instructions live** - it just points to them.
 
-### Step 3.2: Add Ubod Sections
+### Step 3.2: Copy and Customize the Template
 
-Open `.github/copilot-instructions.md` and add these sections:
+**Option A: Creating a new file (fresh Ubod deployment)**
+
+```bash
+cp projects/ubod/templates/copilot-instructions.template.md .github/copilot-instructions.md
+```
+
+Then edit `.github/copilot-instructions.md` and fill in the placeholders:
+- Replace `[REPO_NAME]` with your monorepo name
+- Replace `[DATE]` with current date
+- Replace `[LIST_YOUR_APPS_HERE]` with your app list
+- Replace `[ADD_YOUR_CUSTOM_PROMPTS_HERE]` with custom prompts (if any)
+- Replace `[ADD_YOUR_CUSTOM_AGENTS_HERE]` with custom agents (if any)
+- Replace `[PRIMARY_APP]` with your main app name
+- Replace `[LIST_TECH_STACK_HERE]` with your tech stack
+- Add any custom sections specific to your monorepo
+
+**Option B: Updating existing file (already have copilot-instructions.md)**
+
+Use the `/ubod-migrate-copilot-instructions` prompt to automatically add Ubod sections to your existing file.
+
+If you already have `.github/copilot-instructions.md`, add these Ubod sections manually:
 
 #### After "## 📂 Repository Structure", add:
 

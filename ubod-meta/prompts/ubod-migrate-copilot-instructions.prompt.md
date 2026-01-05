@@ -1,4 +1,16 @@
-# Migrate Copilot Instructions for Ubod
+# Migrate/Update Copilot Instructions
+
+## Purpose
+
+This prompt helps you **update existing** `.github/copilot-instructions.md` files to add or sync Ubod framework references.
+
+**When to use:**
+- You already have a copilot-instructions.md file from before Ubod
+- You've updated Ubod and need to sync the navigation file  
+- Your monorepo structure changed (new apps added, etc.)
+- You need to add missing Ubod sections
+
+**For fresh Ubod deployments:** Use `templates/copilot-instructions.template.md` instead (see Phase 3 of UBOD_SETUP_GUIDE.md)
 
 ## Task
 
