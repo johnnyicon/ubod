@@ -11,21 +11,21 @@ Ubod is designed to work with multiple AI coding tools. This document explains t
 - **Load mechanism:** Via `.vscode/settings.json` or IDE settings
 - **Capability:** Custom instructions via `contextualActions.instructions`
 - **Best for:** Copilot Chat, inline completions, slash commands
-- **Folder:** `ubod/github-copilot/`
+- **Folder:** `ubod/tools/github-copilot/`
 
 #### Claude Code (Claude.ai)
 - **Status:** Full support, production ready
 - **Load mechanism:** Copy-paste into Claude.ai custom instructions
 - **Capability:** Full reasoning with custom methodology
 - **Best for:** Deep analysis, research, complex implementation tasks
-- **Folder:** `ubod/claude-code/`
+- **Folder:** `ubod/tools/claude-code/`
 
 ### Tier 2: Experimental (🚀 Early Access)
 
 #### Anti-Gravity (v0/Cursor equivalent)
 - **Status:** Placeholder for future integration
 - **Expected support:** Q1 2026
-- **Folder:** `ubod/anti-gravity/`
+- **Folder:** `ubod/tools/anti-gravity/`
 
 ### Tier 3: Extensible (📋 Future)
 

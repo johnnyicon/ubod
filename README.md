@@ -64,9 +64,10 @@ ubod/
 ├── prompts/                   # LLM prompts for generation
 │   ├── 01-setup-universal-kernel.prompt.md
 │   └── 02-setup-app-specific.prompt.md
-├── github-copilot/            # Copilot-specific patterns
-├── claude-code/               # Claude Code-specific patterns
-└── anti-gravity/              # Anti-Gravity patterns (extensible)
+└── tools/                     # Tool-specific implementations
+    ├── github-copilot/        # Copilot-specific patterns
+    ├── claude-code/           # Claude Code-specific patterns
+    └── anti-gravity/          # Anti-Gravity patterns (extensible)
 ```
 
 ## Quick Start

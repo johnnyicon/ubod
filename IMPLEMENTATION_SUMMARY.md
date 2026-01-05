@@ -60,17 +60,16 @@ projects/ubod/
 │   ├── README.md                          # Scripts documentation
 │   └── validate-setup.sh                  # Validates setup completeness
 │
-├── github-copilot/                        # Copilot-specific support
-│   ├── README.md                          # Copilot setup guide
-│   └── (Future: customization-guide.md, examples/)
-│
-├── claude-code/                           # Claude Code-specific support
-│   ├── README.md                          # Claude setup guide
-│   └── (Future: customization-guide.md, system-prompt-template.md, examples/)
-│
-└── anti-gravity/                          # Anti-Gravity placeholder
-    ├── README.md                          # Extensibility explanation
-    └── (Future: when tool is available)
+└── tools/                                 # Tool-specific implementations
+    ├── github-copilot/                    # Copilot-specific support
+    │   ├── README.md                      # Copilot setup guide
+    │   └── (Future: customization-guide.md, examples/)
+    ├── claude-code/                       # Claude Code-specific support
+    │   ├── README.md                      # Claude setup guide
+    │   └── (Future: customization-guide.md, system-prompt-template.md, examples/)
+    └── anti-gravity/                      # Anti-Gravity placeholder
+        ├── README.md                      # Extensibility explanation
+        └── (Future: when tool is available)
 ```
 
 ---
