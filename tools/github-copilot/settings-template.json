@@ -1,0 +1,5 @@
+{
+  "copilot.contextualActions.instructions": [
+    ".github/instructions/*.instructions.md"
+  ]
+}

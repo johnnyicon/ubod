@@ -150,7 +150,7 @@ The templates in `ubod/templates/` are **tool-agnostic**:
 - Agent definitions in generic format
 - Prompts using common patterns
 
-Each tool folder (github-copilot/, claude-code/) contains:
+Each tool folder under `ubod/tools/` contains:
 - **Tool-specific adapters** - How to use tool X's features
 - **Configuration examples** - Settings for this tool
 - **Customization guides** - Unique capabilities to leverage
@@ -176,7 +176,7 @@ projects/
 Ubod is extensible in three ways:
 
 1. **New templates** - Add new instruction/agent/prompt templates
-2. **New tools** - Add new folder (anti-gravity/), extend multi-tool support
+2. **New tools** - Add a new folder under `ubod/tools/` (e.g. `tools/anti-gravity/`), extend multi-tool support
 3. **New methodology** - Refine templates based on learnings, improve documentation
 
 ### 7. Copy-Paste Friendly

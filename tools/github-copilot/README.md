@@ -17,7 +17,9 @@ Copy `settings-template.json` to your monorepo root as `.vscode/settings.json`
 
 ### 2. Update Paths
 
-Replace {{PLACEHOLDERS}} with your actual paths
+By default, the template only loads the universal instruction library.
+
+For app-specific instructions, add an app-level `.vscode/settings.json` inside that app (example: `apps/tala/.vscode/settings.json`) and include both the universal and app-specific globs.
 
 ### 3. Load Instructions
 

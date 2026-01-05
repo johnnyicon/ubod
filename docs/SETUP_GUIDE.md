@@ -10,6 +10,17 @@ This guide walks you through implementing Ubod in your monorepo, step by step.
 - **Editor** (VS Code or similar for copy-paste)
 - **Git** (to commit results)
 
+## If Ubod Is a Git Submodule
+
+If your monorepo includes Ubod as a submodule (for example at `projects/ubod/`), clone and initialize submodules so `projects/ubod/` is populated:
+
+```bash
+git clone --recurse-submodules <your-monorepo-repo-url>
+
+# If you already cloned:
+git submodule update --init --recursive
+```
+
 ## Implementation Path
 
 This guide assumes you're starting fresh. Pick your path:
@@ -364,7 +375,7 @@ If one app has unique needs:
 
 When adding a new AI tool (e.g., Anti-Gravity):
 
-1. Create new folder: `ubod/anti-gravity/`
+1. Create new folder: `ubod/tools/anti-gravity/`
 2. Add tool-specific README and examples
 3. Create tool-specific prompt templates
 4. Re-run Prompt 1/2 with tool-specific output format

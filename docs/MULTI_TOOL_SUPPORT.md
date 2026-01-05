@@ -265,7 +265,7 @@ Now help me with [task]...
 
 ### For Both Tools
 
-1. **Store everything in repo** (`.github/` and `apps/*/copilot/`)
+1. **Store everything in repo** (`.github/` and `apps/*/.copilot/`)
 2. **Version control your instructions** (commit changes to Git)
 3. **Iterate based on usage** (refine instructions over time)
 
@@ -273,11 +273,11 @@ Now help me with [task]...
 
 ## Anti-Gravity & Future Tools
 
-The `ubod/anti-gravity/` folder is a placeholder for future tool support.
+The `ubod/tools/anti-gravity/` folder is a placeholder for future tool support.
 
 When adding a new tool:
 
-1. **Create new folder** - `ubod/{tool-name}/`
+1. **Create new folder** - `ubod/tools/{tool-name}/`
 2. **Add README** explaining setup
 3. **Add examples** of working configurations
 4. **Add customization guide** for that tool
@@ -334,7 +334,7 @@ No API calls required for core functionality.
 
 ## Tool-Specific Folders
 
-### `ubod/github-copilot/`
+### `ubod/tools/github-copilot/`
 
 Contains:
 - `README.md` - Copilot-specific setup guide
@@ -342,7 +342,7 @@ Contains:
 - `settings-template.json` - Settings file template
 - `customization-guide.md` - How to extend for your use case
 
-### `ubod/claude-code/`
+### `ubod/tools/claude-code/`
 
 Contains:
 - `README.md` - Claude Code setup guide
@@ -350,7 +350,7 @@ Contains:
 - `system-prompt-template.md` - Custom instruction template
 - `customization-guide.md` - How to extend
 
-### `ubod/anti-gravity/`
+### `ubod/tools/anti-gravity/`
 
 Placeholder for future:
 - Tool hasn't been released yet
@@ -364,7 +364,7 @@ Placeholder for future:
 When a new AI tool becomes available:
 
 1. **Study its capabilities** - What can it load/accept?
-2. **Create new folder** - `ubod/{tool-name}/`
+2. **Create new folder** - `ubod/tools/{tool-name}/`
 3. **Write setup guide** - How to configure
 4. **Create examples** - Working configurations
 5. **Document in this file** - Add tool comparison

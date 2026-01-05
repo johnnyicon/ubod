@@ -151,11 +151,13 @@ When you run Prompt 1 and Prompt 2, the LLM:
 
 ### 3. Tool-Specific Adaptation
 
-Each tool folder (github-copilot/, claude-code/, etc.) contains:
+Each tool folder under `tools/` contains:
 
 - **README.md** - Tool-specific setup instructions
-- **Examples/** - Real-world examples of successful setups
-- **Customization Guide** - How to adapt templates for this tool's capabilities
+- **examples/** - Minimal working examples
+- **customization-guide.md** - How to adapt Ubod for that tool
+
+Some tools may also include templates (for example, a `settings-template.json`).
 
 ## Template Variables Reference
 
@@ -198,8 +200,6 @@ ubod/
 │   ├── PHILOSOPHY.md                      # Core principles
 │   ├── SETUP_GUIDE.md                     # Step-by-step setup
 │   ├── MULTI_TOOL_SUPPORT.md              # Tool-specific guidance
-│   ├── TEMPLATE_REFERENCE.md              # Template variable reference
-│   └── TROUBLESHOOTING.md                 # Common issues & solutions
 │
 ├── templates/                             # Template library
 │   ├── instructions/                      # Instruction templates
@@ -222,8 +222,7 @@ ubod/
 │   │   ├── implementation-task.prompt.md
 │   │   └── ...
 │   └── config/                            # Configuration templates
-│       ├── copilot-settings.json
-│       ├── claude-code-config.json
+│       ├── ubod-config-template.json
 │       └── ...
 │
 ├── prompts/                               # LLM prompts for generation
@@ -236,20 +235,10 @@ ubod/
 │   ├── README.md
 │   └── ...
 │
-├── github-copilot/                        # GitHub Copilot specifics
-│   ├── README.md
-│   ├── examples/
-│   └── customization-guide.md
-│
-├── claude-code/                           # Claude Code specifics
-│   ├── README.md
-│   ├── examples/
-│   └── customization-guide.md
-│
-└── anti-gravity/                          # Anti-Gravity specifics (extensible)
-    ├── README.md
-    ├── examples/
-    └── customization-guide.md
+└── tools/                                 # Tool-specific modules
+   ├── github-copilot/
+   ├── claude-code/
+   └── anti-gravity/
 ```
 
 ## What's Included
@@ -258,8 +247,6 @@ ubod/
 - **PHILOSOPHY.md** - Core principles and vision
 - **SETUP_GUIDE.md** - Step-by-step implementation walkthrough
 - **MULTI_TOOL_SUPPORT.md** - Tool-specific guidance and differences
-- **TEMPLATE_REFERENCE.md** - Complete template variable documentation
-- **TROUBLESHOOTING.md** - Common issues and solutions
 
 ### Template Library
 - 10+ universal instruction templates (discovery, verification, testing, patterns)
@@ -299,6 +286,17 @@ ubod/
 5. **Validate** - Run `scripts/validate-setup.sh` to verify completeness
 6. **Iterate** - Customize templates as you learn what works best for your team
 
+## Using Ubod as a Submodule
+
+If Ubod is included as a submodule (for example, at `projects/ubod/`), make sure you clone and initialize submodules:
+
+```bash
+git clone --recurse-submodules <your-monorepo-repo-url>
+
+# If you already cloned:
+git submodule update --init --recursive
+```
+
 ## Contributing
 
 Ubod is designed to evolve. If you:
@@ -315,7 +313,7 @@ MIT - Use freely, modify as needed, share improvements
 
 ## Questions?
 
-See [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for common questions or create an issue.
+See [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md) for setup details or create an issue.
 
 ---
 

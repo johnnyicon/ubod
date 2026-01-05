@@ -3,7 +3,8 @@
 # Ubod Setup Validation Script
 # Validates that Ubod has been correctly set up in your monorepo
 
-set -e
+# Note: Do NOT use `set -e` here.
+# This script is intended to report all missing pieces in one run.
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 UBOD_DIR="$( dirname "$SCRIPT_DIR" )"
@@ -83,9 +84,10 @@ check_directory "$UBOD_DIR/templates/agents" "Agent templates"
 check_directory "$UBOD_DIR/templates/prompts" "Prompt templates"
 check_directory "$UBOD_DIR/templates/config" "Config templates"
 check_directory "$UBOD_DIR/scripts" "Scripts folder"
-check_directory "$UBOD_DIR/github-copilot" "GitHub Copilot folder"
-check_directory "$UBOD_DIR/claude-code" "Claude Code folder"
-check_directory "$UBOD_DIR/anti-gravity" "Anti-Gravity folder"
+check_directory "$UBOD_DIR/tools" "Tools folder"
+check_directory "$UBOD_DIR/tools/github-copilot" "GitHub Copilot folder"
+check_directory "$UBOD_DIR/tools/claude-code" "Claude Code folder"
+check_directory "$UBOD_DIR/tools/anti-gravity" "Anti-Gravity folder"
 
 echo ""
 
@@ -143,9 +145,9 @@ echo ""
 
 # Phase 7: Tool-Specific Files
 echo -e "${YELLOW}Phase 7: Tool-Specific Documentation${NC}"
-check_file "$UBOD_DIR/github-copilot/README.md" "Copilot README"
-check_file "$UBOD_DIR/claude-code/README.md" "Claude Code README"
-check_file "$UBOD_DIR/anti-gravity/README.md" "Anti-Gravity README"
+check_file "$UBOD_DIR/tools/github-copilot/README.md" "Copilot README"
+check_file "$UBOD_DIR/tools/claude-code/README.md" "Claude Code README"
+check_file "$UBOD_DIR/tools/anti-gravity/README.md" "Anti-Gravity README"
 
 echo ""
 
