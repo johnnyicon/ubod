@@ -21,15 +21,19 @@
 
 **This content gets deployed to consuming repos!**
 
-See `docs/SETUP_GUIDE.md` Phase 3 for full instructions.
+See `docs/UBOD_SETUP_GUIDE.md` Phase 1 (Step 1.6) for full instructions.
 
 **Quick reference:**
 
 ```bash
 # From monorepo root (where projects/ubod is a submodule)
-mkdir -p .github/agents/ubod .github/prompts/ubod .github/instructions/ubod
+mkdir -p .github/prompts/ubod .github/instructions/ubod
 
-cp projects/ubod/ubod-meta/agents/ubod-maintainer.agent.md .github/agents/ubod/
+# IMPORTANT: Agents MUST be at root level (no ubod/ subfolder)
+# VS Code only discovers agents at .github/agents/*.agent.md (root only)
+cp projects/ubod/ubod-meta/agents/ubod-maintainer.agent.md .github/agents/ubod-maintainer.agent.md
+
+# Prompts and instructions CAN use subfolders
 cp projects/ubod/ubod-meta/prompts/ubod-*.prompt.md .github/prompts/ubod/
 cp projects/ubod/ubod-meta/instructions/ubod-*.instructions.md .github/instructions/ubod/
 ```
@@ -39,18 +43,19 @@ cp projects/ubod/ubod-meta/instructions/ubod-*.instructions.md .github/instructi
 ```
 .github/
 ├── agents/
-│   └── ubod/
-│       └── ubod-maintainer.agent.md
+│   └── ubod-maintainer.agent.md         # ✓ At root (VS Code discovers)
 ├── prompts/
-│   └── ubod/
+│   └── ubod/                            # ✓ Subfolders OK for prompts
 │       ├── ubod-bootstrap-app-context.prompt.md
 │       ├── ubod-create-instruction.prompt.md
 │       ├── ubod-update-instruction.prompt.md
 │       └── ubod-generate-complexity-matrix.prompt.md
 └── instructions/
-    └── ubod/
+    └── ubod/                            # ✓ Subfolders OK for instructions
         └── ubod-model-recommendations.instructions.md
 ```
+
+**Why no agent subfolder?** VS Code only discovers `.md` files directly in `.github/agents/`, not in subdirectories. This limitation does NOT apply to prompts or instructions.
 
 ---
 

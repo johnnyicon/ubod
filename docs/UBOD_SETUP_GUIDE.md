@@ -29,17 +29,26 @@ git submodule update --init --recursive
 This guide assumes you're starting fresh. Pick your path:
 
 ### Path 1: Full Implementation (Recommended)
-Do both Prompt 1 and Prompt 2. Takes 30 minutes. Best results.
+Do Phase 1 (Universal Kernel + Meta) and Phase 2 (App-Specific). Takes 30 minutes. Best results.
 
 ### Path 2: Universal Kernel Only
-Do Prompt 1 only. Takes 15 minutes. Good for exploring.
+Do Phase 1 only. Takes 20 minutes. Good for exploring or framework testing.
 
 ### Path 3: Quick Test
-Do one app with Prompt 2 only. Takes 10 minutes. Quick validation.
+Do one app with Phase 2 only. Takes 10 minutes. Quick validation.
+
+**Note:** Phase 1 now includes both universal kernel AND meta content deployment (they're deployed together).
 
 ---
 
-## Phase 1: Universal Kernel Setup (15 minutes)
+## Phase 1: Universal Kernel + Meta Content (20 minutes)
+
+**What you'll deploy:**
+- Universal instructions (discovery, verification, testing, etc.)
+- Universal agent templates (discovery, implementation, verification)
+- Ubod meta content (maintainer agent, meta prompts, model recommendations)
+
+**Why deploy meta content now:** Every repo should be able to maintain ubod from day one. Meta content enables self-improvement.
 
 ### Step 1.1: Prepare Your Monorepo Info
 
@@ -99,12 +108,13 @@ The LLM will generate multiple files. You'll receive:
    - How to organize the outputs
    - Which files go where
 
-### Step 1.5: Save Outputs
+### Step 1.5: Save Universal Kernel Outputs
 
-Create `.github/instructions/` folder in your monorepo:
+Create folders in your monorepo:
 
 ```bash
 mkdir -p /path/to/monorepo/.github/instructions
+mkdir -p /path/to/monorepo/.github/agents
 ```
 
 Save each generated instruction file with the `.instructions.md` extension:
@@ -119,7 +129,7 @@ Save each generated instruction file with the `.instructions.md` extension:
 └── ... (other universal instructions)
 ```
 
-Save generated agent files:
+Save generated agent files (**at root level only, no subfolders**):
 
 ```
 .github/agents/
@@ -129,37 +139,93 @@ Save generated agent files:
 └── ...
 ```
 
-### Step 1.6: Verify Phase 1
+### Step 1.6: Deploy Ubod Meta Content
 
-✅ Check that these exist:
+**Now deploy meta content for ubod self-maintenance:**
+
+Create ubod subfolders (prompts and instructions only):
+
+```bash
+mkdir -p /path/to/monorepo/.github/prompts/ubod
+mkdir -p /path/to/monorepo/.github/instructions/ubod
+
+# NOTE: Agents CANNOT use subfolders (VS Code limitation)
+# They must be at .github/agents/ root level
+```
+
+Copy meta content:
+
+```bash
+# Copy agent to ROOT (VS Code only discovers agents at root level)
+cp projects/ubod/ubod-meta/agents/ubod-maintainer.agent.md \
+   .github/agents/ubod-maintainer.agent.md
+
+# Copy prompts (subfolders OK)
+cp projects/ubod/ubod-meta/prompts/ubod-*.prompt.md \
+   .github/prompts/ubod/
+
+# Copy instructions (subfolders OK)
+cp projects/ubod/ubod-meta/instructions/ubod-*.instructions.md \
+   .github/instructions/ubod/
+```
+
+**Final structure:**
+
+```
+.github/
+├── agents/
+│   ├── ubod-maintainer.agent.md              # ✓ Meta agent at root
+│   ├── universal-discovery-planner.agent.md  # ✓ Universal agents
+│   └── universal-implementer.agent.md
+├── prompts/
+│   └── ubod/                                 # ✓ Meta prompts in subfolder
+│       ├── ubod-bootstrap-app-context.prompt.md
+│       ├── ubod-create-instruction.prompt.md
+│       ├── ubod-update-instruction.prompt.md
+│       └── ubod-generate-complexity-matrix.prompt.md
+└── instructions/
+    ├── discovery-methodology.instructions.md  # Universal at root
+    ├── verification-checklist.instructions.md
+    └── ubod/                                  # ✓ Meta instructions in subfolder
+        └── ubod-model-recommendations.instructions.md
+```
+
+### Step 1.7: Verify Phase 1 (Universal + Meta)
+
+✅ Universal Kernel:
 - [ ] At least 8 `.instructions.md` files in `.github/instructions/`
 - [ ] At least 3 `.agent.md` files in `.github/agents/`
-- [ ] Implementation guide explaining the output
+- [ ] Files mention your actual app names and frameworks
+
+✅ Meta Content:
+- [ ] `ubod-maintainer.agent.md` in `.github/agents/` (root level)
+- [ ] 4 prompts in `.github/prompts/ubod/` (subfolders OK)
+- [ ] 1 instruction in `.github/instructions/ubod/` (subfolders OK)
 
 ✅ Spot-check content:
-- [ ] Files mention your actual app names
-- [ ] Files reference your actual frameworks (Rails, Next.js, etc.)
-- [ ] Files use your testing approach (Minitest, Jest, etc.)
+- [ ] Universal files reference your actual frameworks (Rails, Next.js, etc.)
+- [ ] Meta prompts are prefixed with `ubod-`
+- [ ] Model recommendations match your available LLMs
 
-If anything looks off, re-run the prompt with corrections.
+If anything looks off, re-run Prompt 1 or re-copy meta content.
 
-### Step 1.7: Commit Phase 1
+### Step 1.8: Commit Phase 1 (Universal + Meta)
 
 ```bash
 cd /path/to/monorepo
 
-git add .github/instructions/ .github/agents/
-git commit -m "refactor: Add universal kernel from Ubod
+git add .github/instructions/ .github/agents/ .github/prompts/
+git commit -m "setup: Deploy Ubod universal kernel and meta content
 
-- Add discovery methodology instructions
-- Add verification checklist instructions
-- Add testing strategy instructions
-- Add runtime verification instructions
-- Add task completion verification instructions
+- Add universal instructions (discovery, verification, testing, runtime, completion)
 - Add universal agent templates (discovery, implementation, verification)
+- Add ubod meta agent (maintainer) for framework self-maintenance
+- Add ubod meta prompts (bootstrap, create, update, complexity matrix)
+- Add ubod meta instructions (model recommendations)
 - Foundation for consistent AI agent setup across all tools
+- Enable ubod self-maintenance from consuming repo
 
-Generated via: Ubod Prompt 1 (Universal Kernel Setup)"
+Generated via: Ubod Phase 1 (Universal Kernel + Meta Content)"
 ```
 
 ---
@@ -320,117 +386,219 @@ Generated via: Ubod Prompt 2 (App-Specific Customization)"
 
 ---
 
-## Phase 3: Deploy Ubod Meta Content (10 minutes)
+## Phase 3: Update Copilot Navigation (5 minutes)
 
-**Why this phase?** Every consuming repo should be able to maintain ubod—add new instructions, update existing ones, and understand model selection. This phase deploys the meta-level prompts and agents that enable ubod self-maintenance.
+**Why this phase?** `.github/copilot-instructions.md` is the main entry point for GitHub Copilot. It acts as a navigation index that references all your instruction files, agents, and prompts. After deploying Ubod, update this file so Copilot knows about the new resources.
 
-### Step 3.1: Understand the Meta Content
+### Step 3.1: Understand copilot-instructions.md
 
-Ubod's `ubod-meta/` folder contains content for **maintaining ubod itself**:
+This file is a **high-level index** that:
+- References instruction files (which auto-load via `.vscode/settings.json`)
+- Documents available prompts and workflow commands
+- Lists available agents
+- Provides monorepo structure overview
+- Lists tech stack and resources
 
+**It's NOT where instructions live** - it just points to them.
+
+### Step 3.2: Add Ubod Sections
+
+Open `.github/copilot-instructions.md` and add these sections:
+
+#### After "## 📂 Repository Structure", add:
+
+```markdown
+**Framework:**
+- **`projects/ubod/`** - Universal AI agent kernel (git submodule)
+  - Universal instructions for discovery, verification, testing
+  - Meta content for maintaining ubod itself
+  - App-specific customization templates
 ```
-projects/ubod/ubod-meta/
-├── README.md                    # Explains the meta folder
-├── agents/
-│   └── ubod-maintainer.agent.md # Agent persona for ubod updates
-├── instructions/
-│   └── ubod-model-recommendations.instructions.md  # Model selection guidance
-└── prompts/
-    ├── ubod-bootstrap-app-context.prompt.md    # Set up new app context
-    ├── ubod-create-instruction.prompt.md       # Create new ubod instructions
-    ├── ubod-update-instruction.prompt.md       # Update existing instructions
-    └── ubod-generate-complexity-matrix.prompt.md  # Generate app complexity
+
+#### After "## 🎯 Workflow Prompts", add:
+
+```markdown
+## 🔧 Ubod Maintenance
+
+Use these prompts to maintain the Ubod framework itself:
+
+- **`/ubod-bootstrap-app-context`** - Set up Ubod context for a new app
+- **`/ubod-create-instruction`** - Create a new instruction file
+- **`/ubod-update-instruction`** - Update an existing instruction
+- **`/ubod-generate-complexity-matrix`** - Generate complexity matrix for model selection
+
+**Location:** `.github/prompts/ubod/*.prompt.md`
+
+**Agent:** `@ubod-maintainer` - Specialized agent for maintaining Ubod framework
+
+**Instructions:** `.github/instructions/ubod/ubod-model-recommendations.instructions.md` - Model selection guidance
 ```
 
-### Step 3.2: Create Ubod Subfolders in Consuming Repo
+#### In "## 🔧 Always-On Instructions" under "Universal (all files):", add:
 
-Create subfolders to keep ubod meta content organized:
+```markdown
+**Ubod Meta (framework maintenance):**
+- `.github/instructions/ubod/ubod-model-recommendations.instructions.md` - Model selection
+```
 
-**⚠️ IMPORTANT:** Agents CANNOT use subfolders due to VS Code discovery limitations. Only prompts and instructions can be organized into subfolders.
+#### Add new "## 🤖 Available Agents" section (after "## 📚 Deep Guidance"):
+
+```markdown
+## 🤖 Available Agents
+
+**Universal Agents (work across all contexts):**
+- `@universal-discovery-planner` - Discovery and planning for any task
+- `@universal-implementer` - Implementation following discovery
+- `@universal-verifier` - Verification and testing
+
+**App-Specific Agents (Tala):**
+- `@tala-discovery-planner` - Tala-specific discovery
+- `@tala-implementer` - Tala-specific implementation
+- `@tala-verifier` - Tala-specific verification
+- `@tala-ui-ux-designer` - Tala UI/UX design
+
+**Framework Maintenance:**
+- `@ubod-maintainer` - Maintain and improve Ubod framework itself
+
+**Debugging:**
+- `@debug-stuck` - Systematic debugging when stuck
+
+**Location:** `.github/agents/*.agent.md` (root level only, no subfolders)
+```
+
+### Step 3.3: Example Updated copilot-instructions.md
+
+Here's what your updated file should look like:
+
+```markdown
+# Your Monorepo - Repository Instructions
+
+**Purpose:** High-level repository guidance and routing for GitHub Copilot
+
+---
+
+## 🚨 Critical Rules (Read First)
+
+**Before ANY task:** The critical rules are always loaded via:
+`.github/instructions/universal-critical-rules.instructions.md`
+
+---
+
+## 📂 Repository Structure
+
+This is a **monorepo** with multiple apps:
+
+- **`apps/tala/`** - Rails 8.1.1 + Hotwire + Stimulus (primary app)
+- **`apps/nextjs-chat-app/`** - Next.js + React
+
+**Framework:**
+- **`projects/ubod/`** - Universal AI agent kernel (git submodule)
+  - Universal instructions for discovery, verification, testing
+  - Meta content for maintaining ubod itself
+  - App-specific customization templates
+
+---
+
+## 🎯 Workflow Prompts
+
+- **`/create-prd`** - Create PRD
+- **`/review-prd`** - Review PRD
+- **`/implement-phase`** - Implement PRD phase
+
+**Location:** `.github/prompts/*.prompt.md`
+
+---
+
+## 🔧 Ubod Maintenance
+
+Use these prompts to maintain the Ubod framework itself:
+
+- **`/ubod-bootstrap-app-context`** - Set up Ubod context for a new app
+- **`/ubod-create-instruction`** - Create a new instruction file
+- **`/ubod-update-instruction`** - Update an existing instruction
+- **`/ubod-generate-complexity-matrix`** - Generate complexity matrix
+
+**Location:** `.github/prompts/ubod/*.prompt.md`
+
+**Agent:** `@ubod-maintainer` - Specialized agent for maintaining Ubod
+
+**Instructions:** `.github/instructions/ubod/ubod-model-recommendations.instructions.md`
+
+---
+
+## 📚 Deep Guidance (Skills)
+
+- **`@workspace /skill discovery-methodology`** - How to discover before implementing
+
+**Location:** `.github/skills/*/SKILL.md`
+
+---
+
+## 🤖 Available Agents
+
+**Universal Agents:**
+- `@universal-discovery-planner` - Discovery and planning
+- `@universal-implementer` - Implementation
+- `@universal-verifier` - Verification
+
+**App-Specific Agents (Tala):**
+- `@tala-discovery-planner`
+- `@tala-implementer`
+- `@tala-verifier`
+
+**Framework Maintenance:**
+- `@ubod-maintainer` - Maintain Ubod framework
+
+**Debugging:**
+- `@debug-stuck` - Systematic debugging
+
+---
+
+## 🔧 Always-On Instructions
+
+**Universal (all files):**
+- `.github/instructions/discovery-methodology.instructions.md`
+- `.github/instructions/verification-checklist.instructions.md`
+- `.github/instructions/runtime-verification.instructions.md`
+
+**Ubod Meta (framework maintenance):**
+- `.github/instructions/ubod/ubod-model-recommendations.instructions.md`
+
+**Tala-specific (auto-loads for `apps/tala/**/*`):**
+- `apps/tala/.copilot/instructions/tala-critical-gotchas.instructions.md`
+- `apps/tala/.copilot/instructions/tala-architecture.instructions.md`
+
+---
+
+**Remember:** This file is a navigation index. Detailed guidance is in instruction files.
+```
+
+### Step 3.4: Verify Navigation Update
+
+Check that your `.github/copilot-instructions.md` includes:
+- [ ] Reference to `projects/ubod/` in Repository Structure
+- [ ] Ubod Maintenance section with meta prompts
+- [ ] `@ubod-maintainer` agent listed
+- [ ] Ubod meta instructions referenced in Always-On Instructions
+- [ ] Available Agents section (new)
+
+### Step 3.5: Commit Navigation Update
 
 ```bash
-# Prompts and instructions CAN use subfolders (VS Code supports this)
-mkdir -p /path/to/monorepo/.github/prompts/ubod
-mkdir -p /path/to/monorepo/.github/instructions/ubod
+cd /path/to/monorepo
 
-# Agents MUST be at root level (VS Code limitation)
-# NO: mkdir -p /path/to/monorepo/.github/agents/ubod  ← Don't create this!
+git add .github/copilot-instructions.md
+git commit -m "docs: Update Copilot navigation with Ubod resources
+
+- Add Ubod submodule reference in repository structure
+- Add Ubod maintenance prompts section
+- Add @ubod-maintainer agent
+- Add Available Agents section listing all agents
+- Reference ubod meta instructions in Always-On list
+- Provide clear navigation for framework maintenance
+
+Completes: Ubod Phase 3 (Navigation Update)"
 ```
-
-### Step 3.3: Copy Meta Content to Consuming Repo
-
-Copy the meta content with the `ubod-` prefix:
-
-**⚠️ CRITICAL:** Agent file MUST be copied to `.github/agents/` root, NOT a subfolder.
-
-```bash
-# Copy agent to ROOT (VS Code only discovers agents at root level)
-cp projects/ubod/ubod-meta/agents/ubod-maintainer.agent.md \
-   .github/agents/ubod-maintainer.agent.md
-
-# Copy prompts (subfolders OK for prompts)
-cp projects/ubod/ubod-meta/prompts/ubod-*.prompt.md \
-   .github/prompts/ubod/
-
-# Copy instructions (subfolders OK for instructions)
-cp projects/ubod/ubod-meta/instructions/ubod-*.instructions.md \
-   .github/instructions/ubod/
-```
-
-**Resulting structure:**
-
-```
-.github/
-├── agents/
-│   ├── ubod-maintainer.agent.md         # ✓ At root (VS Code discovers)
-│   └── tala-discovery-planner.agent.md  # ✓ App agents also at root
-├── prompts/
-│   ├── ubod/                            # ✓ Subfolders OK for prompts
-│   │   ├── ubod-bootstrap-app-context.prompt.md
-│   │   ├── ubod-create-instruction.prompt.md
-│   │   ├── ubod-update-instruction.prompt.md
-│   │   └── ubod-generate-complexity-matrix.prompt.md
-│   └── create-prd.prompt.md             # App prompts at root (optional)
-└── instructions/
-    ├── ubod/                            # ✓ Subfolders OK for instructions
-    │   └── ubod-model-recommendations.instructions.md
-    └── discovery-methodology.instructions.md  # Universal at root
-```
-
-**Why agents can't use subfolders:**
-
-VS Code's agent discovery checks if `.md` files are **directly** in `.github/agents/`, not in subdirectories. From VS Code source:
-
-```typescript
-// .md files in .github/agents/ → recognized ✓
-// .md files in .github/agents/subfolder/ → NOT recognized ✗
-function isInAgentsFolder(fileUri: URI): boolean {
-    const dir = dirname(fileUri.path);
-    return dir.endsWith('/.github/agents') || dir === '.github/agents';
-}
-```
-
-This limitation does NOT apply to prompts or instructions, which can be organized into subfolders via `chat.instructionsFilesLocations` and `chat.promptFilesLocations` settings.
-
-### Step 3.4: Update VS Code Settings
-
-Add ubod instruction paths to `.vscode/settings.json`:
-
-```json
-{
-  "chat.instructionsFilesLocations": {
-    ".github/instructions": true,
-    ".github/instructions/ubod": true,
-    "apps/tala/.copilot/instructions": true
-  }
-}
-```
-
-**Note:** The glob pattern in `.github/instructions` may already capture the `ubod/` subfolder. Explicitly adding it ensures the paths are included.
-
-### Step 3.5: Verify Meta Content Deployment
-
-Check that all files are in place:
 
 ```bash
 # Verify agents
