@@ -83,12 +83,12 @@ The orchestrator chooses models BEFORE spawning, so this file can't influence in
 
 **Multi-Layer (2-3 systems):**
 - Controller + model + job
-- Simple integrations (background job, Turbo Stream)
+- Simple integrations (background job, real-time updates)
 - Well-established patterns
 
 **Complex Integration (4+ systems):**
-- Routes + controller + model + job + tests + ViewComponent
-- Multiple integration points (Turbo Streams + Stimulus + portals)
+- Routes + controller + model + job + tests + UI components
+- Multiple integration points (real-time streams + JS controllers + portals)
 - Asynchronous flows with edge cases
 - Multi-tenancy + authorization + real-time updates
 
