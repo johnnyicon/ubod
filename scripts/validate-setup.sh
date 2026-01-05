@@ -95,7 +95,7 @@ echo ""
 echo -e "${YELLOW}Phase 2: Core Documentation${NC}"
 check_file "$UBOD_DIR/README.md" "Ubod README"
 check_file "$UBOD_DIR/docs/PHILOSOPHY.md" "Philosophy documentation"
-check_file "$UBOD_DIR/docs/SETUP_GUIDE.md" "Setup guide"
+check_file "$UBOD_DIR/docs/UBOD_SETUP_GUIDE.md" "Setup guide"
 check_file "$UBOD_DIR/docs/MULTI_TOOL_SUPPORT.md" "Multi-tool support guide"
 
 echo ""
@@ -188,7 +188,7 @@ if [ -d "$MONOREPO_DIR/.github/prompts/ubod" ]; then
     check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-generate-complexity-matrix.prompt.md" "Complexity matrix prompt deployed"
     check_file "$MONOREPO_DIR/.github/instructions/ubod/ubod-model-recommendations.instructions.md" "Model recommendations instruction deployed"
 else
-    echo -e "${YELLOW}⚠${NC} Meta content not yet deployed (run Phase 3 from SETUP_GUIDE.md)"
+    echo -e "${YELLOW}⚠${NC} Meta content not yet deployed (run Phase 3 from UBOD_SETUP_GUIDE.md)"
     ((WARN++))
 fi
 
