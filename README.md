@@ -247,6 +247,7 @@ ubod/
 - **PHILOSOPHY.md** - Core principles and vision
 - **SETUP_GUIDE.md** - Step-by-step implementation walkthrough
 - **MULTI_TOOL_SUPPORT.md** - Tool-specific guidance and differences
+- **MODEL_RECOMMENDATIONS.md** - Which LLM models to use for different tasks
 
 ### Template Library
 - 10+ universal instruction templates (discovery, verification, testing, patterns)
@@ -257,6 +258,12 @@ ubod/
 ### LLM Prompts
 - **Prompt 1** - Universal kernel generation (50-100 lines of guided instructions)
 - **Prompt 2** - App-specific customization (40-80 lines of guided instructions)
+
+### Meta-Prompts (for updating Ubod itself)
+- **update-ubod-instruction.prompt.md** - Modify existing ubod instructions
+- **create-ubod-instruction.prompt.md** - Create new ubod instructions
+- **bootstrap-app-context.prompt.md** - Set up app-specific files in consuming repos
+- **generate-complexity-matrix.prompt.md** - Create app-specific complexity signals
 
 ### Tool-Specific Modules
 - **GitHub Copilot** - Settings examples, capability verification
@@ -279,8 +286,9 @@ ubod/
 
 ## Next Steps
 
-1. **Read PHILOSOPHY.md** - Understand core vision and principles
-2. **Read SETUP_GUIDE.md** - Learn the exact steps to set up
+1. **Read MODEL_RECOMMENDATIONS.md** - Understand which LLM to use for each task
+2. **Read PHILOSOPHY.md** - Understand core vision and principles
+3. **Read SETUP_GUIDE.md** - Learn the exact steps to set up
 3. **Run Prompt 1** - Generate universal kernel for your monorepo
 4. **Run Prompt 2** - Generate app-specific customizations
 5. **Validate** - Run `scripts/validate-setup.sh` to verify completeness

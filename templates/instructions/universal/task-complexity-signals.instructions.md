@@ -273,4 +273,21 @@ The orchestrator chooses models BEFORE spawning, so this file can't influence in
 
 ---
 
+## App-Specific Extensions
+
+**This file provides universal complexity dimensions. For stack-specific complexity signals, create:**
+
+`[app]/.copilot/instructions/[app]-complexity-signals.instructions.md`
+
+**That file should define:**
+- Framework-specific complexity indicators (e.g., "React Server Components are Deep Level")
+- Your stack's "framework magic" examples with specific patterns
+- Real examples from your codebase that illustrate complexity levels
+- Integration points specific to your architecture
+
+**Use the generator prompt to create this file:**
+`ubod/templates/prompts/generate-complexity-matrix.prompt.md`
+
+---
+
 **Remember:** These are signals to inform model selection, NOT rules to limit it. The orchestrator should use its full intelligence to choose from ALL available models.

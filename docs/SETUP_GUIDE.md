@@ -5,7 +5,10 @@ This guide walks you through implementing Ubod in your monorepo, step by step.
 ## Prerequisites
 
 - **Monorepo setup** (like bathala-kaluluwa)
-- **Access to an LLM** (Claude 3.5 Sonnet or better recommended for best results)
+- **Access to an LLM** - See [MODEL_RECOMMENDATIONS.md](MODEL_RECOMMENDATIONS.md) for detailed guidance
+  - **Foundational work:** Claude Opus 4.5, GPT 5.1+, or Gemini 3 Pro (stronger reasoning)
+  - **Implementation:** Claude Sonnet 4.5, GPT 5 (efficient execution)
+  - **Review pass:** Use a *different model family* than initial generation
 - **30 minutes** for first-time setup
 - **Editor** (VS Code or similar for copy-paste)
 - **Git** (to commit results)
@@ -424,14 +427,16 @@ When adding a new AI tool (e.g., Anti-Gravity):
 
 ## Tips for Best Results
 
-### Tip 1: Use Claude 3.5 Sonnet or Better
+### Tip 1: Use the Right Model for the Task
 
-Claude is better at:
-- Understanding markdown templates
-- Inferring patterns from code
-- Maintaining consistency across outputs
+See [MODEL_RECOMMENDATIONS.md](MODEL_RECOMMENDATIONS.md) for detailed guidance.
 
-Other models work, but Claude gives best results.
+**Quick Reference:**
+- **Foundational work** (initial setup, methodology): Claude Opus 4.5, GPT 5.1+, Gemini 3 Pro
+- **Implementation work** (filling templates, generating code): Claude Sonnet 4.5, GPT 5
+- **Review pass**: Always use a different model family than the initial generation
+
+Multi-pass approach (generate with one model, review with another) catches more issues than single-pass.
 
 ### Tip 2: Provide Code Examples
 
@@ -465,6 +470,30 @@ Options:
 1. **Clone Ubod locally** - Keep in `projects/ubod/` as separate Git repo
 2. **Fork Ubod** - Make your own version with team customizations
 3. **Keep reference** - Store Ubod link in team documentation
+
+---
+
+## Updating Ubod Itself
+
+When you need to modify or extend Ubod's instructions and prompts:
+
+### Use Meta-Prompts
+
+Ubod includes prompts for self-updating (in `templates/prompts/`):
+
+1. **update-ubod-instruction.prompt.md** - Modify existing instruction files
+2. **create-ubod-instruction.prompt.md** - Create new instruction files  
+3. **bootstrap-app-context.prompt.md** - Set up app-specific files in consuming repos
+4. **generate-complexity-matrix.prompt.md** - Create app-specific complexity signals
+
+### Model Selection for Updates
+
+- **Methodology changes** (new patterns, philosophy updates): Use Opus 4.5 / GPT 5.1+
+- **Template fixes** (typos, formatting): Use Sonnet 4.5 / GPT 5
+- **Always sanitize**: Remove project-specific details, use `{{PLACEHOLDER}}` syntax
+- **Always review**: Use a different model family to verify changes
+
+See [MODEL_RECOMMENDATIONS.md](MODEL_RECOMMENDATIONS.md) for detailed guidance.
 
 ---
 
