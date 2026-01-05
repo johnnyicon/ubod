@@ -5,7 +5,7 @@ This guide walks you through implementing Ubod in your monorepo, step by step.
 ## Prerequisites
 
 - **Monorepo setup** (like bathala-kaluluwa)
-- **Access to an LLM** - See [MODEL_RECOMMENDATIONS.md](MODEL_RECOMMENDATIONS.md) for detailed guidance
+- **Access to an LLM** - See [meta/MODEL_RECOMMENDATIONS.md](../meta/MODEL_RECOMMENDATIONS.md) for detailed guidance
   - **Foundational work:** Claude Opus 4.5, GPT 5.1+, or Gemini 3 Pro (stronger reasoning)
   - **Implementation:** Claude Sonnet 4.5, GPT 5 (efficient execution)
   - **Review pass:** Use a *different model family* than initial generation
@@ -429,7 +429,7 @@ When adding a new AI tool (e.g., Anti-Gravity):
 
 ### Tip 1: Use the Right Model for the Task
 
-See [MODEL_RECOMMENDATIONS.md](MODEL_RECOMMENDATIONS.md) for detailed guidance.
+See [meta/MODEL_RECOMMENDATIONS.md](../meta/MODEL_RECOMMENDATIONS.md) for detailed guidance.
 
 **Quick Reference:**
 - **Foundational work** (initial setup, methodology): Claude Opus 4.5, GPT 5.1+, Gemini 3 Pro
@@ -493,7 +493,7 @@ Ubod includes prompts for self-updating (in `templates/prompts/`):
 - **Always sanitize**: Remove project-specific details, use `{{PLACEHOLDER}}` syntax
 - **Always review**: Use a different model family to verify changes
 
-See [MODEL_RECOMMENDATIONS.md](MODEL_RECOMMENDATIONS.md) for detailed guidance.
+See [meta/MODEL_RECOMMENDATIONS.md](../meta/MODEL_RECOMMENDATIONS.md) for detailed guidance.
 
 ---
 

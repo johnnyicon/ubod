@@ -55,8 +55,12 @@ Ubod is extensible across multiple AI coding tools:
 
 ```
 ubod/
+├── meta/                      # For maintaining ubod ITSELF (not for consumers)
+│   ├── agents/                # Agent personas for ubod work
+│   ├── prompts/               # Prompts for updating ubod
+│   └── instructions/          # Ubod-specific maintenance instructions
 ├── docs/                      # Shared philosophy & guides
-├── templates/                 # Template library (tool-agnostic)
+├── templates/                 # Template library (deploys to consuming repos)
 │   ├── instructions/          # Instruction templates
 │   ├── agents/                # Agent definition templates
 │   ├── prompts/               # Prompt templates
@@ -247,9 +251,8 @@ ubod/
 - **PHILOSOPHY.md** - Core principles and vision
 - **SETUP_GUIDE.md** - Step-by-step implementation walkthrough
 - **MULTI_TOOL_SUPPORT.md** - Tool-specific guidance and differences
-- **MODEL_RECOMMENDATIONS.md** - Which LLM models to use for different tasks
 
-### Template Library
+### Template Library (for consuming repos)
 - 10+ universal instruction templates (discovery, verification, testing, patterns)
 - 4 agent templates (discovery planner, implementer, verifier, custom)
 - 5+ prompt templates for common tasks
@@ -259,11 +262,15 @@ ubod/
 - **Prompt 1** - Universal kernel generation (50-100 lines of guided instructions)
 - **Prompt 2** - App-specific customization (40-80 lines of guided instructions)
 
-### Meta-Prompts (for updating Ubod itself)
-- **update-ubod-instruction.prompt.md** - Modify existing ubod instructions
-- **create-ubod-instruction.prompt.md** - Create new ubod instructions
-- **bootstrap-app-context.prompt.md** - Set up app-specific files in consuming repos
-- **generate-complexity-matrix.prompt.md** - Create app-specific complexity signals
+### Meta Folder (for maintaining ubod itself)
+Located in `meta/` - **NOT for deploying to consuming repos**:
+- **ubod-maintainer.agent.md** - Agent persona for ubod maintenance
+- **MODEL_RECOMMENDATIONS.md** - Which LLM models to use for ubod work
+- **Meta-prompts** for updating ubod:
+  - `update-ubod-instruction.prompt.md`
+  - `create-ubod-instruction.prompt.md`
+  - `bootstrap-app-context.prompt.md`
+  - `generate-complexity-matrix.prompt.md`
 
 ### Tool-Specific Modules
 - **GitHub Copilot** - Settings examples, capability verification
@@ -286,13 +293,21 @@ ubod/
 
 ## Next Steps
 
-1. **Read MODEL_RECOMMENDATIONS.md** - Understand which LLM to use for each task
-2. **Read PHILOSOPHY.md** - Understand core vision and principles
-3. **Read SETUP_GUIDE.md** - Learn the exact steps to set up
+### For Consuming Ubod (setting up your monorepo)
+
+1. **Read PHILOSOPHY.md** - Understand core vision and principles
+2. **Read SETUP_GUIDE.md** - Learn the exact steps to set up
 3. **Run Prompt 1** - Generate universal kernel for your monorepo
 4. **Run Prompt 2** - Generate app-specific customizations
 5. **Validate** - Run `scripts/validate-setup.sh` to verify completeness
 6. **Iterate** - Customize templates as you learn what works best for your team
+
+### For Maintaining Ubod (improving the framework)
+
+1. **Read meta/README.md** - Understand the separation between meta and templates
+2. **Activate ubod-maintainer agent** - Reference `meta/agents/ubod-maintainer.agent.md`
+3. **Read meta/MODEL_RECOMMENDATIONS.md** - Use right models for ubod work
+4. **Use meta-prompts** - Structured workflows for updates
 
 ## Using Ubod as a Submodule
 
