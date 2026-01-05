@@ -100,6 +100,22 @@ check_file "$UBOD_DIR/docs/MULTI_TOOL_SUPPORT.md" "Multi-tool support guide"
 
 echo ""
 
+# Phase 2.5: Meta Content (Ubod Self-Maintenance)
+echo -e "${YELLOW}Phase 2.5: Meta Content (Ubod Self-Maintenance)${NC}"
+check_directory "$UBOD_DIR/meta" "Meta folder"
+check_directory "$UBOD_DIR/meta/agents" "Meta agents folder"
+check_directory "$UBOD_DIR/meta/prompts" "Meta prompts folder"
+check_directory "$UBOD_DIR/meta/instructions" "Meta instructions folder"
+check_file "$UBOD_DIR/meta/README.md" "Meta README"
+check_file "$UBOD_DIR/meta/agents/ubod-maintainer.agent.md" "Ubod maintainer agent"
+check_file "$UBOD_DIR/meta/prompts/ubod-update-instruction.prompt.md" "Update instruction prompt"
+check_file "$UBOD_DIR/meta/prompts/ubod-create-instruction.prompt.md" "Create instruction prompt"
+check_file "$UBOD_DIR/meta/prompts/ubod-bootstrap-app-context.prompt.md" "Bootstrap app context prompt"
+check_file "$UBOD_DIR/meta/prompts/ubod-generate-complexity-matrix.prompt.md" "Complexity matrix prompt"
+check_file "$UBOD_DIR/meta/instructions/ubod-model-recommendations.instructions.md" "Model recommendations instruction"
+
+echo ""
+
 # Phase 3: Prompts
 echo -e "${YELLOW}Phase 3: LLM Prompts${NC}"
 check_file "$UBOD_DIR/prompts/01-setup-universal-kernel.prompt.md" "Prompt 1: Universal Kernel"
@@ -159,6 +175,25 @@ check_file_content "$UBOD_DIR/prompts/02-setup-app-specific.prompt.md" "app-spec
 
 echo ""
 
+# Phase 9: Meta Content Deployed to Consuming Repo
+echo -e "${YELLOW}Phase 9: Meta Content Deployed to Consuming Repo${NC}"
+if [ -d "$MONOREPO_DIR/.github/prompts/ubod" ]; then
+    check_directory "$MONOREPO_DIR/.github/agents/ubod" "Ubod agents folder in consuming repo"
+    check_directory "$MONOREPO_DIR/.github/prompts/ubod" "Ubod prompts folder in consuming repo"
+    check_directory "$MONOREPO_DIR/.github/instructions/ubod" "Ubod instructions folder in consuming repo"
+    check_file "$MONOREPO_DIR/.github/agents/ubod/ubod-maintainer.agent.md" "Ubod maintainer agent deployed"
+    check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-update-instruction.prompt.md" "Update instruction prompt deployed"
+    check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-create-instruction.prompt.md" "Create instruction prompt deployed"
+    check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-bootstrap-app-context.prompt.md" "Bootstrap app context prompt deployed"
+    check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-generate-complexity-matrix.prompt.md" "Complexity matrix prompt deployed"
+    check_file "$MONOREPO_DIR/.github/instructions/ubod/ubod-model-recommendations.instructions.md" "Model recommendations instruction deployed"
+else
+    echo -e "${YELLOW}⚠${NC} Meta content not yet deployed (run Phase 3 from SETUP_GUIDE.md)"
+    ((WARN++))
+fi
+
+echo ""
+
 # Summary
 echo "====================================="
 echo "Validation Summary"
@@ -176,7 +211,8 @@ if [ $FAIL -eq 0 ]; then
     echo "2. Save outputs to .github/instructions/ and .github/agents/"
     echo "3. Run Prompt 2 for each app"
     echo "4. Save outputs to apps/{app}/.copilot/"
-    echo "5. Commit to Git"
+    echo "5. Deploy meta content (Phase 3) to .github/*/ubod/"
+    echo "6. Commit to Git"
     exit 0
 else
     echo -e "${RED}✗ Ubod setup has issues.${NC}"

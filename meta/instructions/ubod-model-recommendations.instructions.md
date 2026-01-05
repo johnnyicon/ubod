@@ -1,3 +1,7 @@
+---
+applyTo: "**/*"
+---
+
 # Model Recommendations for ubod Framework
 
 **Purpose:** Guide model selection for framework setup, updates, and app-specific customization
@@ -75,16 +79,6 @@ Pass 3: Final Verification (Third model or human review)
 3. **Fixing typos or clarifications**
 4. **Generating app-specific files** from prompts
 
-**Recommended one-shot workflow:**
-
-```
-Single Pass: Capable Model (Sonnet 4.5+)
-   ↓
-Self-Review: Use verification prompt to check own work
-   ↓
-Commit
-```
-
 ---
 
 ## Model Characteristics for ubod Work
@@ -113,65 +107,6 @@ Commit
 - **Strengths:** Fast, cheap, good for simple tasks
 - **Best for:** Template filling, simple updates, verification checks
 - **Watch for:** May miss nuance in methodology work
-
----
-
-## Practical Workflow Examples
-
-### Example 1: Setting Up ubod in New Monorepo
-
-```markdown
-## Step 1: Initial Setup (Claude Opus 4.5)
-- Clone ubod as submodule
-- Review existing instructions
-- Create app-specific files using generator prompts
-- Draft customizations
-
-## Step 2: Review (GPT 5.2 or Gemini 3 Pro)
-- Review Step 1 output
-- Check for gaps in coverage
-- Verify sanitization is complete
-- Suggest refinements
-
-## Step 3: Finalize (Sonnet 4.5 or Human)
-- Apply refinements
-- Run verification prompts
-- Commit and document
-```
-
-### Example 2: Adding New Universal Instruction
-
-```markdown
-## Single Pass (Claude Opus 4.5 or Sonnet 4.5)
-- Read existing instruction patterns
-- Draft new instruction following template
-- Include deferral hooks for app-specific content
-- Self-review using verification checklist
-- Commit
-```
-
-### Example 3: Generating App Complexity Matrix
-
-```markdown
-## Single Pass (Sonnet 4.5 with app context)
-- Load app architecture docs
-- Run generate-complexity-matrix.prompt.md
-- Review output for accuracy
-- Customize based on actual tech stack
-- Commit to app's .copilot/instructions/
-```
-
----
-
-## Quality Gates
-
-**Before committing any ubod changes:**
-
-1. **Sanitization Check:** No app-specific references (grep for project names)
-2. **Template Compliance:** Follows instruction template structure
-3. **Deferral Hooks:** App-specific content defers to app-level files
-4. **Cross-Reference:** References to other instructions are accurate
-5. **Model Diversity:** Foundational changes reviewed by different model family
 
 ---
 

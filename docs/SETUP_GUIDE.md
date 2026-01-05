@@ -320,9 +320,148 @@ Generated via: Ubod Prompt 2 (App-Specific Customization)"
 
 ---
 
-## Phase 3: Validation (5 minutes)
+## Phase 3: Deploy Ubod Meta Content (10 minutes)
 
-### Step 3.1: Run Validation Script
+**Why this phase?** Every consuming repo should be able to maintain ubod—add new instructions, update existing ones, and understand model selection. This phase deploys the meta-level prompts and agents that enable ubod self-maintenance.
+
+### Step 3.1: Understand the Meta Content
+
+Ubod's `meta/` folder contains content for **maintaining ubod itself**:
+
+```
+projects/ubod/meta/
+├── README.md                    # Explains the meta folder
+├── agents/
+│   └── ubod-maintainer.agent.md # Agent persona for ubod updates
+├── instructions/
+│   └── ubod-model-recommendations.instructions.md  # Model selection guidance
+└── prompts/
+    ├── ubod-bootstrap-app-context.prompt.md    # Set up new app context
+    ├── ubod-create-instruction.prompt.md       # Create new ubod instructions
+    ├── ubod-update-instruction.prompt.md       # Update existing instructions
+    └── ubod-generate-complexity-matrix.prompt.md  # Generate app complexity
+```
+
+### Step 3.2: Create Ubod Subfolders in Consuming Repo
+
+Create subfolders to keep ubod meta content organized:
+
+```bash
+mkdir -p /path/to/monorepo/.github/agents/ubod
+mkdir -p /path/to/monorepo/.github/prompts/ubod
+mkdir -p /path/to/monorepo/.github/instructions/ubod
+```
+
+### Step 3.3: Copy Meta Content to Consuming Repo
+
+Copy the meta content with the `ubod-` prefix:
+
+```bash
+# Copy agent
+cp projects/ubod/meta/agents/ubod-maintainer.agent.md \
+   .github/agents/ubod/
+
+# Copy prompts
+cp projects/ubod/meta/prompts/ubod-*.prompt.md \
+   .github/prompts/ubod/
+
+# Copy instructions
+cp projects/ubod/meta/instructions/ubod-*.instructions.md \
+   .github/instructions/ubod/
+```
+
+**Resulting structure:**
+
+```
+.github/
+├── agents/
+│   ├── ubod/
+│   │   └── ubod-maintainer.agent.md     # Ubod maintenance agent
+│   └── tala-discovery-planner.agent.md  # App-specific agents at root
+├── prompts/
+│   ├── ubod/
+│   │   ├── ubod-bootstrap-app-context.prompt.md
+│   │   ├── ubod-create-instruction.prompt.md
+│   │   ├── ubod-update-instruction.prompt.md
+│   │   └── ubod-generate-complexity-matrix.prompt.md
+│   └── create-prd.prompt.md             # App-specific prompts at root
+└── instructions/
+    ├── ubod/
+    │   └── ubod-model-recommendations.instructions.md
+    └── discovery-methodology.instructions.md  # Universal instructions at root
+```
+
+### Step 3.4: Update VS Code Settings
+
+Add ubod instruction paths to `.vscode/settings.json`:
+
+```json
+{
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    ".github/instructions/ubod": true,
+    "apps/tala/.copilot/instructions": true
+  }
+}
+```
+
+**Note:** The glob pattern in `.github/instructions` may already capture the `ubod/` subfolder. Explicitly adding it ensures the paths are included.
+
+### Step 3.5: Verify Meta Content Deployment
+
+Check that all files are in place:
+
+```bash
+# Verify agents
+ls .github/agents/ubod/
+# Expected: ubod-maintainer.agent.md
+
+# Verify prompts
+ls .github/prompts/ubod/
+# Expected: 4 prompt files with ubod- prefix
+
+# Verify instructions
+ls .github/instructions/ubod/
+# Expected: ubod-model-recommendations.instructions.md
+```
+
+### Step 3.6: Test Ubod Maintenance Capability
+
+Try using the deployed meta content:
+
+1. **Ask about model selection:**
+   - Open `.github/instructions/ubod/ubod-model-recommendations.instructions.md`
+   - Verify guidance applies to your workflow
+
+2. **Test the ubod-maintainer agent (if your tool supports custom agents):**
+   - Reference the agent when making ubod changes
+   - Verify it understands sanitization and placeholder requirements
+
+3. **Try a meta prompt:**
+   - Open `.github/prompts/ubod/ubod-create-instruction.prompt.md`
+   - Paste into your LLM and verify it guides you through creating a new instruction
+
+### Step 3.7: Commit Phase 3
+
+```bash
+cd /path/to/monorepo
+
+git add .github/agents/ubod/ .github/prompts/ubod/ .github/instructions/ubod/
+git commit -m "refactor: Deploy ubod meta content for self-maintenance
+
+- Add ubod-maintainer agent for ubod updates
+- Add ubod meta prompts (create, update, bootstrap, complexity matrix)
+- Add ubod model recommendations instruction
+- Every consuming repo can now maintain and update ubod
+
+Source: projects/ubod/meta/"
+```
+
+---
+
+## Phase 4: Validation (5 minutes)
+
+### Step 4.1: Run Validation Script
 
 ```bash
 cd /path/to/ubod  # Your Ubod directory
@@ -335,8 +474,9 @@ This checks:
 - ✅ Instructions reference your actual apps
 - ✅ Agents are properly structured
 - ✅ No broken placeholders remaining
+- ✅ Meta content deployed to consuming repo
 
-### Step 3.2: Test with Copilot
+### Step 4.2: Test with Copilot
 
 1. Open Copilot in your editor
 2. Go to Copilot's settings
@@ -344,7 +484,7 @@ This checks:
 4. Ask a discovery question: "How should I approach adding chat history persistence?"
 5. Verify Copilot references your actual patterns and gotchas
 
-### Step 3.3: Spot Check
+### Step 4.3: Spot Check
 
 Ask Copilot (or Claude) a task related to your app:
 
@@ -418,10 +558,11 @@ When adding a new AI tool (e.g., Anti-Gravity):
 
 1. **Run Phase 1** - Universal kernel (15 min)
 2. **Run Phase 2** - App-specific (15 min per app)
-3. **Validate** - Run validation script (5 min)
-4. **Configure** - Update VS Code settings (5 min)
-5. **Test** - Ask Copilot a question, verify it uses your patterns (5 min)
-6. **Iterate** - Refine based on how AI tools respond
+3. **Run Phase 3** - Deploy ubod meta content (10 min)
+4. **Run Phase 4** - Validate setup (5 min)
+5. **Configure** - Update VS Code settings (5 min)
+6. **Test** - Ask Copilot a question, verify it uses your patterns (5 min)
+7. **Iterate** - Refine based on how AI tools respond
 
 ---
 
@@ -429,7 +570,7 @@ When adding a new AI tool (e.g., Anti-Gravity):
 
 ### Tip 1: Use the Right Model for the Task
 
-See [meta/MODEL_RECOMMENDATIONS.md](../meta/MODEL_RECOMMENDATIONS.md) for detailed guidance.
+See [meta/instructions/ubod-model-recommendations.instructions.md](../meta/instructions/ubod-model-recommendations.instructions.md) for detailed guidance.
 
 **Quick Reference:**
 - **Foundational work** (initial setup, methodology): Claude Opus 4.5, GPT 5.1+, Gemini 3 Pro
@@ -479,12 +620,21 @@ When you need to modify or extend Ubod's instructions and prompts:
 
 ### Use Meta-Prompts
 
-Ubod includes prompts for self-updating (in `templates/prompts/`):
+Ubod includes prompts for self-updating (in `meta/prompts/`):
 
-1. **update-ubod-instruction.prompt.md** - Modify existing instruction files
-2. **create-ubod-instruction.prompt.md** - Create new instruction files  
-3. **bootstrap-app-context.prompt.md** - Set up app-specific files in consuming repos
-4. **generate-complexity-matrix.prompt.md** - Create app-specific complexity signals
+1. **ubod-update-instruction.prompt.md** - Modify existing instruction files
+2. **ubod-create-instruction.prompt.md** - Create new instruction files  
+3. **ubod-bootstrap-app-context.prompt.md** - Set up app-specific files in consuming repos
+4. **ubod-generate-complexity-matrix.prompt.md** - Create app-specific complexity signals
+
+If you deployed Phase 3, these are also available in your consuming repo at `.github/prompts/ubod/`.
+
+### Use the Ubod Maintainer Agent
+
+For comprehensive ubod maintenance, use the `ubod-maintainer` agent (in `meta/agents/`):
+- Understands sanitization requirements
+- Knows placeholder patterns
+- Follows model selection guidance
 
 ### Model Selection for Updates
 
@@ -493,7 +643,7 @@ Ubod includes prompts for self-updating (in `templates/prompts/`):
 - **Always sanitize**: Remove project-specific details, use `{{PLACEHOLDER}}` syntax
 - **Always review**: Use a different model family to verify changes
 
-See [meta/MODEL_RECOMMENDATIONS.md](../meta/MODEL_RECOMMENDATIONS.md) for detailed guidance.
+See [meta/instructions/ubod-model-recommendations.instructions.md](../meta/instructions/ubod-model-recommendations.instructions.md) for detailed guidance.
 
 ---
 
