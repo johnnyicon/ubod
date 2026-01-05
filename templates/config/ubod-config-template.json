@@ -1,0 +1,74 @@
+{
+  "name": "{{PROJECT_NAME}} - AI Agent Configuration",
+  "description": "Configuration for GitHub Copilot, Claude Code, and other AI tools",
+  "version": "1.0.0",
+  "copilot": {
+    "enabled": true,
+    "instructionsPath": [
+      ".github/instructions/**/*.instructions.md"
+    ],
+    "agentsPath": [
+      ".github/agents/**/*.agent.md"
+    ],
+    "contextualActions": {
+      "instructions": [
+        ".github/instructions/*.instructions.md"
+      ]
+    },
+    "settings": {
+      "contextWindow": "32k",
+      "model": "gpt-4",
+      "temperature": 0.7
+    }
+  },
+  "claude": {
+    "enabled": true,
+    "instructionsPath": [
+      ".github/instructions/**/*.instructions.md"
+    ],
+    "agentsPath": [
+      ".github/agents/**/*.agent.md"
+    ],
+    "settings": {
+      "contextWindow": "100k",
+      "temperature": 0.7
+    }
+  },
+  "vscode": {
+    "extensions": [
+      "GitHub.Copilot",
+      "GitHub.Copilot-Chat"
+    ],
+    "settings": {
+      "github.copilot.advanced": {
+        "debug.useCommandLineTool": false
+      }
+    }
+  },
+  "apps": {
+    "{{APP1_NAME}}": {
+      "path": "apps/{{APP1_PATH}}/",
+      "framework": "{{APP1_FRAMEWORK}}",
+      "instructions": [
+        ".github/instructions/*.instructions.md",
+        "apps/{{APP1_PATH}}/.copilot/instructions/*.instructions.md"
+      ],
+      "agents": [
+        ".github/agents/*.agent.md",
+        "apps/{{APP1_PATH}}/.copilot/agents/*.agent.md"
+      ]
+    },
+    "{{APP2_NAME}}": {
+      "path": "apps/{{APP2_PATH}}/",
+      "framework": "{{APP2_FRAMEWORK}}",
+      "instructions": [
+        ".github/instructions/*.instructions.md",
+        "apps/{{APP2_PATH}}/.copilot/instructions/*.instructions.md"
+      ],
+      "agents": [
+        ".github/agents/*.agent.md",
+        "apps/{{APP2_PATH}}/.copilot/agents/*.agent.md"
+      ]
+    }
+  }
+}
