@@ -5,7 +5,7 @@ This guide walks you through implementing Ubod in your monorepo, step by step.
 ## Prerequisites
 
 - **Monorepo setup** (like bathala-kaluluwa)
-- **Access to an LLM** - See [meta/MODEL_RECOMMENDATIONS.md](../meta/MODEL_RECOMMENDATIONS.md) for detailed guidance
+- **Access to an LLM** - See [ubod-meta/MODEL_RECOMMENDATIONS.md](../ubod-meta/MODEL_RECOMMENDATIONS.md) for detailed guidance
   - **Foundational work:** Claude Opus 4.5, GPT 5.1+, or Gemini 3 Pro (stronger reasoning)
   - **Implementation:** Claude Sonnet 4.5, GPT 5 (efficient execution)
   - **Review pass:** Use a *different model family* than initial generation
@@ -326,10 +326,10 @@ Generated via: Ubod Prompt 2 (App-Specific Customization)"
 
 ### Step 3.1: Understand the Meta Content
 
-Ubod's `meta/` folder contains content for **maintaining ubod itself**:
+Ubod's `ubod-meta/` folder contains content for **maintaining ubod itself**:
 
 ```
-projects/ubod/meta/
+projects/ubod/ubod-meta/
 ├── README.md                    # Explains the meta folder
 ├── agents/
 │   └── ubod-maintainer.agent.md # Agent persona for ubod updates
@@ -358,15 +358,15 @@ Copy the meta content with the `ubod-` prefix:
 
 ```bash
 # Copy agent
-cp projects/ubod/meta/agents/ubod-maintainer.agent.md \
+cp projects/ubod/ubod-meta/agents/ubod-maintainer.agent.md \
    .github/agents/ubod/
 
 # Copy prompts
-cp projects/ubod/meta/prompts/ubod-*.prompt.md \
+cp projects/ubod/ubod-meta/prompts/ubod-*.prompt.md \
    .github/prompts/ubod/
 
 # Copy instructions
-cp projects/ubod/meta/instructions/ubod-*.instructions.md \
+cp projects/ubod/ubod-meta/instructions/ubod-*.instructions.md \
    .github/instructions/ubod/
 ```
 
@@ -454,7 +454,7 @@ git commit -m "refactor: Deploy ubod meta content for self-maintenance
 - Add ubod model recommendations instruction
 - Every consuming repo can now maintain and update ubod
 
-Source: projects/ubod/meta/"
+Source: projects/ubod/ubod-meta/"
 ```
 
 ---
@@ -570,7 +570,7 @@ When adding a new AI tool (e.g., Anti-Gravity):
 
 ### Tip 1: Use the Right Model for the Task
 
-See [meta/instructions/ubod-model-recommendations.instructions.md](../meta/instructions/ubod-model-recommendations.instructions.md) for detailed guidance.
+See [ubod-meta/instructions/ubod-model-recommendations.instructions.md](../ubod-meta/instructions/ubod-model-recommendations.instructions.md) for detailed guidance.
 
 **Quick Reference:**
 - **Foundational work** (initial setup, methodology): Claude Opus 4.5, GPT 5.1+, Gemini 3 Pro
@@ -620,7 +620,7 @@ When you need to modify or extend Ubod's instructions and prompts:
 
 ### Use Meta-Prompts
 
-Ubod includes prompts for self-updating (in `meta/prompts/`):
+Ubod includes prompts for self-updating (in `ubod-meta/prompts/`):
 
 1. **ubod-update-instruction.prompt.md** - Modify existing instruction files
 2. **ubod-create-instruction.prompt.md** - Create new instruction files  
@@ -631,7 +631,7 @@ If you deployed Phase 3, these are also available in your consuming repo at `.gi
 
 ### Use the Ubod Maintainer Agent
 
-For comprehensive ubod maintenance, use the `ubod-maintainer` agent (in `meta/agents/`):
+For comprehensive ubod maintenance, use the `ubod-maintainer` agent (in `ubod-meta/agents/`):
 - Understands sanitization requirements
 - Knows placeholder patterns
 - Follows model selection guidance
@@ -643,7 +643,7 @@ For comprehensive ubod maintenance, use the `ubod-maintainer` agent (in `meta/ag
 - **Always sanitize**: Remove project-specific details, use `{{PLACEHOLDER}}` syntax
 - **Always review**: Use a different model family to verify changes
 
-See [meta/instructions/ubod-model-recommendations.instructions.md](../meta/instructions/ubod-model-recommendations.instructions.md) for detailed guidance.
+See [ubod-meta/instructions/ubod-model-recommendations.instructions.md](../ubod-meta/instructions/ubod-model-recommendations.instructions.md) for detailed guidance.
 
 ---
 

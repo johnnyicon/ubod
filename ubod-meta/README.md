@@ -1,16 +1,19 @@
-# Meta - Ubod Self-Maintenance
+# Ubod-Meta: Ubod Self-Maintenance
 
-**Purpose:** Everything in this folder is for maintaining ubod ITSELF. It is ALSO deployed to consuming repos so they can maintain ubod too.
+**Purpose:** Everything in this folder is for maintaining **ubod ITSELF** (meta-programming for ubod). It is ALSO deployed to consuming repos so they can maintain ubod too.
+
+**⚠️ This is NOT the same as "meta" in general terms.** This folder is specifically for ubod self-maintenance, hence the explicit name `ubod-meta/`.
 
 ---
 
 ## ⚠️ Important Distinction
 
-| This Folder (`meta/`) | Other Folders (`templates/`, `prompts/`) |
-|----------------------|------------------------------------------|
-| For updating ubod | For initial ubod setup |
-| Deployed to consuming repos for self-maintenance | One-time setup prompts |
-| Used by anyone who needs to update ubod | Used during initial setup |
+| This Folder (`ubod-meta/`) | Other Folders (`templates/`, `prompts/`) |
+|---------------------------|------------------------------------------|
+| For updating **ubod itself** | For initial ubod setup + app features |
+| Deployed to consuming repos for ubod self-maintenance | One-time setup prompts + reusable templates |
+| Used by anyone who needs to update ubod | Used during setup and app development |
+| Contains `ubod-*` prefixed files only | Contains general templates |
 
 ---
 
@@ -26,9 +29,9 @@ See `docs/SETUP_GUIDE.md` Phase 3 for full instructions.
 # From monorepo root (where projects/ubod is a submodule)
 mkdir -p .github/agents/ubod .github/prompts/ubod .github/instructions/ubod
 
-cp projects/ubod/meta/agents/ubod-maintainer.agent.md .github/agents/ubod/
-cp projects/ubod/meta/prompts/ubod-*.prompt.md .github/prompts/ubod/
-cp projects/ubod/meta/instructions/ubod-*.instructions.md .github/instructions/ubod/
+cp projects/ubod/ubod-meta/agents/ubod-maintainer.agent.md .github/agents/ubod/
+cp projects/ubod/ubod-meta/prompts/ubod-*.prompt.md .github/prompts/ubod/
+cp projects/ubod/ubod-meta/instructions/ubod-*.instructions.md .github/instructions/ubod/
 ```
 
 **Target structure in consuming repo:**
