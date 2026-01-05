@@ -178,10 +178,10 @@ echo ""
 # Phase 9: Meta Content Deployed to Consuming Repo
 echo -e "${YELLOW}Phase 9: Meta Content Deployed to Consuming Repo${NC}"
 if [ -d "$MONOREPO_DIR/.github/prompts/ubod" ]; then
-    check_directory "$MONOREPO_DIR/.github/agents/ubod" "Ubod agents folder in consuming repo"
+    # Agents must be at root level due to VS Code limitations, so we don't check for ubod subfolder in agents
     check_directory "$MONOREPO_DIR/.github/prompts/ubod" "Ubod prompts folder in consuming repo"
     check_directory "$MONOREPO_DIR/.github/instructions/ubod" "Ubod instructions folder in consuming repo"
-    check_file "$MONOREPO_DIR/.github/agents/ubod/ubod-maintainer.agent.md" "Ubod maintainer agent deployed"
+    check_file "$MONOREPO_DIR/.github/agents/ubod-maintainer.agent.md" "Ubod maintainer agent deployed"
     check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-update-instruction.prompt.md" "Update instruction prompt deployed"
     check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-create-instruction.prompt.md" "Create instruction prompt deployed"
     check_file "$MONOREPO_DIR/.github/prompts/ubod/ubod-bootstrap-app-context.prompt.md" "Bootstrap app context prompt deployed"
