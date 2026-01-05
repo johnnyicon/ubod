@@ -346,26 +346,33 @@ projects/ubod/ubod-meta/
 
 Create subfolders to keep ubod meta content organized:
 
+**⚠️ IMPORTANT:** Agents CANNOT use subfolders due to VS Code discovery limitations. Only prompts and instructions can be organized into subfolders.
+
 ```bash
-mkdir -p /path/to/monorepo/.github/agents/ubod
+# Prompts and instructions CAN use subfolders (VS Code supports this)
 mkdir -p /path/to/monorepo/.github/prompts/ubod
 mkdir -p /path/to/monorepo/.github/instructions/ubod
+
+# Agents MUST be at root level (VS Code limitation)
+# NO: mkdir -p /path/to/monorepo/.github/agents/ubod  ← Don't create this!
 ```
 
 ### Step 3.3: Copy Meta Content to Consuming Repo
 
 Copy the meta content with the `ubod-` prefix:
 
-```bash
-# Copy agent
-cp projects/ubod/ubod-meta/agents/ubod-maintainer.agent.md \
-   .github/agents/ubod/
+**⚠️ CRITICAL:** Agent file MUST be copied to `.github/agents/` root, NOT a subfolder.
 
-# Copy prompts
+```bash
+# Copy agent to ROOT (VS Code only discovers agents at root level)
+cp projects/ubod/ubod-meta/agents/ubod-maintainer.agent.md \
+   .github/agents/ubod-maintainer.agent.md
+
+# Copy prompts (subfolders OK for prompts)
 cp projects/ubod/ubod-meta/prompts/ubod-*.prompt.md \
    .github/prompts/ubod/
 
-# Copy instructions
+# Copy instructions (subfolders OK for instructions)
 cp projects/ubod/ubod-meta/instructions/ubod-*.instructions.md \
    .github/instructions/ubod/
 ```
@@ -375,21 +382,35 @@ cp projects/ubod/ubod-meta/instructions/ubod-*.instructions.md \
 ```
 .github/
 ├── agents/
-│   ├── ubod/
-│   │   └── ubod-maintainer.agent.md     # Ubod maintenance agent
-│   └── tala-discovery-planner.agent.md  # App-specific agents at root
+│   ├── ubod-maintainer.agent.md         # ✓ At root (VS Code discovers)
+│   └── tala-discovery-planner.agent.md  # ✓ App agents also at root
 ├── prompts/
-│   ├── ubod/
+│   ├── ubod/                            # ✓ Subfolders OK for prompts
 │   │   ├── ubod-bootstrap-app-context.prompt.md
 │   │   ├── ubod-create-instruction.prompt.md
 │   │   ├── ubod-update-instruction.prompt.md
 │   │   └── ubod-generate-complexity-matrix.prompt.md
-│   └── create-prd.prompt.md             # App-specific prompts at root
+│   └── create-prd.prompt.md             # App prompts at root (optional)
 └── instructions/
-    ├── ubod/
+    ├── ubod/                            # ✓ Subfolders OK for instructions
     │   └── ubod-model-recommendations.instructions.md
-    └── discovery-methodology.instructions.md  # Universal instructions at root
+    └── discovery-methodology.instructions.md  # Universal at root
 ```
+
+**Why agents can't use subfolders:**
+
+VS Code's agent discovery checks if `.md` files are **directly** in `.github/agents/`, not in subdirectories. From VS Code source:
+
+```typescript
+// .md files in .github/agents/ → recognized ✓
+// .md files in .github/agents/subfolder/ → NOT recognized ✗
+function isInAgentsFolder(fileUri: URI): boolean {
+    const dir = dirname(fileUri.path);
+    return dir.endsWith('/.github/agents') || dir === '.github/agents';
+}
+```
+
+This limitation does NOT apply to prompts or instructions, which can be organized into subfolders via `chat.instructionsFilesLocations` and `chat.promptFilesLocations` settings.
 
 ### Step 3.4: Update VS Code Settings
 
