@@ -17,6 +17,73 @@ _Changes staged for next release_
 
 ---
 
+## [1.3.2] - 2026-01-06
+
+### Summary
+
+Fixed agent tool definitions in templates to use actual VS Code tool names instead of generic placeholders. This ensures generated agents can execute tasks correctly. Added changelog template and enhanced ubod-maintainer agent with workflow guidance.
+
+### Fixed
+
+- **Agent tool definitions** - Templates now specify actual tool names
+  ```yaml
+  action: TEMPLATE_CHANGE
+  files:
+    - ubod-meta/prompts/ubod-create-agents.prompt.md
+    - ubod-meta/prompts/ubod-update-agent.prompt.md
+  note: Replaced generic ["read", "search", "execute"] with actual tool names
+  ```
+  - Discovery agents: `["read_file", "grep_search", "semantic_search", "file_search", "list_dir", "create_file"]`
+  - Implementer agents: `["read_file", "create_file", "replace_string_in_file", "multi_replace_string_in_file", "run_in_terminal", "grep_search"]`
+  - Verifier agents: `["read_file", "run_in_terminal", "grep_search", "get_terminal_output"]`
+  - UI/UX Designer agents: `["read_file", "semantic_search", "grep_search", "create_file"]`
+
+### Enhanced
+
+- **ubod-maintainer agent** - Added workflow guidance for common maintenance tasks
+  ```yaml
+  action: REFERENCE_ONLY
+  file: templates/agents/ubod-maintainer.agent.md (deployed to .github/agents/)
+  added: Tasks for updating tool definitions and changelog entries
+  ```
+  - New task: "Update Agent Tool Definitions" with standard tool patterns
+  - New task: "Update Changelog" with versioning guidance
+  - References CHANGELOG_TEMPLATE.md for consistent entries
+
+### Added
+
+- **CHANGELOG_TEMPLATE.md** - Standard template for changelog entries
+  ```yaml
+  action: REFERENCE_ONLY
+  file: templates/CHANGELOG_TEMPLATE.md
+  note: Reference document for maintainers updating CHANGELOG.md
+  ```
+  - Defines categories (Added, Fixed, Enhanced, Changed, Deprecated, Removed)
+  - Explains action types (REFERENCE_ONLY, TEMPLATE_CHANGE, etc.)
+  - Provides version numbering guidelines (MAJOR.MINOR.PATCH)
+  - Includes example entries with YAML blocks
+  - Documents workflow for creating new entries
+
+### Root Cause
+
+**Issue:** Agent templates used generic tool names (`["read", "search", "execute"]`) that don't match actual VS Code tool capabilities. These placeholders were meant to be replaced but weren't specific enough, leading to generated agents with incorrect tool definitions.
+
+**Impact:** Generated agents had tool names that VS Code doesn't recognize, preventing them from:
+- Creating files (no `create_file`)
+- Editing code (no `replace_string_in_file`, `multi_replace_string_in_file`)
+- Running commands (no `run_in_terminal`)
+- Getting command output (no `get_terminal_output`)
+- Searching effectively (generic `search` instead of `semantic_search`, `grep_search`, `file_search`)
+
+**Solution:**
+1. Updated all agent templates with correct, specific tool names that match VS Code capabilities
+2. Documented standard tool assignment patterns by agent role
+3. Added CHANGELOG_TEMPLATE.md for future consistency in versioning and documentation
+4. Enhanced ubod-maintainer agent with clear workflow for tool definition updates
+5. Established this as the canonical pattern for future agent generation
+
+---
+
 ## [1.3.1] - 2026-01-06
 
 ### Summary

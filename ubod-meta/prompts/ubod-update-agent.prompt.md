@@ -86,7 +86,7 @@ Read the agent file the user wants to update (or next agent in batch).
 ---
 name: [App] [Role]
 description: [One-line description of what agent does]
-tools: ["read", "search", "execute"]  # Required
+tools: ["read_file", "create_file", "replace_string_in_file"]  # Required - use actual tool names
 infer: true                            # Required for auto-discovery
 handoffs:                              # Required for workflow transitions
   - label: [Action description]
@@ -156,7 +156,7 @@ Based on user input, update the agent file.
 ---
 name: [Keep existing or update]
 description: [Keep existing or expand]
-tools: ["read", "search", "execute"]
+tools: ["read_file", "grep_search", "semantic_search"]  # Use actual tool names based on agent role
 infer: true
 handoffs:
   - label: [Logical next step]
@@ -222,7 +222,7 @@ OUTPUT FORMAT
 
 **Changes Applied:**
 - [x] Added `infer: true`
-- [x] Added `tools: ["read", "search"]`
+- [x] Added `tools: ["read_file", "grep_search", "semantic_search", "file_search", "list_dir", "create_file"]`
 - [x] Added 2 handoffs (to Implementer, to Discovery)
 - [x] Added WORKFLOW section
 

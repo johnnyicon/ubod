@@ -479,7 +479,7 @@ Generate these 3 agents for every app:
 ---
 name: "[App] Discovery Planner"
 description: "Evidence-first discovery + planning for [App]. Reads code, maps call flows, outputs implementation plan."
-tools: ["read", "search"]
+tools: ["read_file", "grep_search", "semantic_search", "file_search", "list_dir", "create_file"]
 infer: true
 handoffs:
   - label: Implement this plan
@@ -520,7 +520,7 @@ OUTPUT FORMAT
 ---
 name: "[App] Implementer"
 description: "Implements verified plans for [App]. Follows discovery output, runs tests."
-tools: ["read", "search", "edit", "execute"]
+tools: ["read_file", "create_file", "replace_string_in_file", "multi_replace_string_in_file", "run_in_terminal", "grep_search"]
 infer: true
 handoffs:
   - label: Verify this implementation
@@ -562,7 +562,7 @@ OUTPUT FORMAT
 ---
 name: "[App] Verifier"
 description: "Verifies implementations for [App]. Runs tests, checks runtime behavior."
-tools: ["read", "search", "execute"]
+tools: ["read_file", "run_in_terminal", "grep_search", "get_terminal_output"]
 infer: true
 handoffs:
   - label: Fix these issues
@@ -614,7 +614,7 @@ OUTPUT FORMAT
 ---
 name: "[App] UI/UX Designer"
 description: "[Frontend stack] integration expert. Designs UI approach before implementation."
-tools: ["read", "search"]
+tools: ["read_file", "semantic_search", "grep_search", "create_file"]
 infer: true
 handoffs:
   - label: Implement this UI approach
