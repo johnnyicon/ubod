@@ -17,6 +17,29 @@ _Changes staged for next release_
 
 ---
 
+## [1.3.5] - 2026-01-06
+
+### Added
+
+- **NEW MIGRATION:** `2026-01-06-verify-agent-schema-fixes.md`
+  - Verifies that previous migration was actually completed, not just marked as done
+  - Runs mandatory grep commands to detect unfixed issues
+  - Prevents false positives from LLMs who read guide but skip fixes
+  - **Action required:** Repos that marked `2026-01-06-vscode-agent-schema-fix` complete must run verification
+
+- **Mandatory verification commands** in original migration guide
+  - Added grep commands to verify migrations are actually complete
+  - Prevents LLMs from marking migration "done" without fixing issues
+  - Example: `grep "prompt: |"` must return 0 results before marking complete
+  
+### Changed
+
+- **ubod-upgrade prompt** now emphasizes verification requirement
+  - DO NOT mark migration complete until grep verification passes
+  - DO NOT update .ubod-version until verification succeeds
+
+---
+
 ## [1.3.4] - 2026-01-06
 
 ### Fixed
