@@ -7,12 +7,10 @@ infer: true
 handoffs:
   - label: Start implementation
     agent: Implementer
-    prompt: |
-      Implement the approved plan with small diffs. Run relevant tests early and often. If UI work is involved, consult UI/UX Designer for an approach before wiring interactions.
+    prompt: "Implement the approved plan with small diffs. Run relevant tests early and often. If UI work is involved, consult UI/UX Designer for an approach before wiring interactions."
   - label: Get UI/UX approach
     agent: UI/UX Designer
-    prompt: |
-      Review the planned UI surface and propose the implementation approach for our tech stack, including pitfalls and a runtime QA script.
+    prompt: "Review the planned UI surface and propose the implementation approach for our tech stack, including pitfalls and a runtime QA script."
 ---
 
 ROLE

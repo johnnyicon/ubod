@@ -15,6 +15,56 @@ All notable changes to Ubod will be documented in this file.
 
 _Changes staged for next release_
 
+**⚠️ BREAKING:** VS Code Agent Schema Compliance - See `ubod-meta/migrations/2026-01-06-vscode-agent-schema-fix.md`
+
+---
+
+## [1.3.3] - 2026-01-06
+
+### Summary
+
+**⚠️ BREAKING CHANGES** - Fixed agent and prompt schema to comply with VS Code requirements. Existing agents/prompts created before this date require migration.
+
+### Breaking Changes
+
+- **Agent `tools:` field** - Changed to VS Code-valid tool names only
+  - Valid: `["read", "search", "edit", "execute"]`
+  - Invalid: `["read_file", "create_file", "grep_search", ...]`
+  
+- **Agent `handoffs:` format** - Single-line prompts only
+  - Valid: `prompt: "Single line string"`
+  - Invalid: `prompt: |` (multiline YAML)
+  - Removed `label:` field (not used by VS Code)
+  
+- **Prompt `model:` field** - Removed from all prompts
+  - Not a valid frontmatter field in VS Code prompt schema
+  - Only `description:` is supported
+
+### Migration Required
+
+**See:** `migrations/2026-01-06-vscode-agent-schema-fix.md` for detailed migration guide
+
+**Quick migration:**
+```bash
+# Use automated migration
+@workspace /ubod-update-agent
+# Choose option 3: Batch mode
+```
+
+### Fixed
+
+- All agent templates in `templates/agents/*.agent.md`
+- All meta prompts in `ubod-meta/prompts/*.prompt.md`
+- `ubod-maintainer` agent tools and handoffs
+- Commit message template in `ubod-update-instruction.prompt.md` (changed `(ubod)` → `(scope)`)
+
+### Added
+
+- **Migration system** - `migrations/` folder with dated migration guides
+- `migrations/README.md` - Migration system documentation
+- `migrations/2026-01-06-vscode-agent-schema-fix.md` - First migration guide
+- Updated `ubod-upgrade.prompt.md` to reference migrations
+
 ---
 
 ## [1.3.2] - 2026-01-06

@@ -1,6 +1,5 @@
 ---
 description: "Update existing copilot-instructions.md to follow Ubod navigation index pattern"
-model: "sonnet-4-5 for analysis and guidance, any model for simple section additions"
 ---
 
 # Migrate/Update Copilot Instructions

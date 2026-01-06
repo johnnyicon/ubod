@@ -7,8 +7,7 @@ infer: true
 handoffs:
   - label: Fix issues found
     agent: Implementer
-    prompt: |
-      Fix the issues found during verification with minimal diffs. Re-run the failing tests and confirm runtime behavior.
+    prompt: "Fix the issues found during verification with minimal diffs. Re-run the failing tests and confirm runtime behavior."
 ---
 
 ROLE

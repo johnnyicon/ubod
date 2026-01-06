@@ -1,6 +1,5 @@
 ---
 description: "Generate app-specific complexity signals for model selection guidance"
-model: "sonnet-4-5 (with app codebase context)"
 ---
 
 # Generate App Complexity Matrix

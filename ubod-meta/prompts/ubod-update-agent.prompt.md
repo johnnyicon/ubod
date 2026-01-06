@@ -1,6 +1,5 @@
 ---
 description: "Update existing agents with metadata AND structural template changes"
-model: "sonnet-4-5 for analysis and updates"
 ---
 
 # Update Agent
@@ -11,6 +10,12 @@ model: "sonnet-4-5 for analysis and updates"
 > - New learnings from usage need to be captured
 > - Workflow improvements discovered
 > - Gotchas or patterns need to be added
+
+**Before starting:** Read these specification files for official agent format:
+- `github-custom-agent-spec.instructions.md` - Cross-product compatible agent specification (GitHub Copilot)
+- `vscode-custom-agent-spec.instructions.md` - VS Code-specific agent features (handoffs, model, etc.)
+
+These files auto-load when editing `.agent.md` files and contain authoritative documentation on agent structure, YAML properties, and best practices.
 
 ---
 
@@ -86,15 +91,25 @@ Read the agent file the user wants to update (or next agent in batch).
 ---
 name: [App] [Role]
 description: [One-line description of what agent does]
-tools: ["read_file", "create_file", "replace_string_in_file"]  # Required - use actual tool names
+tools: ["read", "search", "edit", "execute"]  # Required - VS Code valid tool names only
 infer: true                            # Required for auto-discovery
 handoffs:                              # Required for workflow transitions
-  - label: [Action description]
-    agent: [Next agent name]
-    prompt: |
-      [What the next agent should do]
+  - agent: "[Next Agent Name]"         # Must match exact agent name (case-sensitive)
+    prompt: "Single-line prompt describing what next agent should do"  # Must be single-line string
 ---
 ```
+
+**CRITICAL: Valid tool names for VS Code agents:**
+- ✅ `"read"` - Read files
+- ✅ `"search"` - Search codebase
+- ✅ `"edit"` - Edit files
+- ✅ `"execute"` - Run commands
+- ❌ NOT: `"read_file"`, `"create_file"`, `"grep_search"`, etc.
+
+**CRITICAL: Handoff format:**
+- ✅ `prompt: "Single line string"`
+- ❌ NOT: `prompt: |` (multiline YAML format not supported)
+- ✅ Agent name must match declared name exactly (case-sensitive)
 
 **Check for structured body sections:**
 

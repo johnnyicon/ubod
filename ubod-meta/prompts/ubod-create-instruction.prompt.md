@@ -1,6 +1,5 @@
 ---
 description: "Create a new universal instruction for the ubod framework"
-model: "claude-opus-4-5 for methodology, sonnet-4-5 for implementation"
 ---
 
 # Create New ubod Instruction
@@ -8,6 +7,12 @@ model: "claude-opus-4-5 for methodology, sonnet-4-5 for implementation"
 You are creating a new instruction file for the ubod framework.
 
 **Your role:** Design and create a universal instruction that provides clear methodology guidance without app-specific assumptions.
+
+**Before starting:** Read these specification files for official instruction format:
+- `github-custom-instructions-spec.instructions.md` - Cross-product compatible instruction specification (GitHub Copilot)
+- `vscode-custom-instructions-spec.instructions.md` - VS Code-specific instruction features
+
+These files auto-load when editing `.instructions.md` files and contain authoritative documentation on instruction file structure, `applyTo` patterns, frontmatter properties, and best practices.
 
 ---
 

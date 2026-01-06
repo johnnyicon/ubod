@@ -1,6 +1,5 @@
 ---
 description: "Generate agents for a new app or framework (Rails, Next.js, etc.)"
-model: "claude-opus-4-5 for initial setup, sonnet-4-5 for individual agent generation"
 ---
 
 # Create Agents for New App
@@ -8,6 +7,12 @@ model: "claude-opus-4-5 for initial setup, sonnet-4-5 for individual agent gener
 You are creating app-specific agents for a new application in your monorepo.
 
 **Your role:** Generate agents (and supporting instruction files) that understand your app's tech stack and patterns, extending ubod's universal agents with app-specific knowledge.
+
+**Before starting:** Read these specification files for official agent format:
+- `github-custom-agent-spec.instructions.md` - Cross-product compatible agent specification (GitHub Copilot)
+- `vscode-custom-agent-spec.instructions.md` - VS Code-specific agent features (handoffs, model, etc.)
+
+These files auto-load when editing `.agent.md` files and contain authoritative documentation on agent structure, YAML properties, and best practices.
 
 ---
 
@@ -479,17 +484,13 @@ Generate these 3 agents for every app:
 ---
 name: "[App] Discovery Planner"
 description: "Evidence-first discovery + planning for [App]. Reads code, maps call flows, outputs implementation plan."
-tools: ["read_file", "grep_search", "semantic_search", "file_search", "list_dir", "create_file"]
+tools: ["read", "search"]
 infer: true
 handoffs:
-  - label: Implement this plan
-    agent: "[App] Implementer"
-    prompt: |
-      Implement the plan documented above. Follow the checkpoints.
-  - label: Design UI approach first
-    agent: "[App] UI/UX Designer"
-    prompt: |
-      Design the UI architecture before implementation. (Only if UI/UX Designer exists)
+  - agent: "[App] Implementer"
+    prompt: "Implement the plan documented above. Follow the checkpoints."
+  - agent: "[App] UI/UX Designer"
+    prompt: "Design the UI architecture before implementation. (Only if UI/UX Designer exists)"
 ---
 
 ROLE
@@ -520,17 +521,13 @@ OUTPUT FORMAT
 ---
 name: "[App] Implementer"
 description: "Implements verified plans for [App]. Follows discovery output, runs tests."
-tools: ["read_file", "create_file", "replace_string_in_file", "multi_replace_string_in_file", "run_in_terminal", "grep_search"]
+tools: ["read", "search", "edit", "execute"]
 infer: true
 handoffs:
-  - label: Verify this implementation
-    agent: "[App] Verifier"
-    prompt: |
-      Verify the implementation works correctly. Run tests and check actual behavior.
-  - label: Need more discovery
-    agent: "[App] Discovery Planner"
-    prompt: |
-      I need more investigation before proceeding. [Describe what's unclear]
+  - agent: "[App] Verifier"
+    prompt: "Verify the implementation works correctly. Run tests and check actual behavior."
+  - agent: "[App] Discovery Planner"
+    prompt: "I need more investigation before proceeding. [Describe what's unclear]"
 ---
 
 ROLE
@@ -562,17 +559,13 @@ OUTPUT FORMAT
 ---
 name: "[App] Verifier"
 description: "Verifies implementations for [App]. Runs tests, checks runtime behavior."
-tools: ["read_file", "run_in_terminal", "grep_search", "get_terminal_output"]
+tools: ["read", "search", "execute"]
 infer: true
 handoffs:
-  - label: Fix these issues
-    agent: "[App] Implementer"
-    prompt: |
-      Issues found during verification: [list issues]
-  - label: Investigation needed
-    agent: "[App] Discovery Planner"
-    prompt: |
-      Verification revealed unexpected behavior. Need investigation.
+  - agent: "[App] Implementer"
+    prompt: "Issues found during verification: [list issues]"
+  - agent: "[App] Discovery Planner"
+    prompt: "Verification revealed unexpected behavior. Need investigation."
 ---
 
 ROLE
@@ -614,17 +607,13 @@ OUTPUT FORMAT
 ---
 name: "[App] UI/UX Designer"
 description: "[Frontend stack] integration expert. Designs UI approach before implementation."
-tools: ["read_file", "semantic_search", "grep_search", "create_file"]
+tools: ["read", "search"]
 infer: true
 handoffs:
-  - label: Implement this UI approach
-    agent: "[App] Implementer"
-    prompt: |
-      Implement the UI approach documented above. Follow the checklist.
-  - label: Verify UI behavior
-    agent: "[App] Verifier"
-    prompt: |
-      Verify the UI implementation works correctly in the browser.
+  - agent: "[App] Implementer"
+    prompt: "Implement the UI approach documented above. Follow the checklist."
+  - agent: "[App] Verifier"
+    prompt: "Verify the UI implementation works correctly in the browser."
 ---
 
 ROLE

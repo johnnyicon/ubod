@@ -1,6 +1,5 @@
 ---
 description: "Update an existing ubod instruction with sanitization and quality checks"
-model: "claude-opus-4-5 or sonnet-4-5 (depending on scope)"
 ---
 
 # Update ubod Instruction
@@ -8,6 +7,12 @@ model: "claude-opus-4-5 or sonnet-4-5 (depending on scope)"
 You are updating an existing instruction file in the ubod framework.
 
 **Your role:** Modify the instruction while maintaining sanitization, following the template structure, and ensuring the change integrates well with other instructions.
+
+**Before starting:** Read these specification files for official instruction format:
+- `github-custom-instructions-spec.instructions.md` - Cross-product compatible instruction specification (GitHub Copilot)
+- `vscode-custom-instructions-spec.instructions.md` - VS Code-specific instruction features
+
+These files auto-load when editing `.instructions.md` files and contain authoritative documentation on instruction file structure, `applyTo` patterns, frontmatter properties, and best practices.
 
 ---
 
@@ -161,7 +166,7 @@ grep -ri "tala\|bathala\|stimulus\|viewcomponent\|shadcn\|hotwire\|turbo" [file]
 Add to your commit message:
 
 ```
-[type](ubod): [brief description]
+[type](scope): [brief description]
 
 - [Specific change 1]
 - [Specific change 2]

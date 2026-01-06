@@ -1,6 +1,5 @@
 ---
 description: "Orchestrate upgrading Ubod in your monorepo: run script, then handle agents"
-model: "sonnet-4-5 for orchestration and handoff"
 ---
 
 # Ubod Upgrade
@@ -229,7 +228,39 @@ Choose in this order or run in parallel!
 
 **What changed in this version?**
 - Ask: "What's new in Ubod 1.3.0?" (or current version)
-- I'll explain COMMANDS/BOUNDARIES template changes, simplified prompts, two-layer architecture
+- I'll explain what changed based on CHANGELOG.md
+
+**Do I need to migrate existing files?**
+
+Check for unapplied migrations:
+
+```bash
+# 1. List available migrations
+ls -1 projects/ubod/ubod-meta/migrations/*.md | grep -v README
+
+# 2. Check which migrations are already applied
+grep -A 100 "migrations:" .ubod-version
+
+# 3. Compare: Apply any migration NOT in .ubod-version
+```
+
+**For each unapplied migration:**
+1. Open the migration file
+2. Check "Who Needs This Migration" section
+3. If it applies to you, follow the steps
+4. After applying, add to `.ubod-version`:
+   ```yaml
+   migrations:
+     - 2026-01-06-vscode-agent-schema-fix  # Example
+   ```
+
+**Common migrations:**
+- `2026-01-06-vscode-agent-schema-fix.md` - Fix agent tools, handoffs, prompt model field
+
+**To apply migrations:**
+- **Automated:** Use `/ubod-update-agent` prompt (batch mode)
+- **Manual:** Follow migration file instructions
+- **Track:** Always update `.ubod-version` after applying
 
 ---
 
