@@ -825,6 +825,49 @@ Options:
 
 ---
 
+## Updating Ubod (After Initial Setup)
+
+Once Ubod is deployed, use the update system to stay current.
+
+### Version Tracking
+
+Ubod uses semantic versioning. Your repo tracks the deployed version in `.ubod-version`:
+
+```
+version: 1.0.0
+commit: a8008ca
+updated: 2026-01-05
+```
+
+### Updating to Latest Version
+
+**After pulling submodule updates:**
+
+```bash
+# Pull latest ubod submodule
+cd projects/ubod && git pull origin main && cd ../..
+
+# Run update script
+cd projects/ubod && ./scripts/ubod-update.sh
+```
+
+**Update modes:**
+- **Semi-automated (default):** Shows changelog, syncs files, lists prompts to run
+- **Full automated:** `./scripts/ubod-update.sh --auto` (syncs everything)
+- **Preview only:** `./scripts/ubod-update.sh --dry-run`
+
+### Changelog
+
+See [CHANGELOG.md](../CHANGELOG.md) for version history. Each entry includes:
+- Human-readable description
+- LLM-actionable instructions (action type, source, target)
+
+### Architecture Reference
+
+See [docs/ARCHITECTURE.md](ARCHITECTURE.md) for how agents and instructions work together.
+
+---
+
 ## Updating Ubod Itself
 
 When you need to modify or extend Ubod's instructions and prompts:
