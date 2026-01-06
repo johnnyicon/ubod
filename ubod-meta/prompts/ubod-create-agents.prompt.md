@@ -432,6 +432,7 @@ For each file:
 
 Before committing generated files:
 
+**Instructions:**
 - [ ] Files are in correct location: `[app]/.copilot/instructions/`
 - [ ] Frontmatter has correct `applyTo` pattern
 - [ ] Examples are from actual codebase (not made up)
@@ -439,9 +440,32 @@ Before committing generated files:
 - [ ] Consistent with ubod universal instruction patterns
 - [ ] References to universal instructions are accurate
 
+**Agents:**
+- [ ] **CRITICAL:** All agent files saved to `.github/agents/` at monorepo root
+- [ ] **NOT** in app folders (VS Code limitation - won't be discovered)
+- [ ] Agent filenames have app prefix: `{app}-discovery-planner.agent.md`
+- [ ] Agent YAML has correct `name` and `description`
+- [ ] Handoffs reference correct agent names
+
 ---
 
 ## Agent Generation
+
+⚠️ **CRITICAL: Agent File Placement**
+
+All agents MUST be saved to:
+```
+.github/agents/  ← ROOT LEVEL ONLY
+├── {app}-discovery-planner.agent.md
+├── {app}-implementer.agent.md
+├── {app}-verifier.agent.md
+└── {app}-ui-ux-designer.agent.md (if frontend)
+```
+
+**NOT** here (VS Code limitation - agents only discovered at root):
+```
+❌ apps/{app}/.copilot/agents/  ← WRONG, won't be discovered
+```
 
 ### Standard Agents (Always Generate)
 

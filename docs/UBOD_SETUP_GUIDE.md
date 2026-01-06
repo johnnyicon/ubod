@@ -297,13 +297,28 @@ For each app, you'll receive:
 
 ### Step 2.5: Save App-Specific Files
 
-Create `.copilot/instructions/` for each app:
+Create `.copilot/instructions/` and `.copilot/prompts/` for each app:
 
 ```bash
 mkdir -p /path/to/monorepo/apps/{app-name}/.copilot/instructions
-mkdir -p /path/to/monorepo/apps/{app-name}/.copilot/agents
 mkdir -p /path/to/monorepo/apps/{app-name}/.copilot/prompts
 ```
+
+**⚠️ CRITICAL: Agent File Placement**
+
+Agents **MUST** be saved to `.github/agents/` at monorepo root, NOT in app folders:
+
+```bash
+# ✅ CORRECT - Agents at root
+mkdir -p /path/to/monorepo/.github/agents
+
+# ❌ WRONG - VS Code will NOT discover agents here
+mkdir -p /path/to/monorepo/apps/{app-name}/.copilot/agents
+```
+
+**Why?** VS Code limitation - agents are only discovered at `.github/agents/` (no subfolders, no app-specific paths).
+
+**Instructions and Prompts** can use subfolders (app-specific paths work fine).
 
 Save instruction files:
 
@@ -317,13 +332,15 @@ apps/tala/.copilot/instructions/
 └── ...
 ```
 
-Save agent files:
+Save agent files **(at monorepo root)**:
 
 ```
-apps/tala/.copilot/agents/
+.github/agents/  ← ROOT LEVEL ONLY
 ├── tala-discovery-planner.agent.md
 ├── tala-implementer.agent.md
 ├── tala-verifier.agent.md
+├── www-discovery-planner.agent.md
+├── www-implementer.agent.md
 └── ...
 ```
 
@@ -341,9 +358,9 @@ apps/tala/.copilot/prompts/
 For each app, check:
 
 ✅ Files exist:
-- [ ] At least 6 instruction files (with app name prefix)
-- [ ] At least 3 agent files (with app name prefix)
-- [ ] At least 2 prompt files
+- [ ] At least 6 instruction files (in `apps/{app}/.copilot/instructions/`)
+- [ ] At least 3 agent files (in `.github/agents/` with app name prefix)
+- [ ] At least 2 prompt files (in `apps/{app}/.copilot/prompts/`)
 
 ✅ Content references actual app:
 - [ ] Files mention your framework correctly

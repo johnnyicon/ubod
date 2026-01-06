@@ -255,6 +255,121 @@ show_changelog_diff() {
 }
 
 # =============================================================================
+# Agent Migration (Fix misplaced agents from app folders)
+# =============================================================================
+
+migrate_misplaced_agents() {
+    log_info ""
+    log_info "Checking for misplaced agents..."
+    
+    local found_misplaced=false
+    local migrated=0
+    local target_dir="$MONOREPO_DIR/.github/agents"
+    
+    # Check for agents in app folders (they won't be discovered there)
+    for app_dir in "$MONOREPO_DIR"/apps/*/; do
+        [ -d "$app_dir" ] || continue
+        
+        local copilot_agents="$app_dir.copilot/agents"
+        
+        if [ -d "$copilot_agents" ]; then
+            for agent_file in "$copilot_agents"/*.agent.md; do
+                [ -f "$agent_file" ] || continue
+                
+                if [ "$found_misplaced" = false ]; then
+                    log_warning "⚠️  Found agents in app folders - VS Code only discovers agents at .github/agents/"
+                    echo ""
+                    found_misplaced=true
+                fi
+                
+                local filename=$(basename "$agent_file")
+                local target="$target_dir/$filename"
+                local app_name=$(basename "$(dirname "$(dirname "$agent_file")")")
+                
+                log_action "MIGRATE: $app_name/.copilot/agents/$filename → .github/agents/$filename"
+                
+                if [ "$DRY_RUN" = false ]; then
+                    mkdir -p "$target_dir"
+                    cp "$agent_file" "$target"
+                    rm "$agent_file"
+                    ((migrated++))
+                fi
+            done
+            
+            # Clean up empty directories
+            if [ "$DRY_RUN" = false ] && [ -d "$copilot_agents" ] && [ -z "$(ls -A "$copilot_agents")" ]; then
+                rmdir "$copilot_agents"
+            fi
+        fi
+    done
+    
+    if [ "$found_misplaced" = true ]; then
+        log_success "Migrated $migrated agents to .github/agents/"
+        log_info "ℹ️  VS Code limitation: Agents MUST be at .github/agents/ (no subfolders)"
+    else
+        log_success "No misplaced agents found"
+    fi
+}
+
+validate_settings_json() {
+    local settings_file="$MONOREPO_DIR/.vscode/settings.json"
+    
+    log_info ""
+    log_info "Validating .vscode/settings.json..."
+    
+    if [ ! -f "$settings_file" ]; then
+        log_info "No settings.json found (will be created by VS Code)"
+        return
+    fi
+    
+    # Check for incorrect array format
+    local has_errors=false
+    
+    if grep -q '"chat.instructionsFilesLocations": \[' "$settings_file" 2>/dev/null; then
+        log_warning "❌ chat.instructionsFilesLocations using ARRAY format (should be OBJECT)"
+        has_errors=true
+    fi
+    
+    if grep -q '"chat.promptFilesLocations": \[' "$settings_file" 2>/dev/null; then
+        log_warning "❌ chat.promptFilesLocations using ARRAY format (should be OBJECT)"
+        has_errors=true
+    fi
+    
+    if grep -q '"chat.agentFilesLocations"' "$settings_file" 2>/dev/null; then
+        log_warning "❌ chat.agentFilesLocations is not a valid VS Code setting (remove it)"
+        has_errors=true
+    fi
+    
+    if [ "$has_errors" = true ]; then
+        echo ""
+        log_warning "⚠️  settings.json has format errors!"
+        echo ""
+        echo "CORRECT FORMAT (object with boolean values):"
+        echo ""
+        echo '  "chat.instructionsFilesLocations": {'
+        echo '    ".github/instructions": true,'
+        echo '    "apps/app-name/.copilot/instructions": true'
+        echo '  },'
+        echo '  "chat.promptFilesLocations": {'
+        echo '    ".github/prompts": true,'
+        echo '    ".github/prompts/ubod": true'
+        echo '  }'
+        echo ""
+        echo "INCORRECT FORMAT (array - causes lint errors):"
+        echo ""
+        echo '  "chat.instructionsFilesLocations": ['
+        echo '    ".github/instructions",'
+        echo '    "apps/app-name/.copilot/instructions"'
+        echo '  ]'
+        echo ""
+        log_warning "Run /ubod-upgrade prompt to auto-fix, or edit manually"
+        echo ""
+    else
+        log_success "settings.json format looks good"
+    fi
+}
+
+# =============================================================================
 # File Syncing (merged from ubod-sync.sh)
 # =============================================================================
 
@@ -394,6 +509,11 @@ check_copilot_instructions() {
 run_file_sync() {
     print_header "Syncing Files"
     
+    # Migration & validation (pre-sync)
+    migrate_misplaced_agents
+    validate_settings_json
+    
+    # Regular sync
     sync_agents
     sync_prompts
     sync_instructions

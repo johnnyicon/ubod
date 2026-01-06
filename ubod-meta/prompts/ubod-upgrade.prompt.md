@@ -66,14 +66,79 @@ Show output to user (copy/paste or terminal).
 **Script does:**
 - Detects your monorepo setup
 - Shows version diff (old → new)
+- **Migrates misplaced agents** from app folders → .github/agents/ (VS Code limitation)
+- **Validates settings.json** format (object vs array, invalid keys)
 - Copies: agents → .github/agents/, prompts → .github/prompts/ubod/, instructions → .github/instructions/ubod/
 - Validates copilot-instructions.md has right structure
 - Updates .ubod-version file
+
+**If script shows warnings:**
+- Settings.json format errors → Prompt will offer to auto-fix
+- Misplaced agents → Already migrated by script
 
 **If script fails:**
 - Show error message
 - Suggest: "Run `cd projects/ubod && ./scripts/ubod-upgrade.sh --dry-run` for preview"
 - OR: "You may need to set up Ubod submodule first"
+
+### Step 2a: Fix settings.json (If Needed)
+
+**If script showed settings.json warnings:**
+
+```markdown
+## Settings.json Validation
+
+The script detected format errors in `.vscode/settings.json`:
+
+❌ Incorrect format issues found
+
+Would you like me to auto-fix settings.json? (yes/no)
+```
+
+**If user says yes:**
+
+```typescript
+// Read current settings.json
+read_file(".vscode/settings.json")
+
+// Fix these issues:
+// 1. Convert array format → object format with boolean values
+// 2. Remove chat.agentFilesLocations (not a valid setting)
+
+// CORRECT FORMAT:
+{
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    "apps/app-name/.copilot/instructions": true
+  },
+  "chat.promptFilesLocations": {
+    ".github/prompts": true,
+    ".github/prompts/ubod": true
+  }
+  // Note: NO chat.agentFilesLocations (agents always at .github/agents/)
+}
+
+// Save fixed version
+replace_string_in_file(...) 
+```
+
+**Validation rules:**
+- ✅ **instructionsFilesLocations**: Object with path keys → boolean values
+- ✅ **promptFilesLocations**: Object with path keys → boolean values
+- 🚫 **agentFilesLocations**: REMOVE this key (not supported, agents always at .github/agents/)
+- 🚫 **Array format**: NEVER use `["path1", "path2"]` - causes "Expected object" lint errors
+
+After fix:
+```markdown
+✅ Fixed settings.json format
+
+Changes:
+- Converted instructionsFilesLocations from array to object
+- Converted promptFilesLocations from array to object
+- Removed chat.agentFilesLocations (not a valid VS Code setting)
+
+Please reload VS Code window for changes to take effect.
+```
 
 ### Step 3: Detect: New App or Existing?
 

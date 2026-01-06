@@ -17,6 +17,102 @@ _Changes staged for next release_
 
 ---
 
+## [1.3.1] - 2026-01-06
+
+### Summary
+
+Critical fix for VS Code agent discovery limitation + automated migration of misplaced agents + settings.json validation.
+
+### Fixed
+
+- **Agent migration** - Detect and move agents from app folders to .github/agents/
+  ```yaml
+  action: AUTOMATED_MIGRATION
+  script: scripts/ubod-upgrade.sh (migrate_misplaced_agents function)
+  note: VS Code only discovers agents at .github/agents/ root level
+  ```
+  - Scans all `apps/*/.copilot/agents/` for agent files
+  - Migrates them to `.github/agents/` automatically
+  - Removes empty directories after migration
+  - Shows warning explaining VS Code limitation
+
+- **settings.json validation** - Detect and report format errors
+  ```yaml
+  action: VALIDATION_CHECK
+  script: scripts/ubod-upgrade.sh (validate_settings_json function)
+  note: Detects array vs object format, invalid keys
+  ```
+  - Checks for incorrect array format (causes "Expected object" lint error)
+  - Checks for invalid `chat.agentFilesLocations` key (not supported by VS Code)
+  - Provides correct format example
+  - Prompts user to run `/ubod-upgrade` for auto-fix
+
+- **settings.json auto-fix** - Correct format errors automatically
+  ```yaml
+  action: AUTO_FIX
+  prompt: ubod-meta/prompts/ubod-upgrade.prompt.md (Step 2a)
+  note: Converts array format to object format, removes invalid keys
+  ```
+  - Converts `chat.instructionsFilesLocations` from array to object with boolean values
+  - Converts `chat.promptFilesLocations` from array to object with boolean values
+  - Removes `chat.agentFilesLocations` (not a valid VS Code setting)
+  - Validates final format
+
+### Enhanced
+
+- **ubod-upgrade.sh** - Added pre-sync migration and validation
+  ```yaml
+  action: REFERENCE_ONLY
+  file: scripts/ubod-upgrade.sh
+  functions:
+    - migrate_misplaced_agents() - Moves agents from app folders to root
+    - validate_settings_json() - Checks format and reports errors
+  ```
+  - Runs before file sync to catch issues early
+  - Provides clear error messages with examples
+  - Non-blocking (warnings only, doesn't fail upgrade)
+
+- **ubod-upgrade prompt** - Added settings.json auto-fix step
+  ```yaml
+  action: REFERENCE_ONLY
+  file: ubod-meta/prompts/ubod-upgrade.prompt.md
+  added: Step 2a - Fix settings.json (If Needed)
+  ```
+  - Offers to auto-fix after script validation
+  - Shows correct format with explanations
+  - Validates after fix
+
+- **ubod-create-agents prompt** - Added prominent agent placement warning
+  ```yaml
+  action: REFERENCE_ONLY
+  file: ubod-meta/prompts/ubod-create-agents.prompt.md
+  added: Critical warning box about .github/agents/ requirement
+  ```
+
+- **UBOD_SETUP_GUIDE.md** - Fixed incorrect agent placement docs
+  ```yaml
+  action: DOCUMENTATION_FIX
+  file: docs/UBOD_SETUP_GUIDE.md
+  section: "Step 2.5: Save App-Specific Files"
+  ```
+  - Removed instructions to create `apps/{app}/.copilot/agents/`
+  - Added critical warning about VS Code limitation
+  - Shows correct structure with agents at root
+
+### Root Cause
+
+**VS Code Limitation:** Agents are only discovered at `.github/agents/` root level. Unlike instructions and prompts (which support subfolders via `chat.instructionsFilesLocations` and `chat.promptFilesLocations`), there is NO `chat.agentFilesLocations` setting. All agents must be at root.
+
+**Impact:** Any agents placed in `apps/{app}/.copilot/agents/` won't be discovered by VS Code Copilot.
+
+**Solution:**
+1. Migration script moves existing misplaced agents to root
+2. Documentation updated to reflect correct placement
+3. Create-agents prompt warns prominently about limitation
+4. Settings.json validation catches incorrect configuration
+
+---
+
 ## [1.3.0] - 2026-01-05
 
 ### Summary
