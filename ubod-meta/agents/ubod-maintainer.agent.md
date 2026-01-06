@@ -1,4 +1,3 @@
-```chatagent
 ---
 name: Ubod Maintainer
 description: Specialized agent for maintaining and improving the ubod framework itself. Ensures templates stay universal and patterns remain cross-tool compatible.
