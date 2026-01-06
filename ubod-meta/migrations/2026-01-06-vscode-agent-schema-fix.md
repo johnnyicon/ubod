@@ -206,18 +206,60 @@ Open VS Code and check Problems panel:
 
 ## Verification Checklist
 
-After migration:
+**MANDATORY: Run these commands to verify migration is complete**
 
-- [ ] All `.agent.md` files use `tools: ["read", "search", ...]`
-- [ ] All agent handoffs use single-line `prompt: "..."`
-- [ ] All agent name references match declared names exactly
-- [ ] All `.prompt.md` files have NO `model:` field
-- [ ] VS Code Problems panel shows 0 (or only false positive) errors
-- [ ] **Track migration**: Add to `.ubod-version`:
-  ```yaml
-  migrations:
-    - 2026-01-06-vscode-agent-schema-fix
-  ```
+### 1. Verify no multiline prompts remain
+
+```bash
+# Must return NO results
+grep -n "prompt: |" .github/agents/*.agent.md
+
+# If any results: FIX THEM - multiline prompts break VS Code
+```
+
+### 2. Verify no invalid tool names remain
+
+```bash
+# Must return NO results
+grep -E "tools:.*_(file|string|in_file|search)" .github/agents/*.agent.md
+
+# If any results: FIX THEM - underscore tool names are invalid
+```
+
+### 3. Verify all handoffs have labels
+
+```bash
+# Check for handoffs missing label field
+grep -A3 "handoffs:" .github/agents/*.agent.md | grep -B1 "agent:" | grep -v "label:"
+
+# If any results without label: FIX THEM - label is required
+```
+
+### 4. Verify no model field in prompts
+
+```bash
+# Must return NO results
+grep -n "^model:" .github/prompts/**/*.prompt.md
+
+# If any results: FIX THEM - model field is not valid
+```
+
+### 5. Check VS Code Problems panel
+
+Open VS Code:
+- View → Problems (⇧⌘M)
+- Filter to ".agent.md" and ".prompt.md" files
+- Must show 0 schema errors (ignore file path resolution warnings)
+
+### 6. Track migration in .ubod-version
+
+```bash
+# Add this line if not present
+echo "migrations:" >> .ubod-version
+echo "  - 2026-01-06-vscode-agent-schema-fix" >> .ubod-version
+```
+
+**DO NOT mark migration complete until ALL grep commands return 0 results.**
 
 ---
 

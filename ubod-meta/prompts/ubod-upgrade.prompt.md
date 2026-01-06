@@ -247,8 +247,10 @@ grep -A 100 "migrations:" .ubod-version
 **For each unapplied migration:**
 1. Open the migration file
 2. Check "Who Needs This Migration" section
-3. If it applies to you, follow the steps
-4. After applying, add to `.ubod-version`:
+3. If it applies to you, follow ALL steps (including fixes)
+4. **MANDATORY: Run verification commands** from "Verification Checklist" section
+5. **DO NOT mark complete** until all grep commands return 0 results
+6. After VERIFIED, add to `.ubod-version`:
    ```yaml
    migrations:
      - 2026-01-06-vscode-agent-schema-fix  # Example
@@ -256,11 +258,12 @@ grep -A 100 "migrations:" .ubod-version
 
 **Common migrations:**
 - `2026-01-06-vscode-agent-schema-fix.md` - Fix agent tools, handoffs, prompt model field
+  - **Verification required:** Run grep commands to verify no multiline prompts remain
 
 **To apply migrations:**
-- **Automated:** Use `/ubod-update-agent` prompt (batch mode)
-- **Manual:** Follow migration file instructions
-- **Track:** Always update `.ubod-version` after applying
+- **Automated:** Use `/ubod-update-agent` prompt (batch mode) + VERIFY with grep
+- **Manual:** Follow migration file instructions + VERIFY with grep
+- **Track:** Only update `.ubod-version` AFTER verification passes
 
 ---
 
