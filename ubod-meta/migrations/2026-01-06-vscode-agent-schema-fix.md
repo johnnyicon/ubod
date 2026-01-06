@@ -86,12 +86,13 @@ handoffs:
 **AFTER (Valid):**
 ```yaml
 handoffs:
-  - agent: "My Agent"
+  - label: "Next step"
+    agent: "My Agent"
     prompt: "Single-line prompt text describing what next agent should do"
 ```
 
 **Changes:**
-- Remove `label:` field
+- Keep `label:` field (REQUIRED by VS Code schema)
 - Change `prompt: |` (multiline) → `prompt: "..."` (single-line string)
 - Agent name must match declared name exactly (case-sensitive)
 
