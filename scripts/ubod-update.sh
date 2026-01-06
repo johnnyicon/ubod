@@ -258,17 +258,24 @@ show_changelog_diff() {
     echo ""
     
     # Extract and display changelog sections
-    awk -v from="$from_version" -v to="$to_version" '
-        /^## \[/ {
-            in_section = 0
-            # Extract version number
-            match($0, /\[([0-9]+\.[0-9]+\.[0-9]+)\]/, arr)
-            if (arr[1] != "" && arr[1] != from) {
-                in_section = 1
-            }
-        }
-        in_section { print }
-    ' "$CHANGELOG_FILE" | head -100
+    # Show all sections between current and latest version
+    local in_range=0
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^\#\#\ \[([0-9]+\.[0-9]+\.[0-9]+)\] ]]; then
+            version="${BASH_REMATCH[1]}"
+            if [ "$version" = "$to_version" ]; then
+                in_range=1
+                echo "$line"
+            elif [ "$version" = "$from_version" ]; then
+                in_range=0
+                break
+            elif [ $in_range -eq 1 ]; then
+                echo "$line"
+            fi
+        elif [ $in_range -eq 1 ]; then
+            echo "$line"
+        fi
+    done < "$CHANGELOG_FILE"
     
     echo ""
 }
