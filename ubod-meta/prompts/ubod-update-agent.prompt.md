@@ -1,5 +1,5 @@
 ---
-description: "Update an existing app-specific or universal agent based on learnings"
+description: "Update existing agents with metadata AND structural template changes"
 model: "sonnet-4-5 for analysis and updates"
 ---
 
@@ -7,6 +7,7 @@ model: "sonnet-4-5 for analysis and updates"
 
 > **When to use:**
 > - Agent is missing metadata (tools, infer, handoffs)
+> - Template added new sections (COMMANDS, BOUNDARIES, etc.)
 > - New learnings from usage need to be captured
 > - Workflow improvements discovered
 > - Gotchas or patterns need to be added
@@ -171,6 +172,25 @@ handoffs:
 ROLE
 [Clear 1-2 sentence role definition]
 
+COMMANDS
+Key commands this agent uses:
+- `/ubod-create-agents` - Generate new app agents
+- `/ubod-update-agent` - Update existing agents
+- [Add app-specific test commands, linters, etc.]
+
+BOUNDARIES
+✅ **Always do:**
+- [Action this agent should always perform]
+- [Another action]
+
+⚠️ **Ask first:**
+- [Action requiring user confirmation]
+- [Another action]
+
+🚫 **Never do:**
+- [Action this agent must avoid]
+- [Another action]
+
 SCOPE
 - [What this agent does]
 - [What this agent doesn't do]
@@ -189,6 +209,9 @@ WORKFLOW
 OUTPUT FORMAT
 [Define expected output structure]
 ```
+
+> **Note:** COMMANDS and BOUNDARIES sections are NEW (v1.3.0).
+> If agent doesn't have them, add them from the template above.
 
 ### Step 5: Verify Updates
 

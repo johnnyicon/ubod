@@ -839,28 +839,73 @@ commit: a8008ca
 updated: 2026-01-05
 ```
 
-### Upgrading to Latest Version
+## Upgrading Ubod (After Initial Setup)
 
-**After pulling submodule updates:**
+Ubod uses a **two-layer system** for upgrades:
+
+### Layer 1: Infrastructure (Script)
+**`ubod-upgrade.sh`** - Copies latest Ubod files from submodule
 
 ```bash
-# Pull latest ubod submodule
-cd projects/ubod && git pull origin main && cd ../..
-
-# Run upgrade script
 cd projects/ubod && ./scripts/ubod-upgrade.sh
 ```
 
-**Upgrade modes:**
-- **Semi-automated (default):** Shows changelog, syncs files, lists prompts to run
-- **Full automated:** `./scripts/ubod-upgrade.sh --auto` (syncs everything)
-- **Preview only:** `./scripts/ubod-upgrade.sh --dry-run`
+**Use when:**
+- First time setting up Ubod
+- The `/ubod-upgrade` prompt doesn't exist yet (new version)
+- You're debugging script issues
+
+**Modes:**
+- **Semi-automated (default):** Shows changelog, syncs files, lists next prompts
+- **Full automated:** `./scripts/ubod-upgrade.sh --auto` (no prompts)
+- **Preview only:** `./scripts/ubod-upgrade.sh --dry-run` (shows what would happen)
+
+### Layer 2: Coordination (Prompts)
+**`/ubod-upgrade`** - Orchestrator prompt that automates everything
+
+```
+Run: /ubod-upgrade
+
+This prompt will:
+1. Show changelog (what changed)
+2. Run ubod-upgrade.sh script via tools
+3. Detect: new app or existing agents?
+4. Hand off to /ubod-create-agents or /ubod-update-agent
+```
+
+**Use almost always** - This is your normal daily entry point.
+
+### Simplified Workflow
+
+```
+MOST OF THE TIME:
+  Run: /ubod-upgrade
+  → Script runs automatically
+  → Agents updated automatically
+  → Done
+
+SOMETIMES (first-time):
+  Run: cd projects/ubod && ./scripts/ubod-upgrade.sh
+  → Then: /ubod-upgrade
+  → Done
+```
+
+### Prompts Explained
+
+| Prompt | When | What |
+|--------|------|------|
+| `/ubod-upgrade` | Want to upgrade | Orchestrator - handles everything |
+| `/ubod-create-agents` | New app | Generate agents for new Rails/Next.js/etc. app |
+| `/ubod-update-agent` | Existing agents | Update agents with new metadata/structural changes |
+| `/ubod-create-instruction` | New instruction | Create new framework-specific instruction file |
+| `/ubod-update-instruction` | Existing instruction | Update existing instruction file |
 
 ### Changelog
 
 See [CHANGELOG.md](../CHANGELOG.md) for version history. Each entry includes:
 - Human-readable description
 - LLM-actionable instructions (action type, source, target)
+- What structural changes were made (if any)
 
 ### Architecture Reference
 
@@ -876,10 +921,12 @@ When you need to modify or extend Ubod's instructions and prompts:
 
 Ubod includes prompts for self-updating (in `ubod-meta/prompts/`):
 
-1. **ubod-update-instruction.prompt.md** - Modify existing instruction files
-2. **ubod-create-instruction.prompt.md** - Create new instruction files  
-3. **ubod-bootstrap-app-context.prompt.md** - Set up app-specific files in consuming repos
-4. **ubod-generate-complexity-matrix.prompt.md** - Create app-specific complexity signals
+1. **ubod-upgrade.prompt.md** - Orchestrate full upgrade workflow
+2. **ubod-create-agents.prompt.md** - Generate agents for new apps
+3. **ubod-update-agent.prompt.md** - Update existing agents
+4. **ubod-update-instruction.prompt.md** - Modify existing instruction files
+5. **ubod-create-instruction.prompt.md** - Create new instruction files  
+6. **ubod-generate-complexity-matrix.prompt.md** - Create app-specific complexity signals
 
 If you deployed Phase 3, these are also available in your consuming repo at `.github/prompts/ubod/`.
 

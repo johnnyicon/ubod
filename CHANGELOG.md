@@ -17,6 +17,101 @@ _Changes staged for next release_
 
 ---
 
+## [1.3.0] - 2026-01-05
+
+### Summary
+
+Simplified agent management workflow with clearer prompt names, orchestrator prompt, and enhanced agent template. Two-layer system: infrastructure script + coordination prompts.
+
+### Added
+
+- **ubod-upgrade prompt** - Orchestrator prompt for upgrading Ubod
+  ```yaml
+  action: REFERENCE_ONLY
+  file: .github/prompts/ubod/ubod-upgrade.prompt.md
+  note: New entry point - runs script, detects app context, hands off to create/update
+  commands:
+    - /ubod-upgrade (run this first, it orchestrates everything)
+  ```
+  - Displays changelog
+  - Runs ubod-upgrade.sh script via tools
+  - Detects: new app or existing agents?
+  - Hands off to /ubod-create-agents or /ubod-update-agent
+
+- **COMMANDS section** in agent template
+  ```yaml
+  action: TEMPLATE_CHANGE
+  file: templates/agents/app-specific-agent.template.md
+  section: COMMANDS
+  note: Lists executable commands this agent uses
+  ```
+  - Executable commands with flags
+  - Organized by purpose
+  - Example: `/ubod-create-agents`, `/ubod-update-agent`, test runners, linters
+
+- **BOUNDARIES section** in agent template
+  ```yaml
+  action: TEMPLATE_CHANGE
+  file: templates/agents/app-specific-agent.template.md
+  section: BOUNDARIES
+  note: Three-tier boundary system from GitHub research
+  ```
+  - ✅ Always do: Actions agent always performs
+  - ⚠️ Ask first: Actions requiring user confirmation
+  - 🚫 Never do: Actions agent must avoid
+
+- **RESOURCES.md** - Design bibliography documenting influences
+  ```yaml
+  action: REFERENCE_ONLY
+  file: docs/RESOURCES.md
+  note: External articles and inspiration (no system impact)
+  ```
+  - GitHub blog: 2,500+ repos analysis
+  - What we adopted vs. what we didn't (with rationale)
+  - Template for future resource additions
+
+### Renamed
+
+- **ubod-bootstrap-app-context.prompt.md** → **ubod-create-agents.prompt.md**
+  ```yaml
+  action: RENAME_FILE
+  old: projects/ubod/ubod-meta/prompts/ubod-bootstrap-app-context.prompt.md
+  new: projects/ubod/ubod-meta/prompts/ubod-create-agents.prompt.md
+  note: Clearer intent - generates agents for new apps
+  commands:
+    - /ubod-create-agents (was: /ubod-bootstrap-app-context)
+  why: "bootstrap" unclear about what's being bootstrapped, "create-agents" explicit
+  ```
+
+### Enhanced
+
+- **ubod-update-agent.prompt.md** - Now applies structural changes too
+  ```yaml
+  action: REFERENCE_ONLY
+  file: ubod-meta/prompts/ubod-update-agent.prompt.md
+  scope: BOTH metadata AND structural template changes
+  ```
+  - Still adds missing metadata (tools, infer, handoffs)
+  - NEW: Adds COMMANDS section if missing
+  - NEW: Adds BOUNDARIES section if missing
+  - Can operate in single, interactive, or batch modes
+
+### Architecture
+
+**Two-Layer System (clearer mental model):**
+
+| Layer | Type | What | When |
+|-------|------|------|------|
+| **Infrastructure** | Script | `ubod-upgrade.sh` - copies files | Rarely (or first-time) |
+| **Coordination** | Prompts | `/ubod-upgrade` → `/ubod-create-agents` \| `/ubod-update-agent` | Every day |
+
+**Workflow Simplified:**
+- **Most of the time:** Just run `/ubod-upgrade` (orchestrator)
+- **Sometimes first:** Run `ubod-upgrade.sh` script manually (if prompt outdated or first-time)
+- **Never again:** No need to remember which script or prompt to run - it's all orchestrated
+
+---
+
 ## [1.2.0] - 2026-01-05
 
 ### Summary

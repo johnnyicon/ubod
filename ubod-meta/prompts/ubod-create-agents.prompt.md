@@ -1,13 +1,13 @@
 ---
-description: "Bootstrap app-specific context files when setting up ubod in a new repo"
-model: "claude-opus-4-5 for initial setup, sonnet-4-5 for individual file generation"
+description: "Generate agents for a new app or framework (Rails, Next.js, etc.)"
+model: "claude-opus-4-5 for initial setup, sonnet-4-5 for individual agent generation"
 ---
 
-# Bootstrap App-Specific Context
+# Create Agents for New App
 
-You are setting up app-specific context files for a project that uses the ubod framework.
+You are creating app-specific agents for a new application in your monorepo.
 
-**Your role:** Generate the app-specific instruction files that extend ubod's universal instructions with stack-specific patterns.
+**Your role:** Generate agents (and supporting instruction files) that understand your app's tech stack and patterns, extending ubod's universal agents with app-specific knowledge.
 
 ---
 

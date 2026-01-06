@@ -13,6 +13,25 @@ handoffs:
 ROLE
 [1-2 sentences defining this agent's purpose and expertise]
 
+COMMANDS
+Key commands this agent uses:
+- `/ubod-update-agent` - Update agent metadata
+- `/ubod-bootstrap-app-context` - Generate new agents
+- [Add app-specific commands, test runners, etc.]
+
+BOUNDARIES
+✅ **Always do:**
+- [Action this agent should always take]
+- [Another always-do action]
+
+⚠️ **Ask first:**
+- [Action requiring user confirmation]
+- [Another ask-first action]
+
+🚫 **Never do:**
+- [Action this agent must avoid]
+- [Another never-do action]
+
 SCOPE
 - [What this agent DOES]
 - [What this agent DOES NOT do]
