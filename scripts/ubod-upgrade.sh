@@ -8,7 +8,7 @@
 # Combines file syncing, changelog display, and version tracking.
 #
 # Modes:
-#   - Semi-automated (default): Shows changelog, syncs files, lists follow-up prompts
+#   - Semi-automated (default): Shows changelog, syncs files, directs to orchestrator
 #   - Full-auto (--auto): Does everything without prompts
 #
 # Usage:
@@ -491,15 +491,15 @@ check_copilot_instructions() {
     log_info "Checking copilot-instructions.md..."
 
     if [ ! -f "$copilot_file" ]; then
-        log_warning "No copilot-instructions.md found!"
-        log_warning "Consider running /ubod-migrate-copilot-instructions to create it."
+        log_warning "No copilot-instructions.md found at root level."
+        log_warning "This is typically created by the /ubod-upgrade orchestrator prompt."
         return
     fi
 
     # Check if it mentions ubod
     if ! grep -qi "ubod" "$copilot_file" 2>/dev/null; then
-        log_warning "copilot-instructions.md does not reference Ubod!"
-        log_warning "Consider running /ubod-migrate-copilot-instructions to update it."
+        log_warning "copilot-instructions.md does not reference Ubod."
+        log_warning "The /ubod-upgrade prompt can help update this."
         return
     fi
 
@@ -521,24 +521,19 @@ run_file_sync() {
 }
 
 # =============================================================================
-# Follow-up Prompts
+# Next Steps
 # =============================================================================
 
-show_prompts_to_run() {
-    print_header "Follow-up Prompts"
+show_next_steps() {
+    print_header "Next Step"
     
     echo ""
-    echo "After upgrade, consider running these prompts in Copilot chat:"
+    log_info "Run this orchestrator prompt in Copilot chat:"
     echo ""
-    echo "  • /ubod-update-agent (batch mode) - Update agents with missing metadata"
-    echo "  • /ubod-bootstrap-app-context - Generate UI/UX Designer agent (if complex frontend)"
-    echo "  • /ubod-migrate-copilot-instructions - Update navigation file if needed"
+    echo "  /ubod-upgrade"
     echo ""
-    
-    if [ "$AUTO_MODE" = true ]; then
-        log_warning "Auto mode cannot run Copilot prompts automatically"
-        log_info "Please run the prompts above manually in VS Code"
-    fi
+    log_info "This prompt handles agent creation, updates, and orchestration."
+    echo ""
 }
 
 # =============================================================================
@@ -608,8 +603,8 @@ main() {
         update_version_file "$LATEST_VERSION" "$LATEST_COMMIT"
     fi
     
-    # Show follow-up prompts
-    show_prompts_to_run
+    # Show next steps
+    show_next_steps
     
     # Summary
     print_header "Upgrade Complete"
@@ -619,10 +614,10 @@ main() {
     else
         log_success "Upgraded from $CURRENT_VERSION to $LATEST_VERSION"
         echo ""
-        log_info "Next steps:"
+        log_info "Recommended:"
         echo "  1. Review changes: git diff .github/"
-        echo "  2. Commit: git add .github/ .ubod-version && git commit -m 'chore: Upgrade Ubod to $LATEST_VERSION'"
-        echo "  3. Run prompts listed above in Copilot chat"
+        echo "  2. Commit changes: git add .github/ .ubod-version && git commit -m 'chore: Upgrade Ubod to $LATEST_VERSION'"
+        echo "  3. Run /ubod-upgrade in Copilot chat for orchestration"
     fi
 }
 
