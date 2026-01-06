@@ -17,6 +17,18 @@ _Changes staged for next release_
 
 ---
 
+## [1.3.6] - 2026-01-06
+
+### Added
+
+- **Auto-add chat.promptFilesLocations** in ubod-upgrade.sh
+  - Automatically adds setting if missing (fixes chicken-and-egg problem)
+  - Detects .github/prompts + app-specific prompts
+  - Notifies user to reload VS Code
+  - Prevents "/prompt commands not working" issue
+
+---
+
 ## [1.3.5] - 2026-01-06
 
 ### Added
