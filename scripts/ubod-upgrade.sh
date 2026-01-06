@@ -352,7 +352,7 @@ validate_settings_json() {
         echo '  },'
         echo '  "chat.promptFilesLocations": {'
         echo '    ".github/prompts": true,'
-        echo '    ".github/prompts/ubod": true'
+        echo '    "apps/app-name/.copilot/prompts": true'
         echo '  }'
         echo ""
         echo "INCORRECT FORMAT (array - causes lint errors):"
@@ -367,6 +367,82 @@ validate_settings_json() {
     else
         log_success "settings.json format looks good"
     fi
+}
+
+ensure_prompt_locations() {
+    local settings_file="$MONOREPO_DIR/.vscode/settings.json"
+    
+    if [ ! -f "$settings_file" ]; then
+        log_info "No settings.json found - skipping prompt locations setup"
+        return
+    fi
+    
+    # Check if chat.promptFilesLocations exists
+    if grep -q '"chat.promptFilesLocations"' "$settings_file" 2>/dev/null; then
+        return
+    fi
+    
+    log_info ""
+    log_action "Adding chat.promptFilesLocations to settings.json..."
+    
+    if [ "$DRY_RUN" = true ]; then
+        log_info "[DRY RUN] Would add chat.promptFilesLocations"
+        return
+    fi
+    
+    # Detect existing prompt directories
+    local prompt_dirs=()
+    
+    # Check for .github/prompts
+    if [ -d "$MONOREPO_DIR/.github/prompts" ]; then
+        prompt_dirs+=('    ".github/prompts": true')
+    fi
+    
+    # Check for app-specific prompts
+    for app_dir in "$MONOREPO_DIR"/apps/*/; do
+        if [ -d "$app_dir/.copilot/prompts" ]; then
+            local rel_path=$(realpath --relative-to="$MONOREPO_DIR" "$app_dir/.copilot/prompts")
+            prompt_dirs+=("    \"$rel_path\": true")
+        fi
+        if [ -d "$app_dir/prompts" ]; then
+            local rel_path=$(realpath --relative-to="$MONOREPO_DIR" "$app_dir/prompts")
+            prompt_dirs+=("    \"$rel_path\": true")
+        fi
+    done
+    
+    if [ ${#prompt_dirs[@]} -eq 0 ]; then
+        log_info "No prompt directories found - skipping"
+        return
+    fi
+    
+    # Create the JSON block
+    local json_block=""
+    json_block+='  "chat.promptFilesLocations": {\n'
+    
+    for i in "${!prompt_dirs[@]}"; do
+        if [ $i -eq $((${#prompt_dirs[@]} - 1)) ]; then
+            json_block+="${prompt_dirs[$i]}\n"
+        else
+            json_block+="${prompt_dirs[$i]},\n"
+        fi
+    done
+    
+    json_block+='  },'
+    
+    # Insert before the last closing brace
+    local temp_file=$(mktemp)
+    awk -v json="$json_block" '
+        /^}$/ && !done {
+            printf "%s\n", json
+            done = 1
+        }
+        { print }
+    ' "$settings_file" > "$temp_file"
+    
+    mv "$temp_file" "$settings_file"
+    
+    log_success "Added chat.promptFilesLocations"
+    log_info "ℹ️  Reload VS Code for prompts to appear: Cmd+Shift+P → 'Reload Window'"
 }
 
 # =============================================================================
@@ -512,6 +588,7 @@ run_file_sync() {
     # Migration & validation (pre-sync)
     migrate_misplaced_agents
     validate_settings_json
+    ensure_prompt_locations
     
     # Regular sync
     sync_agents
