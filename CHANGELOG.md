@@ -15,7 +15,16 @@ All notable changes to Ubod will be documented in this file.
 
 _Changes staged for next release_
 
-**⚠️ BREAKING:** VS Code Agent Schema Compliance - See `ubod-meta/migrations/2026-01-06-vscode-agent-schema-fix.md`
+---
+
+## [1.3.4] - 2026-01-06
+
+### Fixed
+
+- **Migration guide correction** - `2026-01-06-vscode-agent-schema-fix.md` incorrectly stated to remove `label` from handoffs
+  - VS Code schema REQUIRES `label` field in handoffs
+  - Corrected: Keep `label`, only convert multiline `prompt: |` to single-line `prompt: "..."`
+  - This caused upgrade LLMs to skip fixing handoffs, perpetuating schema violations
 
 ---
 
