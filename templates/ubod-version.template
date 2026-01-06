@@ -1,0 +1,14 @@
+# Ubod Version Tracking
+#
+# This file tracks which version of Ubod is deployed in this repo.
+# Updated by: ubod-update.sh script
+# Location: Place this file at repo root as `.ubod-version`
+#
+# Format:
+#   version: X.Y.Z (semver)
+#   commit: git commit hash of ubod submodule
+#   updated: date of last update
+
+version: 1.0.0
+commit: REPLACE_WITH_COMMIT_HASH
+updated: REPLACE_WITH_DATE
