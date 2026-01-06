@@ -15,9 +15,67 @@ model: "sonnet-4-5 for analysis and updates"
 
 ## Instructions
 
+### Step 0: Determine Mode
+
+**Ask the user:**
+
+```markdown
+How would you like to update agents?
+
+1. **Single agent** - Update one specific agent
+2. **Interactive mode** - Scan all agents, pick which to update
+3. **Batch mode** - Update all agents missing metadata
+
+Choose an option (1-3):
+```
+
+**Based on choice:**
+
+- **Option 1 (Single):** Ask for agent file path and proceed to Step 1
+- **Option 2 (Interactive):** Scan all agents, show analysis, let user pick → Step 1
+- **Option 3 (Batch):** Scan all agents, update all missing metadata → Step 1 for each
+
+---
+
+### Step 0a: Scan All Agents (For Interactive/Batch)
+
+If user chose options 2 or 3, scan `.github/agents/*.agent.md`:
+
+```typescript
+file_search(".github/agents/*.agent.md")
+```
+
+For each agent, quickly check:
+- Has `infer:` field?
+- Has `tools:` field?
+- Has `handoffs:` field?
+- Has structured body (ROLE, SCOPE, WORKFLOW)?
+
+**Report findings:**
+
+```markdown
+Found X agents. Analysis:
+
+**Complete (no updates needed):**
+- tala-verifier.agent.md ✓
+- universal-discovery-planner.agent.md ✓
+
+**Missing metadata:**
+- tahua-www-verifier.agent.md ⚠️ Missing: infer, tools, handoffs
+- tahua-www-implementer.agent.md ⚠️ Missing: infer, tools, handoffs, structured body
+
+**Need improvement:**
+- tala-ui-ux-designer.agent.md ~ Could add more domain context
+
+[For Interactive] Which agents would you like to update? (comma-separated numbers or "all")
+[For Batch] Updating all agents missing metadata...
+```
+
+---
+
 ### Step 1: Read the Current Agent
 
-Read the agent file the user wants to update.
+Read the agent file the user wants to update (or next agent in batch).
 
 ### Step 2: Analyze What's Missing or Needs Update
 
@@ -44,7 +102,9 @@ handoffs:                              # Required for workflow transitions
 - **WORKFLOW** - Step-by-step process
 - **OUTPUT FORMAT** - Expected output structure
 
-### Step 3: Ask User What to Update
+### Step 3: Report Findings & Get Approval
+
+**For Single/Interactive Mode:**
 
 ```markdown
 I've analyzed the agent. Here's what I found:
@@ -67,6 +127,22 @@ I've analyzed the agent. Here's what I found:
 6. All of the above
 
 Please provide details or choose an option.
+```
+
+**For Batch Mode:**
+
+Show summary table for all agents needing updates:
+
+```markdown
+## Batch Update Plan
+
+| Agent | Missing Metadata | Missing Body | Updates Needed |
+|-------|------------------|--------------|----------------|
+| verifier | tools, infer | WORKFLOW | 4 items |
+| implementer | handoffs | none | 1 item |
+| discovery | none | DOMAIN CONTEXT | 1 item |
+
+Proceed with batch update? (yes/no)
 ```
 
 ### Step 4: Apply Updates
@@ -116,10 +192,34 @@ OUTPUT FORMAT
 
 ### Step 5: Verify Updates
 
-After updating, show the user:
+**For Single/Interactive:**
 
 ```markdown
 ✅ Agent Updated: `[agent-name].agent.md`
+
+**Changes Applied:**
+- [x] Added `infer: true`
+- [x] Added `tools: ["read", "search"]`
+- [x] Added 2 handoffs (to Implementer, to Discovery)
+- [x] Added WORKFLOW section
+
+Test the agent by invoking it in Copilot chat.
+```
+
+**For Batch:**
+
+```markdown
+✅ Batch Update Complete
+
+**Updated Agents:**
+- ✓ verifier.agent.md (4 changes)
+- ✓ implementer.agent.md (1 change)
+- ✓ discovery.agent.md (1 change)
+
+**Summary:** 3 agents updated, 6 total changes applied.
+
+Test the agents by invoking them in Copilot chat.
+```
 
 **Changes Made:**
 - [List of changes]
