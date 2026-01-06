@@ -1,20 +1,21 @@
 #!/bin/bash
 
 # =============================================================================
-# Ubod Update Script
+# Ubod Upgrade Script
 # =============================================================================
 #
-# Updates a consumer repo to the latest Ubod version.
+# Upgrades a consumer repo to the latest Ubod version.
+# Combines file syncing, changelog display, and version tracking.
 #
 # Modes:
-#   - Semi-automated (default): Syncs files, shows changelog, lists prompts to run
-#   - Full-auto (--auto): Does everything including running upgrade steps
+#   - Semi-automated (default): Shows changelog, syncs files, lists follow-up prompts
+#   - Full-auto (--auto): Does everything without prompts
 #
 # Usage:
-#   ./ubod-update.sh              # Semi-automated (default)
-#   ./ubod-update.sh --auto       # Full automated
-#   ./ubod-update.sh --dry-run    # Preview without changes
-#   ./ubod-update.sh --help       # Show help
+#   ./ubod-upgrade.sh              # Semi-automated (default)
+#   ./ubod-upgrade.sh --auto       # Full automated
+#   ./ubod-upgrade.sh --dry-run    # Preview without changes
+#   ./ubod-upgrade.sh --help       # Show help
 #
 # =============================================================================
 
@@ -43,6 +44,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --auto)
             AUTO_MODE=true
+            FORCE=true
             shift
             ;;
         --quiet|-q)
@@ -55,6 +57,8 @@ while [[ $# -gt 0 ]]; do
             ;;
         --help|-h)
             echo "Usage: $0 [OPTIONS]"
+            echo ""
+            echo "Upgrade consumer repo to latest Ubod version."
             echo ""
             echo "Options:"
             echo "  --dry-run    Preview changes without making them"
@@ -97,7 +101,11 @@ log_error() {
 }
 
 log_action() {
-    echo -e "${BLUE}→${NC} $1"
+    if [ "$DRY_RUN" = true ]; then
+        echo -e "${YELLOW}[DRY-RUN]${NC} Would: $1"
+    else
+        echo -e "${BLUE}→${NC} $1"
+    fi
 }
 
 print_header() {
@@ -187,13 +195,13 @@ update_version_file() {
     local date=$(date +%Y-%m-%d)
     
     if [ "$DRY_RUN" = true ]; then
-        log_action "Would update .ubod-version to version $version"
+        log_action "Update .ubod-version to $version"
         return
     fi
     
     cat > "$VERSION_FILE" << EOF
 # Ubod Version Tracking
-# Updated by: ubod-update.sh
+# Updated by: ubod-upgrade.sh
 # See: projects/ubod/CHANGELOG.md for version history
 
 version: $version
@@ -205,39 +213,8 @@ EOF
 }
 
 # =============================================================================
-# Changelog Parsing
+# Changelog Display
 # =============================================================================
-
-parse_changelog_actions() {
-    local from_version=$1
-    local to_version=$2
-    
-    # This function extracts action blocks from changelog
-    # Returns: action type, source, target for each entry
-    
-    if [ ! -f "$CHANGELOG_FILE" ]; then
-        log_warning "No CHANGELOG.md found"
-        return
-    fi
-    
-    # For now, we'll rely on ubod-sync.sh for file syncing
-    # This function identifies prompts that need to be run
-    
-    log_info "Parsing changelog from $from_version to $to_version..."
-    
-    # Extract RUN_PROMPT actions
-    PROMPTS_TO_RUN=()
-    
-    # Look for action: RUN_PROMPT entries
-    if grep -q "action: RUN_PROMPT" "$CHANGELOG_FILE"; then
-        while IFS= read -r line; do
-            if [[ "$line" == *"prompt:"* ]]; then
-                prompt=$(echo "$line" | sed 's/.*prompt: *//' | tr -d ' ')
-                PROMPTS_TO_RUN+=("$prompt")
-            fi
-        done < <(grep -A1 "action: RUN_PROMPT" "$CHANGELOG_FILE")
-    fi
-}
 
 show_changelog_diff() {
     local from_version=$1
@@ -250,11 +227,8 @@ show_changelog_diff() {
         return
     fi
     
-    # Show relevant changelog sections
-    # For simplicity, show all entries for versions > from_version
-    
     echo ""
-    echo "Changes in this update:"
+    echo "Changes in this upgrade:"
     echo ""
     
     # Extract and display changelog sections
@@ -281,49 +255,164 @@ show_changelog_diff() {
 }
 
 # =============================================================================
-# File Syncing
+# File Syncing (merged from ubod-sync.sh)
 # =============================================================================
 
-run_sync() {
-    local sync_script="$UBOD_DIR/scripts/ubod-sync.sh"
+sync_agents() {
+    local source_dir="$UBOD_DIR/ubod-meta/agents"
+    local target_dir="$MONOREPO_DIR/.github/agents"
+    local copied=0
+    local updated=0
+    local skipped=0
+
+    log_info ""
+    log_info "Syncing agents (to root level)..."
+
+    mkdir -p "$target_dir"
+
+    for file in "$source_dir"/*.agent.md; do
+        [ -f "$file" ] || continue
+        local filename=$(basename "$file")
+        local target="$target_dir/$filename"
+
+        if [ ! -f "$target" ]; then
+            log_action "Copy NEW: $filename"
+            if [ "$DRY_RUN" = false ]; then
+                cp "$file" "$target"
+            fi
+            ((copied++))
+        elif ! diff -q "$file" "$target" > /dev/null 2>&1; then
+            log_action "Update CHANGED: $filename"
+            if [ "$DRY_RUN" = false ]; then
+                cp "$file" "$target"
+            fi
+            ((updated++))
+        else
+            ((skipped++))
+        fi
+    done
+
+    log_success "Agents: $copied new, $updated updated, $skipped unchanged"
+}
+
+sync_prompts() {
+    local source_dir="$UBOD_DIR/ubod-meta/prompts"
+    local target_dir="$MONOREPO_DIR/.github/prompts/ubod"
+    local copied=0
+    local updated=0
+    local skipped=0
+
+    log_info ""
+    log_info "Syncing prompts (to ubod/ subfolder)..."
+
+    mkdir -p "$target_dir"
+
+    for file in "$source_dir"/*.prompt.md; do
+        [ -f "$file" ] || continue
+        local filename=$(basename "$file")
+        local target="$target_dir/$filename"
+
+        if [ ! -f "$target" ]; then
+            log_action "Copy NEW: $filename"
+            if [ "$DRY_RUN" = false ]; then
+                cp "$file" "$target"
+            fi
+            ((copied++))
+        elif ! diff -q "$file" "$target" > /dev/null 2>&1; then
+            log_action "Update CHANGED: $filename"
+            if [ "$DRY_RUN" = false ]; then
+                cp "$file" "$target"
+            fi
+            ((updated++))
+        else
+            ((skipped++))
+        fi
+    done
+
+    log_success "Prompts: $copied new, $updated updated, $skipped unchanged"
+}
+
+sync_instructions() {
+    local source_dir="$UBOD_DIR/ubod-meta/instructions"
+    local target_dir="$MONOREPO_DIR/.github/instructions/ubod"
+    local copied=0
+    local updated=0
+    local skipped=0
+
+    log_info ""
+    log_info "Syncing instructions (to ubod/ subfolder)..."
+
+    mkdir -p "$target_dir"
+
+    for file in "$source_dir"/*.instructions.md; do
+        [ -f "$file" ] || continue
+        local filename=$(basename "$file")
+        local target="$target_dir/$filename"
+
+        if [ ! -f "$target" ]; then
+            log_action "Copy NEW: $filename"
+            if [ "$DRY_RUN" = false ]; then
+                cp "$file" "$target"
+            fi
+            ((copied++))
+        elif ! diff -q "$file" "$target" > /dev/null 2>&1; then
+            log_action "Update CHANGED: $filename"
+            if [ "$DRY_RUN" = false ]; then
+                cp "$file" "$target"
+            fi
+            ((updated++))
+        else
+            ((skipped++))
+        fi
+    done
+
+    log_success "Instructions: $copied new, $updated updated, $skipped unchanged"
+}
+
+check_copilot_instructions() {
+    local copilot_file="$MONOREPO_DIR/.github/copilot-instructions.md"
     
-    if [ ! -f "$sync_script" ]; then
-        log_error "ubod-sync.sh not found at $sync_script"
-        exit 1
+    log_info ""
+    log_info "Checking copilot-instructions.md..."
+
+    if [ ! -f "$copilot_file" ]; then
+        log_warning "No copilot-instructions.md found!"
+        log_warning "Consider running /ubod-migrate-copilot-instructions to create it."
+        return
     fi
-    
+
+    # Check if it mentions ubod
+    if ! grep -qi "ubod" "$copilot_file" 2>/dev/null; then
+        log_warning "copilot-instructions.md does not reference Ubod!"
+        log_warning "Consider running /ubod-migrate-copilot-instructions to update it."
+        return
+    fi
+
+    log_success "copilot-instructions.md looks good"
+}
+
+run_file_sync() {
     print_header "Syncing Files"
     
-    if [ "$DRY_RUN" = true ]; then
-        bash "$sync_script" --dry-run
-    elif [ "$FORCE" = true ] || [ "$AUTO_MODE" = true ]; then
-        bash "$sync_script" --force
-    else
-        bash "$sync_script"
-    fi
+    sync_agents
+    sync_prompts
+    sync_instructions
+    check_copilot_instructions
 }
 
 # =============================================================================
-# Upgrade Prompts
+# Follow-up Prompts
 # =============================================================================
 
 show_prompts_to_run() {
-    print_header "Prompts to Run"
-    
-    # Standard upgrade prompts
-    local prompts=(
-        "/ubod-update-agent (batch mode) - Update agents with missing metadata"
-        "/ubod-migrate-copilot-instructions - Update navigation file if needed"
-    )
+    print_header "Follow-up Prompts"
     
     echo ""
-    echo "After syncing, consider running these prompts in Copilot chat:"
+    echo "After upgrade, consider running these prompts in Copilot chat:"
     echo ""
-    
-    for prompt in "${prompts[@]}"; do
-        echo "  • $prompt"
-    done
-    
+    echo "  • /ubod-update-agent (batch mode) - Update agents with missing metadata"
+    echo "  • /ubod-bootstrap-app-context - Generate UI/UX Designer agent (if complex frontend)"
+    echo "  • /ubod-migrate-copilot-instructions - Update navigation file if needed"
     echo ""
     
     if [ "$AUTO_MODE" = true ]; then
@@ -337,7 +426,7 @@ show_prompts_to_run() {
 # =============================================================================
 
 main() {
-    print_header "Ubod Update"
+    print_header "Ubod Upgrade"
     
     # Detect environment
     detect_environment
@@ -351,7 +440,7 @@ main() {
     log_info "Current version: $CURRENT_VERSION (commit: ${CURRENT_COMMIT:0:7})"
     log_info "Latest version: $LATEST_VERSION (commit: ${LATEST_COMMIT:0:7})"
     
-    # Check if update needed
+    # Check if upgrade needed
     if [ "$CURRENT_VERSION" = "$LATEST_VERSION" ] && [ "$CURRENT_COMMIT" = "$LATEST_COMMIT" ]; then
         log_success "Already up to date!"
         
@@ -370,13 +459,13 @@ main() {
         show_changelog_diff "$CURRENT_VERSION" "$LATEST_VERSION"
     fi
     
-    # Confirm update (unless auto or force)
+    # Confirm upgrade (unless auto or force)
     if [ "$AUTO_MODE" = false ] && [ "$FORCE" = false ] && [ "$DRY_RUN" = false ]; then
         echo ""
-        read -p "Proceed with update? (Y/n) " -n 1 -r
+        read -p "Proceed with upgrade? (Y/n) " -n 1 -r
         echo ""
         if [[ $REPLY =~ ^[Nn]$ ]]; then
-            log_info "Update cancelled"
+            log_info "Upgrade cancelled"
             exit 0
         fi
         
@@ -391,28 +480,28 @@ main() {
         fi
     fi
     
-    # Run sync
-    run_sync
+    # Run file sync
+    run_file_sync
     
     # Update version file
     if [ "$DRY_RUN" = false ]; then
         update_version_file "$LATEST_VERSION" "$LATEST_COMMIT"
     fi
     
-    # Show prompts to run
+    # Show follow-up prompts
     show_prompts_to_run
     
     # Summary
-    print_header "Update Complete"
+    print_header "Upgrade Complete"
     
     if [ "$DRY_RUN" = true ]; then
         log_info "Dry run complete. No changes were made."
     else
-        log_success "Updated from $CURRENT_VERSION to $LATEST_VERSION"
+        log_success "Upgraded from $CURRENT_VERSION to $LATEST_VERSION"
         echo ""
         log_info "Next steps:"
         echo "  1. Review changes: git diff .github/"
-        echo "  2. Commit: git add .github/ .ubod-version && git commit -m 'chore: Update Ubod to $LATEST_VERSION'"
+        echo "  2. Commit: git add .github/ .ubod-version && git commit -m 'chore: Upgrade Ubod to $LATEST_VERSION'"
         echo "  3. Run prompts listed above in Copilot chat"
     fi
 }

@@ -17,6 +17,65 @@ _Changes staged for next release_
 
 ---
 
+## [1.2.0] - 2026-01-05
+
+### Summary
+
+Merged `ubod-sync.sh` and `ubod-update.sh` into single `ubod-upgrade.sh` for clarity. One script to rule them all.
+
+### Changed
+
+- **ubod-upgrade.sh** - Merged sync and update functionality
+  ```yaml
+  action: REFERENCE_ONLY
+  source: scripts/ubod-upgrade.sh
+  note: Run from ubod submodule, replaces both sync and update scripts
+  ```
+  - All file syncing logic (agents, prompts, instructions)
+  - Changelog display and version tracking
+  - Semi-automated and full-auto modes
+  - Single entry point, less confusion
+
+### Removed
+
+- **ubod-sync.sh** - Merged into ubod-upgrade.sh
+  ```yaml
+  action: DELETE_FILE
+  target: projects/ubod/scripts/ubod-sync.sh
+  note: No longer needed, use ubod-upgrade.sh instead
+  ```
+
+- **ubod-update.sh** - Merged into ubod-upgrade.sh
+  ```yaml
+  action: DELETE_FILE
+  target: projects/ubod/scripts/ubod-update.sh
+  note: No longer needed, use ubod-upgrade.sh instead
+  ```
+
+### Fixed
+
+- Fixed awk syntax error in changelog parsing (now uses bash regex)
+
+### Instructions for Upgrading
+
+From 1.1.0 to 1.2.0:
+
+1. **Pull latest submodule:**
+   ```bash
+   cd projects/ubod && git pull origin main
+   ```
+
+2. **Use new script name:**
+   ```bash
+   cd projects/ubod && ./scripts/ubod-upgrade.sh
+   ```
+
+3. **Old scripts removed:**
+   - `ubod-sync.sh` → Merged into `ubod-upgrade.sh`
+   - `ubod-update.sh` → Renamed to `ubod-upgrade.sh`
+
+---
+
 ## [1.1.0] - 2026-01-05
 
 ### Summary

@@ -827,7 +827,7 @@ Options:
 
 ## Updating Ubod (After Initial Setup)
 
-Once Ubod is deployed, use the update system to stay current.
+Once Ubod is deployed, use the upgrade script to stay current.
 
 ### Version Tracking
 
@@ -839,7 +839,7 @@ commit: a8008ca
 updated: 2026-01-05
 ```
 
-### Updating to Latest Version
+### Upgrading to Latest Version
 
 **After pulling submodule updates:**
 
@@ -847,14 +847,14 @@ updated: 2026-01-05
 # Pull latest ubod submodule
 cd projects/ubod && git pull origin main && cd ../..
 
-# Run update script
-cd projects/ubod && ./scripts/ubod-update.sh
+# Run upgrade script
+cd projects/ubod && ./scripts/ubod-upgrade.sh
 ```
 
-**Update modes:**
+**Upgrade modes:**
 - **Semi-automated (default):** Shows changelog, syncs files, lists prompts to run
-- **Full automated:** `./scripts/ubod-update.sh --auto` (syncs everything)
-- **Preview only:** `./scripts/ubod-update.sh --dry-run`
+- **Full automated:** `./scripts/ubod-upgrade.sh --auto` (syncs everything)
+- **Preview only:** `./scripts/ubod-upgrade.sh --dry-run`
 
 ### Changelog
 
