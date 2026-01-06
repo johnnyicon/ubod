@@ -17,6 +17,105 @@ _Changes staged for next release_
 
 ---
 
+## [1.1.0] - 2026-01-05
+
+### Summary
+
+Adds versioning system, semi-automated updates, architecture documentation, and enhanced agent generation with conditional UI/UX Designer for complex frontend frameworks.
+
+### Added
+
+- **CHANGELOG.md** - LLM-readable changelog with action types
+  ```yaml
+  action: DOCS_ONLY
+  note: Version history for upgrade tracking
+  ```
+
+- **ARCHITECTURE.md** - Documents agent-instruction relationship
+  ```yaml
+  action: DOCS_ONLY
+  note: Reference documentation, not deployed to consumer
+  ```
+
+- **ubod-update.sh** - Semi-automated update script
+  ```yaml
+  action: REFERENCE_ONLY
+  source: scripts/ubod-update.sh
+  note: Run from ubod submodule, not copied to .github/
+  ```
+
+- **ubod-version.template** - Template for version tracking file
+  ```yaml
+  action: REFERENCE_ONLY
+  source: templates/ubod-version.template
+  note: Consumer creates .ubod-version from this template
+  ```
+
+### Changed
+
+- **ubod-bootstrap-app-context.prompt.md** - Now generates agents with full metadata
+  ```yaml
+  action: SYNC_FILE
+  source: ubod-meta/prompts/ubod-bootstrap-app-context.prompt.md
+  target: .github/prompts/ubod/ubod-bootstrap-app-context.prompt.md
+  breaking: false
+  ```
+  - Generates 3 standard agents (Discovery, Implementer, Verifier)
+  - Conditionally generates UI/UX Designer for complex frontend frameworks
+  - Includes frontend complexity detection guide
+
+- **ubod-update-agent.prompt.md** - Added batch and interactive modes
+  ```yaml
+  action: SYNC_FILE
+  source: ubod-meta/prompts/ubod-update-agent.prompt.md
+  target: .github/prompts/ubod/ubod-update-agent.prompt.md
+  breaking: false
+  ```
+
+- **UBOD_SETUP_GUIDE.md** - Added versioning/update documentation
+  ```yaml
+  action: DOCS_ONLY
+  note: Reference documentation updates
+  ```
+
+### Instructions for Upgrading
+
+From 1.0.0 to 1.1.0:
+
+1. **Pull latest submodule:**
+   ```bash
+   cd projects/ubod && git pull origin main
+   ```
+
+2. **Run update script:**
+   ```bash
+   cd projects/ubod && ./scripts/ubod-update.sh
+   ```
+   
+   Or manually:
+   ```bash
+   cd projects/ubod && ./scripts/ubod-sync.sh --force
+   ```
+
+3. **Create/update .ubod-version:**
+   ```bash
+   cat > .ubod-version << EOF
+   version: 1.1.0
+   commit: $(cd projects/ubod && git rev-parse HEAD)
+   updated: $(date +%Y-%m-%d)
+   EOF
+   ```
+
+4. **Optional - Regenerate agents with UI/UX Designer:**
+   If your app has complex frontend (Rails+Hotwire, Next.js RSC, etc.):
+   - Run `/ubod-bootstrap-app-context`
+   - Answer "yes" when asked about UI/UX Designer
+
+5. **Update existing agents:**
+   Run `/ubod-update-agent` with batch mode to add missing metadata
+
+---
+
 ## [1.0.0] - 2026-01-05
 
 ### Summary
