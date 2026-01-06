@@ -15,6 +15,21 @@ All notable changes to Ubod will be documented in this file.
 
 _Changes staged for next release_
 
+### Changed
+
+- **Ubod Maintainer agent** upgraded with write access and comprehensive maintenance guidance
+  - Added `tools: ["read", "search", "edit", "execute"]` for full framework maintenance
+  - Moved COMMANDS and BOUNDARIES sections to top (after persona) for visibility
+  - Added Rule 4: Documentation is Mandatory (CHANGELOG + Migrations)
+  - Added Framework Maintenance Guide with 5 key protocols:
+    1. Schema Compliance (validation against specs)
+    2. Slash Command Accessibility (name fields, VS Code config)
+    3. Agent Definition Standards (COMMANDS/BOUNDARIES placement, tool aliases)
+    4. Migration Policy (when to create, template, verification)
+    5. CHANGELOG Discipline (always update, categories, format)
+  - **Migration:** Not required (agents are already schema-compliant)
+  - **Action:** Consumers should update submodule and review enhanced agent capabilities
+
 ---
 
 ## [1.3.6] - 2026-01-06
