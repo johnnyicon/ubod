@@ -71,18 +71,7 @@ Before adding anything to `templates/`:
 - [ ] Methodology (HOW) not configuration (WHAT)
 ```
 
-### Rule 3: Model Selection for Ubod Work
-
-See [ubod-model-recommendations.instructions.md](../instructions/ubod-model-recommendations.instructions.md):
-
-| Work Type | Recommended Models |
-|-----------|-------------------|
-| Methodology changes | Claude Opus 4.5, GPT 5.1+ |
-| Template fixes | Claude Sonnet 4.5, GPT 5 |
-| Documentation | Any capable model |
-| Review pass | Different family than initial |
-
-### Rule 4: Two-Phase Updates
+### Rule 3: Two-Phase Updates
 
 1. **Discovery Phase** - Read existing content, understand patterns
 2. **Implementation Phase** - Make changes with clear commit messages

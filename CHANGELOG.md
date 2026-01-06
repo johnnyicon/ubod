@@ -27,6 +27,13 @@ _Changes staged for next release_
   - Prevents false positives from LLMs who read guide but skip fixes
   - **Action required:** Repos that marked `2026-01-06-vscode-agent-schema-fix` complete must run verification
 
+- **Schema verification sections** in both agent specs
+  - Added to `vscode-custom-agent-spec.instructions.md`
+  - Added to `github-custom-agent-spec.instructions.md`
+  - 3 mandatory grep commands that must pass before commit
+  - Auto-loads when editing `.agent.md` files
+  - Prevents schema violations proactively
+
 - **Mandatory verification commands** in original migration guide
   - Added grep commands to verify migrations are actually complete
   - Prevents LLMs from marking migration "done" without fixing issues
@@ -37,6 +44,13 @@ _Changes staged for next release_
 - **ubod-upgrade prompt** now emphasizes verification requirement
   - DO NOT mark migration complete until grep verification passes
   - DO NOT update .ubod-version until verification succeeds
+
+### Fixed
+
+- **Removed model recommendations reference** from ubod-maintainer agent
+  - Model is selected BEFORE agent execution (by orchestrator)
+  - Recommendations file was causing broken reference errors in consuming repos
+  - Renumbered remaining rules (Rule 4 → Rule 3)
 
 ---
 

@@ -556,6 +556,41 @@ handoffs:
 
 ---
 
+## Schema Verification (CRITICAL)
+
+**Before committing agent files, run these verification commands:**
+
+### 1. No multiline prompts
+
+```bash
+grep -n "prompt: |" **/*.agent.md
+```
+
+**Must return:** 0 results (exit code 1)  
+**If found:** Convert to single-line `prompt: "..."`
+
+### 2. No invalid tool names
+
+```bash
+grep -E "tools:.*_(file|string|in_file|search)" **/*.agent.md
+```
+
+**Must return:** 0 results (exit code 1)  
+**If found:** Use valid tool names: `read`, `search`, `edit`, `execute`
+
+### 3. All handoffs have labels
+
+```bash
+grep -A3 "handoffs:" **/*.agent.md | grep -B1 "agent:" | grep -v "label:"
+```
+
+**Must return:** 0 results (all handoffs have labels)  
+**If found:** Add `label:` field (REQUIRED in VS Code)
+
+**Schema violations break VS Code Copilot.** Always verify before commit.
+
+---
+
 ## References
 
 - **Official Docs:** https://code.visualstudio.com/docs/copilot/customization/custom-agents
@@ -564,6 +599,7 @@ handoffs:
 - **Prompt Files:** https://code.visualstudio.com/docs/copilot/customization/prompt-files
 - **Chat Tools:** https://code.visualstudio.com/docs/copilot/chat/chat-tools
 - **Community Examples:** https://github.com/github/awesome-copilot
+- **Migration Guide:** `ubod-meta/migrations/2026-01-06-vscode-agent-schema-fix.md`
 
 ---
 

@@ -412,12 +412,49 @@ target: # Defaults to both
 
 ---
 
+## Schema Verification (CRITICAL)
+
+**Before committing agent files, run these verification commands:**
+
+### 1. No multiline prompts
+
+```bash
+grep -n "prompt: |" **/*.agent.md
+```
+
+**Must return:** 0 results (exit code 1)  
+**If found:** Convert to single-line `prompt: "..."`
+
+### 2. No invalid tool names
+
+```bash
+grep -E "tools:.*_(file|string|in_file|search)" **/*.agent.md
+```
+
+**Must return:** 0 results (exit code 1)  
+**If found:** Use valid tool names: `read`, `search`, `edit`, `execute`
+
+### 3. All handoffs have labels (if using VS Code features)
+
+```bash
+grep -A3 "handoffs:" **/*.agent.md | grep -B1 "agent:" | grep -v "label:"
+```
+
+**Must return:** 0 results (all handoffs have labels)  
+**If found:** Add `label:` field (REQUIRED in VS Code)
+
+**Schema violations break GitHub Copilot.** Always verify before commit.
+
+---
+
 ## References
 
 - **Official Docs:** https://docs.github.com/en/copilot/reference/custom-agents-configuration
+- **How-To Guide:** https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents
 - **VS Code Agents:** https://code.visualstudio.com/docs/copilot/customization/custom-agents
 - **MCP Configuration:** https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/extend-coding-agent-with-mcp
 - **Examples:** https://github.com/github/awesome-copilot/tree/main/agents
+- **Migration Guide:** `ubod-meta/migrations/2026-01-06-vscode-agent-schema-fix.md`
 
 ---
 
