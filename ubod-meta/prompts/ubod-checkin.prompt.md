@@ -173,22 +173,33 @@ git push origin main
 
 ## Phase 7: Upgrade Consumer
 
-**Update consumer repo:**
+**Now automatically invoke /ubod-upgrade to deploy to consumer repo:**
 
-```bash
-cd /path/to/consumer-repo
-git submodule update --remote projects/ubod
-./projects/ubod/scripts/ubod-upgrade.sh
-# Review changes, then:
-git add .ubod-version projects/ubod
-git commit -m "chore(ubod): upgrade to v$NEW_VERSION"
+```markdown
+✅ Ubod v$NEW_VERSION released and pushed
+
+Now deploying to consumer repo...
+
+Invoking: /ubod-upgrade
+
+---
 ```
 
+**Then invoke the ubod-upgrade prompt:**
+- Hand off complete context (version, changelog, migration info)
+- ubod-upgrade will handle:
+  - Submodule update
+  - Running ubod-upgrade.sh
+  - Migration checking (automatic)
+  - .ubod-version validation
+  - Consumer repo commit
+
 ### Checklist: Phase 7
-- [ ] Ubod submodule updated to latest
-- [ ] ubod-upgrade.sh executed successfully
-- [ ] .ubod-version shows new version
-- [ ] Changes reviewed and committed
+- [ ] /ubod-upgrade invoked with full context
+- [ ] ubod-upgrade completed successfully
+- [ ] Consumer repo committed (or user chose to commit later)
+
+**Note:** Phase 7 is NOT complete until /ubod-upgrade finishes. Don't mark ubod-checkin as "complete" until /ubod-upgrade confirms deployment.
 
 ---
 

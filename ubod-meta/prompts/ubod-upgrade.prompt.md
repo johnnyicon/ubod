@@ -140,6 +140,69 @@ Changes:
 Please reload VS Code window for changes to take effect.
 ```
 
+### Step 2b: Check Migrations (Automatic)
+
+**After script runs, automatically check for unapplied migrations:**
+
+```bash
+# 1. List available migrations
+ls -1 projects/ubod/ubod-meta/migrations/*.md | grep -v README
+
+# 2. Check which migrations are tracked
+grep -A 100 "migrations:" .ubod-version
+
+# 3. Compare and identify unapplied migrations
+```
+
+**If unapplied migrations found:**
+
+```markdown
+## ⚠️ Unapplied Migrations Detected
+
+The following migrations are available but not tracked in .ubod-version:
+
+- migration-name-1.md
+- migration-name-2.md
+
+**Next Steps:**
+1. Review each migration file
+2. Apply fixes if needed (run verification commands)
+3. Update .ubod-version migrations section
+
+Would you like me to:
+A) Show details for each migration
+B) Apply migrations automatically (if possible)
+C) Skip for now (you'll apply manually later)
+
+Choose (A/B/C):
+```
+
+**If all migrations applied:**
+
+```markdown
+✅ All migrations up-to-date
+
+Tracked in .ubod-version:
+- [list of applied migrations]
+```
+
+**If .ubod-version missing migrations section:**
+
+```markdown
+⚠️ .ubod-version missing migrations tracking section
+
+I'll add it now with empty array. You should verify which migrations were actually applied.
+
+See "Tips" section below for migration verification commands.
+```
+
+Then add migrations section to .ubod-version:
+```bash
+echo "" >> .ubod-version
+echo "# Applied migrations (add migration names as you apply them)" >> .ubod-version
+echo "migrations: []" >> .ubod-version
+```
+
 ### Step 3: Detect: New App or Existing?
 
 After script runs, ask user:

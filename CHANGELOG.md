@@ -11,6 +11,39 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [Unreleased]
+
+---
+
+## [1.7.1] - 2026-01-07
+
+### Changed
+
+- **Active Pre-Commit Enforcement in Ubod Maintainer** - Prevent bypass of /ubod-checkin workflow
+  - Added Pre-Commit Protocol section to WORKFLOW (before any git commit)
+  - Self-correction triggers: Detects git commit attempts, stops, asks user
+  - Updated BOUNDARIES: Direct git commits explicitly forbidden
+  - Forces agent to STOP → Ask user → Invoke /ubod-checkin (never bypass)
+  - Prevents "just a small fix" mentality that bypasses versioning
+  - **Action:** Pull latest Ubod Maintainer for active enforcement
+
+- **Workflow Automation Improvements** - Closed automation gaps in upgrade workflow
+  - `ubod-upgrade.sh`: Now preserves migrations section in .ubod-version, initializes with empty array if missing
+  - `ubod-upgrade.prompt.md`: Added automatic Step 2b (Check Migrations) after script runs
+  - `ubod-checkin.prompt.md`: Phase 7 now explicitly invokes /ubod-upgrade (not just bash commands)
+  - Eliminates manual steps: migration detection, .ubod-version format fixes, prompt invocation
+  - **Action:** Pull latest Ubod to benefit from fully automated upgrade workflow
+
+### Fixed
+
+- **.ubod-version Format Inconsistency** - Now always includes migrations section
+  - Previously: ubod-upgrade.sh created .ubod-version without migrations tracking
+  - Now: Preserves existing migrations or initializes with `migrations: []`
+  - Prevents manual format fixes during upgrades
+  - **Verification:** Run `cat .ubod-version` - should see migrations section
+
+---
+
 ## [1.7.0] - 2026-01-07
 
 ### Added

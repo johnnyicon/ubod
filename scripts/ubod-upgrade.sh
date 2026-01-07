@@ -199,6 +199,12 @@ update_version_file() {
         return
     fi
     
+    # Preserve existing migrations section if present
+    local migrations_section=""
+    if [ -f "$VERSION_FILE" ]; then
+        migrations_section=$(grep -A 100 "^migrations:" "$VERSION_FILE" 2>/dev/null || echo "")
+    fi
+    
     cat > "$VERSION_FILE" << EOF
 # Ubod Version Tracking
 # Updated by: ubod-upgrade.sh
@@ -208,6 +214,16 @@ version: $version
 commit: $commit
 updated: $date
 EOF
+    
+    # Add migrations section (preserved from existing or empty array)
+    if [ -n "$migrations_section" ]; then
+        echo "" >> "$VERSION_FILE"
+        echo "$migrations_section" >> "$VERSION_FILE"
+    else
+        echo "" >> "$VERSION_FILE"
+        echo "# Applied migrations (add migration names as you apply them)" >> "$VERSION_FILE"
+        echo "migrations: []" >> "$VERSION_FILE"
+    fi
     
     log_success "Updated .ubod-version to $version"
 }
