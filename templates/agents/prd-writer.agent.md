@@ -27,7 +27,7 @@ SCOPE
 - Create required files: master index, sub-PRDs, discovery checklist, testing strategy
 - Hand off to Implementer with clear next steps
 
-COMMANDS
+## COMMANDS
 - Read discovery findings from Discovery Planner output
 - Read canonical schema and authoring guidance
 - Search for similar PRDs and implementation patterns

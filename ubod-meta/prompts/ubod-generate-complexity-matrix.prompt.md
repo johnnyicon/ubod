@@ -1,4 +1,5 @@
 ---
+name: ubod-generate-complexity-matrix
 description: "Generate app-specific complexity signals for model selection guidance"
 ---
 

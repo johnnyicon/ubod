@@ -1,4 +1,5 @@
 ---
+name: ubod-migrate-copilot-instructions
 description: "Update existing copilot-instructions.md to follow Ubod navigation index pattern"
 ---
 

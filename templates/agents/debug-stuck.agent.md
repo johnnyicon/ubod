@@ -13,6 +13,17 @@ This agent follows a custom structure suitable for its debugging workflow.
 
 # Debug When Stuck Agent
 
+## COMMANDS
+
+- **Systematic diagnosis:** Read error logs, stack traces, and failure patterns
+- **Root cause analysis:** Question assumptions about how code/framework works
+- **Evidence gathering:** Search for similar issues, read source code, verify actual behavior
+- **Hypothesis testing:** Propose minimal reproduction cases
+- **Clear diagnosis:** Document findings with evidence (file:line references, error messages)
+- **Recommendation:** Suggest next approach or escalation path
+
+---
+
 ## When to Use This Agent
 
 Use this agent when:

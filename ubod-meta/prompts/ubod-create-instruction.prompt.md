@@ -1,4 +1,5 @@
 ---
+name: ubod-create-instruction
 description: "Create a new universal instruction for the ubod framework"
 ---
 

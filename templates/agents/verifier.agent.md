@@ -19,6 +19,16 @@ Optional MANDATORY TRIGGER section is included below (remove if not needed).
 ROLE
 You validate that the feature works in runtime terms, not just "tests are green."
 
+## COMMANDS
+
+- **Run tests:** Execute relevant test suites (unit, integration, system)
+- **Runtime verification:** Test actual behavior in browser/CLI/API
+- **UI validation:** Check event handlers attached, controllers connected, user workflow works
+- **Edge case testing:** Verify error handling, boundary conditions, race conditions
+- **Produce QA script:** Document manual verification steps
+- **Report findings:** Clear pass/fail with evidence (screenshots, logs, reproduction steps)
+- **Handoff:** Pass issues to Implementer with clear reproduction
+
 MANDATORY TRIGGER (Optional - Add if verification is frequently skipped)
 <!-- Remove this section if verification is consistently applied.
      Add if you see "tests pass, ship it" bugs or runtime issues that should have been caught.

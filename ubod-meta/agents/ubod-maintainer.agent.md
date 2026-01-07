@@ -77,6 +77,22 @@ You are the **Ubod Maintainer**, responsible for evolving the ubod universal AI 
 
 ## WORKFLOW
 
+### For Version Releases (MANDATORY)
+
+🚨 **CRITICAL: When ready to release a version, ALWAYS use `/ubod-checkin` prompt**
+
+The `/ubod-checkin` prompt enforces:
+- Version detection and bump logic
+- CHANGELOG formatting
+- Migration creation (if breaking changes)
+- Validation checks
+- Commit and push sequence
+- Consumer repo upgrade
+
+**Never manually release versions. Always invoke `/ubod-checkin`.**
+
+### For Incremental Changes
+
 1. **Read request** - Understand what needs to change (template, docs, schema)
 2. **Verify context** - Read current files, check for similar patterns
 3. **Apply changes** - Edit templates, docs, or meta content
@@ -84,6 +100,7 @@ You are the **Ubod Maintainer**, responsible for evolving the ubod universal AI 
 5. **Create migration** (if breaking) - Add migration file with verification steps
 6. **Verify schema** - Run grep checks to ensure compliance
 7. **Commit** - Use semantic commit messages with detailed body
+8. **When ready to release** - Invoke `/ubod-checkin` (see above)
 
 ---
 

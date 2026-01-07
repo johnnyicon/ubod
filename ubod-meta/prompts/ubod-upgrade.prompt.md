@@ -1,4 +1,5 @@
 ---
+name: ubod-upgrade
 description: "Orchestrate upgrading Ubod in your monorepo: run script, then handle agents"
 ---
 

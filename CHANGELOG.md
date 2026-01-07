@@ -11,6 +11,91 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.7.0] - 2026-01-07
+
+### Added
+
+- **RESOURCES.md Maintenance Guidance** in Ubod Maintainer agent
+  - New Rule 6: Document external resources when used
+  - New Task: "Document External Resource" workflow
+  - Ensures attribution trail for design decisions
+  - Helps future maintainers understand why patterns were chosen
+  - **Action:** Maintainers should update RESOURCES.md when using external patterns
+
+- **awesome-copilot Repository Reference** in RESOURCES.md
+  - Community-curated GitHub Copilot resources
+  - Source for discovering patterns and validating standards
+  - Documents what we adopted vs. didn't (with rationale)
+  - **Action:** No deployment needed (documentation only)
+
+- **ADR Writer Agent Template** (`templates/agents/adr-writer.agent.md`)
+  - Universal agent for creating Architecture Decision Records post-implementation
+  - Captures context, alternatives considered, trade-offs, and consequences
+  - Supports both monorepo and single-app projects
+  - MADR-style structure for consistency across projects
+  - Handoffs from implementer agents after feature completion
+  - **Action:** Deploy to consuming repos for systematic ADR creation
+
+- **ADR Schema Documentation** (`templates/docs/ADR_SCHEMA.md`)
+  - Canonical template for Architecture Decision Records
+  - MADR (Markdown Any Decision Records) format
+  - Required sections: Context, Decision Drivers, Options, Outcome, Consequences
+  - Optional sections: Implementation Notes, Addendums
+  - Status workflow: Proposed → Accepted → Superseded/Deprecated
+  - Cross-referencing patterns for PRDs, commits, related ADRs
+  - **Action:** Copy to consuming repo's docs/ folder as reference
+
+- **ADR JSON Schema** (`templates/docs/ADR_SCHEMA.json`)
+  - JSON Schema for validating ADR structure
+  - Enforces required fields (title, date, status, context, decision_outcome)
+  - Validates options have pros/cons, consequences are categorized
+  - Supports automated validation in CI/CD pipelines
+  - **Action:** Use with ajv or similar validator for ADR quality checks
+
+- **ADR Example** (`templates/docs/ADR_EXAMPLE.md`)
+  - Complete example ADR: "Use PostgreSQL HNSW for Vector Similarity Search"
+  - Demonstrates all sections with realistic content
+  - Shows proper formatting, cross-references, addendums
+  - Includes verification commands and rollback plans
+  - **Action:** Reference when creating first ADRs in new projects
+
+- **ADR Migration Guide** (`ubod-meta/migrations/2026-01-07-adr-templates.md`)
+  - 6-step deployment process for ADR templates
+  - Verification commands and testing procedures
+  - Rollback plan and FAQ
+  - **Action:** Follow migration guide when deploying ADR support
+
+### Changed
+
+- **Enhanced /ubod-checkin Prompt** (`ubod-meta/prompts/ubod-checkin.prompt.md`)
+  - 7-phase checklist structure with validation gates
+  - Explicit STOP points requiring user approval between phases
+  - Validation commands at each step (sanitization, schema compliance)
+  - Comprehensive output report template
+  - **Action:** Maintainers must use `/ubod-checkin` for all version releases
+
+- **Ubod Maintainer Agent Workflow** (`ubod-meta/agents/ubod-maintainer.agent.md`)
+  - MANDATORY section: "Always use `/ubod-checkin` for version releases"
+  - Separates incremental changes from version release workflows
+  - Explicit warning against manual version releases
+  - **Action:** All maintainers must follow /ubod-checkin workflow
+
+### Notes
+
+- **Why ADRs improve LLM coding:**
+  - Documents "why" decisions were made, not just "what"
+  - Prevents LLMs from re-proposing rejected alternatives
+  - Creates searchable knowledge base of architectural decisions
+  - Helps onboarding and knowledge transfer
+- **Why workflow enforcement matters:**
+  - Previous hardening attempts didn't stick without explicit gates
+  - Checklist format prevents skipping critical steps (CHANGELOG, migrations)
+  - User can manually invoke `/ubod-checkin` when AI forgets
+- Version bump reflects new ADR templates, maintainer documentation, and workflow enforcement
+- Consumers should run `projects/ubod/scripts/ubod-upgrade.sh` and follow ADR migration guide
+
+---
+
 ## [1.6.0] - 2026-01-06
 
 ### Added
@@ -29,9 +114,9 @@ All notable changes to Ubod will be documented in this file.
 
 ### Added
 
-- **RESOURCES.md Maintenance Guidance** in Ubod Maintainer agent
-  - New Rule 6: Document external resources when used
-  - New Task: "Document External Resource" workflow
+[New unreleased features will be added here]
+
+---
   - Ensures attribution trail for design decisions
   - Helps future maintainers understand why patterns were chosen
   - **Action:** Maintainers should update RESOURCES.md when using external patterns

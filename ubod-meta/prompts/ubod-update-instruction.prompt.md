@@ -1,4 +1,5 @@
 ---
+name: ubod-update-instruction
 description: "Update an existing ubod instruction with sanitization and quality checks"
 ---
 
