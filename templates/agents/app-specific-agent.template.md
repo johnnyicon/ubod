@@ -10,6 +10,12 @@ handoffs:
       [Clear instructions for the next agent]
 ---
 
+<!--
+📖 SCHEMA REFERENCE: projects/ubod/ubod-meta/schemas/agent-schema.md
+This template includes optional enforcement sections (CRITICAL GATE, MANDATORY TRIGGER).
+Remove sections you don't need for your app-specific agent.
+-->
+
 ROLE
 [1-2 sentences defining this agent's purpose and expertise]
 
@@ -31,6 +37,31 @@ BOUNDARIES
 🚫 **Never do:**
 - [Action this agent must avoid]
 - [Another never-do action]
+
+CRITICAL GATE (Optional - Add if bypass causes bugs)
+<!-- Add this section if this agent frequently acts without prerequisites.
+     Common for Implementer agents that should require approved plans.
+     See ubod-meta/docs/workflow-enforcement-patterns.md for examples. -->
+
+🚨 **STOP: Prerequisites required before proceeding**
+
+**Required:**
+- [ ] [Specific prerequisite from upstream agent]
+- [ ] [User approval signal]
+- [ ] [Required context or documentation]
+
+**If missing:** [Action to take - request from other agent, ask user, etc.]
+
+MANDATORY TRIGGER (Optional - Add if this agent is skipped)
+<!-- Add this section if changes should always invoke this agent.
+     Common for Verifier agents that validate UI or critical paths.
+     See ubod-meta/docs/workflow-enforcement-patterns.md for examples. -->
+
+**This agent MUST be invoked for:**
+- [Change type 1 that requires this agent]
+- [Change type 2 that requires this agent]
+
+**Why mandatory:** [Brief explanation of what bugs occur when skipped]
 
 SCOPE
 - [What this agent DOES]

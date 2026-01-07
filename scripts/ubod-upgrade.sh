@@ -560,6 +560,56 @@ sync_instructions() {
     log_success "Instructions: $copied new, $updated updated, $skipped unchanged"
 }
 
+sync_schemas() {
+    local source_dir="$UBOD_DIR/ubod-meta/schemas"
+    local target_dir="$MONOREPO_DIR/.github/schemas"
+    local copied=0
+    local updated=0
+    local skipped=0
+
+    log_info ""
+    log_info "Syncing schemas..."
+
+    if [ ! -d "$source_dir" ]; then
+        log_info "No schemas directory in ubod - skipping"
+        return
+    fi
+
+    mkdir -p "$target_dir"
+
+    for file in "$source_dir"/*; do
+        [ -f "$file" ] || continue
+        local filename=$(basename "$file")
+        local target_file="$target_dir/$filename"
+
+        if [ "$DRY_RUN" = true ]; then
+            if [ ! -f "$target_file" ]; then
+                log_info "[DRY RUN] Would copy: $filename (NEW)"
+                ((copied++))
+            elif ! cmp -s "$file" "$target_file"; then
+                log_info "[DRY RUN] Would update: $filename"
+                ((updated++))
+            else
+                ((skipped++))
+            fi
+        else
+            if [ ! -f "$target_file" ]; then
+                cp "$file" "$target_file"
+                log_info "  + $filename (NEW)"
+                ((copied++))
+            elif ! cmp -s "$file" "$target_file"; then
+                cp "$file" "$target_file"
+                log_info "  ↻ $filename (UPDATED)"
+                ((updated++))
+            else
+                ((skipped++))
+            fi
+        fi
+    done
+
+    log_success "Schemas: $copied new, $updated updated, $skipped unchanged"
+}
+
 check_copilot_instructions() {
     local copilot_file="$MONOREPO_DIR/.github/copilot-instructions.md"
     
@@ -594,6 +644,7 @@ run_file_sync() {
     sync_agents
     sync_prompts
     sync_instructions
+    sync_schemas
     check_copilot_instructions
 }
 

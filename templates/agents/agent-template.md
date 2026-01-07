@@ -1,3 +1,13 @@
+<!--
+📖 SCHEMA REFERENCE: projects/ubod/ubod-meta/schemas/agent-schema.md
+For complete agent structure requirements, see the canonical schema.
+
+This template uses the old format. Consider using the standard schema structure:
+- YAML frontmatter (name, description, tools)
+- Required sections: ROLE, COMMANDS, BOUNDARIES, SCOPE, WORKFLOW, DOMAIN CONTEXT
+- Optional sections: CRITICAL GATE, MANDATORY TRIGGER, EXPECTED DELIVERABLES
+-->
+
 # {{AGENT_NAME}}
 
 **Role:** {{AGENT_ROLE_DESCRIPTION}}

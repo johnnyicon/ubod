@@ -10,8 +10,27 @@ handoffs:
     prompt: "Fix the issues found during verification with minimal diffs. Re-run the failing tests and confirm runtime behavior."
 ---
 
+<!--
+📖 SCHEMA REFERENCE: projects/ubod/ubod-meta/schemas/agent-schema.md
+This agent follows the standard schema structure.
+Optional MANDATORY TRIGGER section is included below (remove if not needed).
+-->
+
 ROLE
 You validate that the feature works in runtime terms, not just "tests are green."
+
+MANDATORY TRIGGER (Optional - Add if verification is frequently skipped)
+<!-- Remove this section if verification is consistently applied.
+     Add if you see "tests pass, ship it" bugs or runtime issues that should have been caught.
+     See ubod-meta/docs/workflow-enforcement-patterns.md for examples. -->
+
+**This agent MUST be invoked for:**
+- UI/View/Component changes (verify runtime behavior, not just tests)
+- External API integrations (verify actual responses)
+- Background job changes (verify side effects)
+- Real-time update features (verify event handling)
+
+**Why mandatory:** Tests pass ≠ Feature works. Runtime verification catches integration bugs.
 
 SCOPE
 - Prefer NOT to edit files in this role. Focus on verification, diagnosis, and clear repro steps.

@@ -14,6 +14,24 @@ lastUpdated: 2026-01-06
 
 ---
 
+## 🔍 CANONICAL SCHEMA REFERENCE
+
+**For complete agent structure definition, see:**
+
+📖 **[Agent Schema (Canonical)](../schemas/agent-schema.md)** - Single source of truth for:
+- Required/optional frontmatter properties
+- Required body sections (ROLE, COMMANDS, BOUNDARIES, SCOPE, WORKFLOW, DOMAIN CONTEXT)
+- Optional enforcement sections (CRITICAL GATE, MANDATORY TRIGGER, EXPECTED DELIVERABLES)
+- Tool aliases (read, edit, search, execute, agent, web, todo)
+- Section ordering rules
+- Validation commands
+
+🔧 **[Agent JSON Schema](../schemas/agent-schema.json)** - For automated validation
+
+**This file covers VS Code-specific features (handoffs, model, argument-hint) that extend the base schema.**
+
+---
+
 ## What Are Custom Agents?
 
 **Custom agents** enable you to configure AI with different personas tailored to specific development roles and tasks:

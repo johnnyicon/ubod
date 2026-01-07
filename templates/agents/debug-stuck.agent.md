@@ -6,6 +6,11 @@ tools: ["read", "search", "execute"]
 infer: true
 ---
 
+<!--
+📖 SCHEMA REFERENCE: projects/ubod/ubod-meta/schemas/agent-schema.md
+This agent follows a custom structure suitable for its debugging workflow.
+-->
+
 # Debug When Stuck Agent
 
 ## When to Use This Agent

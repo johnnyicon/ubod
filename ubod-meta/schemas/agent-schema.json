@@ -1,0 +1,410 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/kanekoa/ubod/schemas/agent-schema.json",
+  "title": "Ubod Agent Schema",
+  "description": "JSON Schema for validating ubod agent files (.agent.md)",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["frontmatter", "sections"],
+  "properties": {
+    "frontmatter": {
+      "type": "object",
+      "description": "YAML frontmatter for agent metadata",
+      "required": ["name", "description", "tools"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Agent name (must match filename)",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "One-line description of when to use this agent",
+          "minLength": 1
+        },
+        "tools": {
+          "oneOf": [
+            {
+              "type": "array",
+              "description": "List of tool aliases",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "read",
+                  "edit",
+                  "search",
+                  "execute",
+                  "agent",
+                  "web",
+                  "todo",
+                  "*"
+                ]
+              },
+              "uniqueItems": true
+            },
+            {
+              "type": "string",
+              "const": "*",
+              "description": "Wildcard enables all tools"
+            }
+          ]
+        },
+        "infer": {
+          "type": "boolean",
+          "description": "Let LLM choose tools dynamically (optional)"
+        },
+        "handoffs": {
+          "type": "array",
+          "description": "List of agent handoff definitions (optional)",
+          "items": {
+            "type": "object",
+            "required": ["label", "agent", "prompt"],
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Handoff button label",
+                "minLength": 1
+              },
+              "agent": {
+                "type": "string",
+                "description": "Target agent name (must match target's frontmatter name)",
+                "minLength": 1
+              },
+              "prompt": {
+                "type": "string",
+                "description": "Single-line handoff prompt (no multiline)",
+                "minLength": 1,
+                "pattern": "^[^\\n\\r]+$"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sections": {
+      "type": "object",
+      "description": "Required and optional body sections",
+      "required": [
+        "title",
+        "role",
+        "commands",
+        "boundaries",
+        "scope",
+        "workflow"
+      ],
+      "properties": {
+        "title": {
+          "type": "object",
+          "description": "Agent title (H1) with purpose/when-to-use",
+          "required": ["heading", "purpose", "whenToUse"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "description": "H1 heading text",
+              "pattern": "^# .+ Agent$"
+            },
+            "purpose": {
+              "type": "string",
+              "description": "One-line purpose statement",
+              "minLength": 1
+            },
+            "whenToUse": {
+              "type": "string",
+              "description": "Clear trigger conditions",
+              "minLength": 1
+            }
+          }
+        },
+        "role": {
+          "type": "object",
+          "description": "ROLE section: defines core responsibility (H2)",
+          "required": ["heading", "content"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "const": "## ROLE"
+            },
+            "content": {
+              "type": "string",
+              "description": "1-3 sentences defining agent's core responsibility",
+              "minLength": 1
+            }
+          }
+        },
+        "commands": {
+          "type": "object",
+          "description": "COMMANDS section: key commands agent uses (H2)",
+          "required": ["heading", "items"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "const": "## COMMANDS"
+            },
+            "items": {
+              "type": "array",
+              "description": "List of 3-7 key commands",
+              "minItems": 3,
+              "maxItems": 10,
+              "items": {
+                "type": "object",
+                "required": ["name", "description"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Command name (bold in markdown)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "What the command does"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "boundaries": {
+          "type": "object",
+          "description": "BOUNDARIES section: what agent always/ask/never does (H2)",
+          "required": ["heading", "alwaysDo", "askFirst", "neverDo"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "const": "## BOUNDARIES"
+            },
+            "alwaysDo": {
+              "type": "array",
+              "description": "✅ Always do items (1-5)",
+              "minItems": 1,
+              "maxItems": 5,
+              "items": {
+                "type": "string"
+              }
+            },
+            "askFirst": {
+              "type": "array",
+              "description": "⚠️ Ask first items (1-5)",
+              "minItems": 1,
+              "maxItems": 5,
+              "items": {
+                "type": "string"
+              }
+            },
+            "neverDo": {
+              "type": "array",
+              "description": "🚫 Never do items (1-5)",
+              "minItems": 1,
+              "maxItems": 5,
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "scope": {
+          "type": "object",
+          "description": "SCOPE section: positive and negative boundaries (H2)",
+          "required": ["heading", "inScope", "outOfScope"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "const": "## SCOPE"
+            },
+            "inScope": {
+              "type": "array",
+              "description": "What agent covers (2-7 items)",
+              "minItems": 2,
+              "maxItems": 10,
+              "items": {
+                "type": "string"
+              }
+            },
+            "outOfScope": {
+              "type": "array",
+              "description": "What agent does NOT cover (2-7 items)",
+              "minItems": 2,
+              "maxItems": 10,
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "workflow": {
+          "type": "object",
+          "description": "WORKFLOW section: typical execution flow (H2)",
+          "required": ["heading", "steps"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "const": "## WORKFLOW"
+            },
+            "steps": {
+              "type": "array",
+              "description": "Numbered list of workflow steps (3-10)",
+              "minItems": 3,
+              "maxItems": 15,
+              "items": {
+                "type": "object",
+                "required": ["name", "description"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Step name (bold in markdown)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Brief description of step"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "domainContext": {
+          "type": "object",
+          "description": "DOMAIN CONTEXT section: framework-specific knowledge (H2, optional)",
+          "required": ["heading"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "const": "## DOMAIN CONTEXT"
+            },
+            "subsections": {
+              "type": "array",
+              "description": "List of subsections (H3)",
+              "items": {
+                "type": "object",
+                "required": ["heading", "content"],
+                "properties": {
+                  "heading": {
+                    "type": "string",
+                    "pattern": "^### .+"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Subsection content (markdown)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "criticalGate": {
+          "type": "object",
+          "description": "CRITICAL GATE section: enforcement gate (H2, optional)",
+          "required": ["heading", "condition", "prerequisites", "guidance"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "const": "## CRITICAL GATE"
+            },
+            "condition": {
+              "type": "string",
+              "description": "Gate condition description"
+            },
+            "prerequisites": {
+              "type": "array",
+              "description": "Checklist of prerequisites",
+              "items": {
+                "type": "string"
+              }
+            },
+            "guidance": {
+              "type": "object",
+              "required": ["ifNotMet", "ifMet"],
+              "properties": {
+                "ifNotMet": {
+                  "type": "string",
+                  "description": "What to do if prerequisites not met"
+                },
+                "ifMet": {
+                  "type": "string",
+                  "description": "Proceed guidance"
+                }
+              }
+            }
+          }
+        },
+        "mandatoryTrigger": {
+          "type": "object",
+          "description": "MANDATORY TRIGGER section: when agent is mandatory (H2, optional)",
+          "required": ["heading", "conditions", "rationale", "riskStatement"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "const": "## MANDATORY TRIGGER"
+            },
+            "conditions": {
+              "type": "array",
+              "description": "List of conditions that mandate this agent",
+              "items": {
+                "type": "string"
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "description": "Why this is mandatory"
+            },
+            "riskStatement": {
+              "type": "string",
+              "description": "What happens if agent not invoked"
+            }
+          }
+        },
+        "expectedDeliverables": {
+          "type": "object",
+          "description": "EXPECTED DELIVERABLES section: handoff contract (H2, optional)",
+          "required": ["heading", "deliverables"],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "const": "## EXPECTED DELIVERABLES"
+            },
+            "downstreamAgent": {
+              "type": "string",
+              "description": "Name of downstream agent (optional)"
+            },
+            "deliverables": {
+              "type": "array",
+              "description": "List of deliverable categories",
+              "items": {
+                "type": "object",
+                "required": ["category", "items"],
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "description": "Deliverable category name"
+                  },
+                  "items": {
+                    "type": "array",
+                    "description": "Specific items in this category",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "toolAliases": {
+      "description": "Standard tool aliases recognized by ubod framework",
+      "enum": [
+        "read",
+        "edit",
+        "search",
+        "execute",
+        "agent",
+        "web",
+        "todo",
+        "*"
+      ]
+    }
+  }
+}

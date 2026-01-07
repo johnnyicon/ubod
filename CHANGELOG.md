@@ -13,7 +13,59 @@ All notable changes to Ubod will be documented in this file.
 
 ## [Unreleased]
 
-_Changes staged for next release_
+### Added
+
+- **Canonical agent schema** (`ubod-meta/schemas/agent-schema.md` + `agent-schema.json`)
+  - Single source of truth for agent structure definition
+  - Complete frontmatter properties (name, description, tools, handoffs)
+  - Required body sections (ROLE, COMMANDS, BOUNDARIES, SCOPE, WORKFLOW, DOMAIN CONTEXT)
+  - Optional enforcement sections (CRITICAL GATE, MANDATORY TRIGGER, EXPECTED DELIVERABLES)
+  - Tool aliases reference (read, edit, search, execute, agent, web, todo)
+  - Section ordering rules and validation commands
+  - JSON Schema for automated validation
+  - **Action:** Reference this file for all agent structure questions
+
+### Changed
+
+- **DRY refactoring: Schema references instead of duplication**
+  - `vscode-custom-agent-spec.instructions.md` now references canonical schema
+  - `github-custom-agent-spec.instructions.md` now references canonical schema
+  - Agent templates include schema reference comments
+  - **Impact:** Schema changes now update in ONE place, not four
+  - **Migration:** See `ubod-meta/migrations/2026-01-06-canonical-schema-dry.md`
+
+- **Schema evolution process documented**
+  - Update canonical schema → Update JSON Schema → Update spec references → Create migration
+  - Clear guidance on when to version bump
+  - **Action:** Follow this process for all future schema changes
+
+---
+
+## [1.4.0] - 2026-01-06
+
+### Added
+
+- **Workflow enforcement patterns documentation** (`ubod-meta/docs/workflow-enforcement-patterns.md`)
+  - Comprehensive guide on when and how to add gates, triggers, and QA checklists
+  - 5 patterns: Critical Gates, Mandatory Triggers, Handoff Contracts, QA Checklists, Runtime Verification
+  - Post-incident hardening workflow
+  - Anti-patterns to avoid
+  - **Action:** Read when experiencing workflow bypass or recurring bugs
+
+- **`/harden-workflow` prompt** for post-incident analysis
+  - Guided workflow to analyze recent bugs
+  - Pattern classification (Bypass, Gap, Handoff)
+  - Prioritized hardening recommendations
+  - Copy-paste ready enforcement sections
+  - **Usage:** `/harden-workflow` after production bugs or during workflow reviews
+
+- **Optional enforcement sections in agent templates**
+  - Discovery Planner: EXPECTED DELIVERABLES section (handoff contracts)
+  - Verifier: MANDATORY TRIGGER section (required invocation rules)
+  - App-specific template: CRITICAL GATE + MANDATORY TRIGGER placeholders
+  - All sections include removal guidance (only use when needed)
+  - HTML comments explain when to use each section
+  - **Action:** New agents include placeholders; remove if workflow is simple
 
 ### Changed
 
@@ -27,8 +79,27 @@ _Changes staged for next release_
     3. Agent Definition Standards (COMMANDS/BOUNDARIES placement, tool aliases)
     4. Migration Policy (when to create, template, verification)
     5. CHANGELOG Discipline (always update, categories, format)
-  - **Migration:** Not required (agents are already schema-compliant)
+  - Added "Harden Workflow After Incident" to Common Tasks
+  - **Migration:** Not required (agents are already schema-compliant, changes are additive)
   - **Action:** Consumers should update submodule and review enhanced agent capabilities
+
+---
+
+## [Unreleased]
+
+_Changes staged for next release_
+
+### Changed
+
+- **Ubod Maintainer agent schema standardization**
+  - **BREAKING:** Refactored to follow standard agent schema (ROLE, COMMANDS, BOUNDARIES, SCOPE, WORKFLOW, DOMAIN CONTEXT)
+  - Changed `## Agent Persona` → `## ROLE`
+  - Standardized `## BOUNDARIES` to use ✅/⚠️/🚫 format (was plain list)
+  - Changed `## Common Tasks` → moved to `## WORKFLOW` + additional reference section
+  - Added explicit `## SCOPE` section
+  - Moved maintenance rules and directories to `## DOMAIN CONTEXT`
+  - **Migration:** `2026-01-06-ubod-maintainer-schema-standardization.md`
+  - **Action:** Consumers must update deployed copy from templates
 
 ---
 
