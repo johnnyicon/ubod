@@ -29,6 +29,73 @@ All notable changes to Ubod will be documented in this file.
 
 ### Added
 
+- **ADR Writer Agent Template** (`templates/agents/adr-writer.agent.md`)
+  - Universal agent for creating Architecture Decision Records post-implementation
+  - Captures context, alternatives considered, trade-offs, and consequences
+  - Supports both monorepo and single-app projects
+  - MADR-style structure for consistency across projects
+  - Handoffs from implementer agents after feature completion
+  - **Action:** Deploy to consuming repos for systematic ADR creation
+
+- **ADR Schema Documentation** (`templates/docs/ADR_SCHEMA.md`)
+  - Canonical template for Architecture Decision Records
+  - MADR (Markdown Any Decision Records) format
+  - Required sections: Context, Decision Drivers, Options, Outcome, Consequences
+  - Optional sections: Implementation Notes, Addendums
+  - Status workflow: Proposed → Accepted → Superseded/Deprecated
+  - Cross-referencing patterns for PRDs, commits, related ADRs
+  - **Action:** Copy to consuming repo's docs/ folder as reference
+
+- **ADR JSON Schema** (`templates/docs/ADR_SCHEMA.json`)
+  - JSON Schema for validating ADR structure
+  - Enforces required fields (title, date, status, context, decision_outcome)
+  - Validates options have pros/cons, consequences are categorized
+  - Supports automated validation in CI/CD pipelines
+  - **Action:** Use with ajv or similar validator for ADR quality checks
+
+- **ADR Example** (`templates/docs/ADR_EXAMPLE.md`)
+  - Complete example ADR: "Use PostgreSQL HNSW for Vector Similarity Search"
+  - Demonstrates all sections with realistic content
+  - Shows proper formatting, cross-references, addendums
+  - Includes verification commands and rollback plans
+  - **Action:** Reference when creating first ADRs in new projects
+
+### Notes
+
+- **Why ADRs improve LLM coding:**
+  - Documents "why" decisions were made, not just "what"
+  - Prevents LLMs from re-proposing rejected alternatives
+  - Captures constraints and trade-offs for better decision-making
+  - Builds institutional memory across sessions
+- **Threshold for creating ADRs:**
+  - Architecture-level decisions (affects multiple components)
+  - Non-obvious trade-offs (future "why did we do this?" questions)
+  - Reversible but costly decisions (hard to change later)
+  - Skip for implementation details, obvious choices, temporary experiments
+- **When to create:** AFTER implementation is complete (not speculative)
+
+---
+
+## [1.6.0] - 2026-01-06
+
+### Added
+
+- Discovery Planner template: add "Draft PRDs" handoff to PRD Writer
+  - Ensures evidence-first discovery can hand off to universal PRD authoring
+  - Aligns with canonical PRD schema and create-prd workflow
+
+### Notes
+
+- Version bump reflects template enhancement; no breaking changes
+- Upgrade script uses CHANGELOG to detect latest version
+- Consumers should rerun `projects/ubod/scripts/ubod-upgrade.sh`
+
+---
+
+## [1.5.0] - 2026-01-06 (Previously Unreleased)
+
+### Added
+
 - **Canonical agent schema** (`ubod-meta/schemas/agent-schema.md` + `agent-schema.json`)
   - Single source of truth for agent structure definition
   - Complete frontmatter properties (name, description, tools, handoffs)

@@ -1,0 +1,249 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ADR Schema",
+  "description": "Schema for Architecture Decision Records (MADR-style)",
+  "type": "object",
+  "required": ["title", "date", "status", "context", "decision_outcome"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "maxLength": 50,
+      "description": "Short, descriptive title (max 50 chars)",
+      "examples": [
+        "Use PostgreSQL HNSW for Vector Search",
+        "Adopt RubyLLM for Multi-Provider LLM"
+      ]
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date decision was made (YYYY-MM-DD)",
+      "examples": ["2026-01-07"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["Proposed", "Accepted", "Superseded", "Deprecated"],
+      "description": "Current status of the decision"
+    },
+    "deciders": {
+      "type": "string",
+      "description": "Who made the decision (names or 'Team Decision')",
+      "examples": ["Engineering Team", "John Doe", "Architecture Review Board"]
+    },
+    "related_prd": {
+      "type": "string",
+      "description": "PRD reference (e.g., PRD-09)",
+      "examples": ["PRD-09: RubyLLM Integration"]
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "Link to superseded ADR (if applicable)",
+      "examples": ["[ADR-2026-01-01-old-decision](./2026-01-01-old-decision.md)"]
+    },
+    "context": {
+      "type": "object",
+      "required": ["problem_statement"],
+      "properties": {
+        "problem_statement": {
+          "type": "string",
+          "description": "What problem are we solving? Why does it matter?",
+          "minLength": 50
+        },
+        "decision_drivers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 10
+          },
+          "description": "Key priorities/constraints that influenced the decision",
+          "minItems": 1,
+          "examples": [
+            ["Performance at scale (1M+ vectors)", "Cost optimization (cloud spend < $500/mo)", "Maintenance burden"]
+          ]
+        }
+      }
+    },
+    "options_considered": {
+      "type": "array",
+      "description": "All alternatives that were seriously considered",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["title", "approach", "pros", "cons"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Descriptive name for this option",
+            "examples": ["PostgreSQL pgvector with HNSW", "Pinecone managed service"]
+          },
+          "approach": {
+            "type": "string",
+            "description": "One-line summary of how this works",
+            "examples": ["Use PostgreSQL extension with HNSW indexing for vector similarity"]
+          },
+          "pros": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific advantages of this option",
+            "minItems": 1,
+            "examples": [["No external dependency", "Better data locality", "15x faster than linear scan"]]
+          },
+          "cons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific disadvantages of this option",
+            "minItems": 1,
+            "examples": [["Need to manage indexing ourselves", "Limited to PostgreSQL features"]]
+          },
+          "effort": {
+            "type": "string",
+            "enum": ["Small", "Medium", "Large"],
+            "description": "Estimated implementation effort"
+          }
+        }
+      }
+    },
+    "decision_outcome": {
+      "type": "object",
+      "required": ["chosen_option", "rationale"],
+      "properties": {
+        "chosen_option": {
+          "type": "string",
+          "description": "Which option was selected (match title from options_considered)",
+          "examples": ["PostgreSQL pgvector with HNSW"]
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Why this option was chosen over others",
+          "minLength": 50,
+          "examples": ["15x faster than linear scan, no external dependency, fits within existing PostgreSQL infrastructure, and aligns with our cost optimization goals."]
+        },
+        "trade_offs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "What we gave up vs what we gained",
+          "examples": [["Gained: Lower cost, better data locality", "Lost: Less specialized features than Pinecone"]]
+        }
+      }
+    },
+    "consequences": {
+      "type": "object",
+      "properties": {
+        "positive": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Expected positive outcomes",
+          "examples": [["15x faster similarity search", "No external dependencies", "Reduced monthly costs by $70"]]
+        },
+        "negative": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Expected negative outcomes or challenges",
+          "examples": [["Need to manage indexing ourselves", "Limited to PostgreSQL features", "Requires PostgreSQL 16+"]]
+        },
+        "neutral": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Outcomes that are neither clearly positive nor negative",
+          "examples": [["Requires PostgreSQL 16+ (infrastructure upgrade)", "Team needs to learn pgvector extension"]]
+        }
+      }
+    },
+    "implementation_notes": {
+      "type": "object",
+      "description": "Optional section for implementation details",
+      "properties": {
+        "key_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Important files implementing this decision",
+          "examples": [["app/models/document.rb", "db/migrate/20260107_add_hnsw_index.rb"]]
+        },
+        "verification_command": {
+          "type": "string",
+          "description": "Command to verify this decision is working",
+          "examples": ["cd apps/tala && bin/rails test test/models/document_test.rb"]
+        },
+        "rollback_plan": {
+          "type": "string",
+          "description": "How to reverse this decision if needed",
+          "examples": ["Drop HNSW index, revert to IVFFlat: DROP INDEX hnsw_index; CREATE INDEX USING ivfflat ..."]
+        }
+      }
+    },
+    "more_information": {
+      "type": "object",
+      "description": "Links to supporting materials",
+      "properties": {
+        "prd_link": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Link to related PRD",
+          "examples": ["../../prds/PRD_09_RUBYLLM.md"]
+        },
+        "discussion_link": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to GitHub issue, PR, or discussion",
+          "examples": ["https://github.com/org/repo/pull/123"]
+        },
+        "commits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Commit SHAs implementing this decision",
+          "examples": [["abc123", "def456"]]
+        },
+        "external_references": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": "External resources (blog posts, papers, docs)",
+          "examples": [["https://www.postgresql.org/docs/16/pgvector.html", "https://blog.example.com/hnsw-vs-ivfflat"]]
+        }
+      }
+    },
+    "addendums": {
+      "type": "array",
+      "description": "Updates to the original decision",
+      "items": {
+        "type": "object",
+        "required": ["date", "title", "content"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the update"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the update",
+            "examples": ["Performance tuning after deployment"]
+          },
+          "content": {
+            "type": "string",
+            "description": "What changed and why",
+            "minLength": 50
+          }
+        }
+      }
+    }
+  }
+}
