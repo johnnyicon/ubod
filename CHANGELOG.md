@@ -11,6 +11,20 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.6.0] - 2026-01-06
+
+### Added
+
+- Discovery Planner template: add "Draft PRDs" handoff to PRD Writer
+  - Ensures evidence-first discovery can hand off to universal PRD authoring
+  - Aligns with canonical PRD schema and create-prd workflow
+
+### Notes
+
+- Version bump reflects template enhancement; no breaking changes
+- Upgrade script uses CHANGELOG to detect latest version
+- Consumers should rerun `projects/ubod/scripts/ubod-upgrade.sh`
+
 ## [Unreleased]
 
 ### Added
