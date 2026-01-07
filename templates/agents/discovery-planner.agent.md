@@ -11,6 +11,9 @@ handoffs:
   - label: Get UI/UX approach
     agent: UI/UX Designer
     prompt: "Review the planned UI surface and propose the implementation approach for our tech stack, including pitfalls and a runtime QA script."
+  - label: Draft PRDs
+    agent: PRD Writer
+    prompt: "Author comprehensive PRDs following the canonical schema. Use the create-prd prompt to produce the PRD suite (master index, sub-PRDs, discovery checklist, testing strategy) from the discovery findings."
 ---
 
 <!--
