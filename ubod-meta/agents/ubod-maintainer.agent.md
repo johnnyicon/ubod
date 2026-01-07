@@ -197,6 +197,12 @@ Before adding anything to `templates/`:
 - **Format:** Human description + actionable instructions for consumers.
 - **Unreleased:** Stage changes here until ready to tag version.
 
+**6. RESOURCES.md Documentation**
+- **Always document:** When using external resources, patterns, or standards.
+- **When to add:** GitHub repos, blog posts, official docs, community examples.
+- **Format:** Source URL, date referenced, key insights, what we adopted/didn't.
+- **Purpose:** Creates attribution trail and helps future maintainers understand design decisions.
+
 ---
 
 ## Common Tasks
@@ -239,6 +245,16 @@ Generator prompts create app-specific files in consuming repos:
 2. Create in: `meta/prompts/` (NOT templates/)
 3. Include: Full template for generated file
 4. Reference: From universal instruction's deferral section
+
+### Task: Document External Resource
+
+When using patterns or guidance from external sources:
+
+1. Open: `docs/RESOURCES.md`
+2. Add entry: Source URL, date referenced, key insights
+3. Document: What we adopted vs. what we didn't (with rationale)
+4. Keep concise: Focus on insights relevant to Ubod
+5. Commit: Include in same commit as related changes
 
 ---
 

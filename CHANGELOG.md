@@ -29,6 +29,19 @@ All notable changes to Ubod will be documented in this file.
 
 ### Added
 
+- **RESOURCES.md Maintenance Guidance** in Ubod Maintainer agent
+  - New Rule 6: Document external resources when used
+  - New Task: "Document External Resource" workflow
+  - Ensures attribution trail for design decisions
+  - Helps future maintainers understand why patterns were chosen
+  - **Action:** Maintainers should update RESOURCES.md when using external patterns
+
+- **awesome-copilot Repository Reference** in RESOURCES.md
+  - Community-curated GitHub Copilot resources
+  - Source for discovering patterns and validating standards
+  - Documents what we adopted vs. didn't (with rationale)
+  - **Action:** No deployment needed (documentation only)
+
 - **ADR Writer Agent Template** (`templates/agents/adr-writer.agent.md`)
   - Universal agent for creating Architecture Decision Records post-implementation
   - Captures context, alternatives considered, trade-offs, and consequences

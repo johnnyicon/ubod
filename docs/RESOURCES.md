@@ -6,6 +6,31 @@ External references and inspiration for Ubod's design and implementation.
 
 ## Agent Design & Best Practices
 
+### Awesome Copilot (Community Curated)
+**Source:** [awesome-copilot on GitHub](https://github.com/jmatthiesen/awesome-copilot)  
+**Date Referenced:** January 7, 2026  
+**Key Insights:**
+- Community-curated collection of GitHub Copilot resources
+- Examples of agent files, prompts, and custom instructions from real projects
+- Links to official documentation, blog posts, and tutorials
+- Categories: Agents, Extensions, Prompts, Workspaces, Learning Resources
+- Active curation of best practices and patterns
+
+**What We Adopted:**
+- Reference for discovering community patterns and examples
+- Validation that our agent structure aligns with community standards
+- Source for learning about new Copilot features and capabilities
+
+**What We Didn't Adopt:**
+- Specific agent implementations (we create our own universal templates)
+- VS Code-only patterns (we prioritize cross-tool compatibility)
+
+**Ubod Usage:**
+- Consulted when updating agent schemas and best practices
+- Referenced in RESOURCES.md to track external influences on framework design
+
+---
+
 ### How to Write a Great agents.md (GitHub, 2025)
 **Source:** [GitHub Blog](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/)  
 **Date Referenced:** January 5, 2026  
