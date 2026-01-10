@@ -15,6 +15,121 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.8.0] - 2026-01-10
+
+### Added
+
+- **ADR System** - 4-prompt workflow for documenting architectural decisions
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - ubod-meta/prompts/adr/adr-gatekeeper.prompt.md
+    - ubod-meta/prompts/adr/adr-writer.prompt.md
+    - ubod-meta/prompts/adr/adr-commit.prompt.md
+    - ubod-meta/prompts/adr/adr-health.prompt.md
+    - ubod-meta/prompts/adr/adr-criteria.json
+    - ubod-meta/agents/adr.agent.md
+  note: Prompts auto-sync to .github/prompts/ubod/adr/
+  ```
+  - `/adr-gatekeeper` - Route decisions (local case vs upstream pattern vs ADR)
+  - `/adr-writer` - Create MADR-formatted ADR files
+  - `/adr-commit` - Validate and commit ADR with auto-generated message
+  - `/adr-health` - Audit ADR catalog for stale/conflicting records
+  - `@adr` agent - Orchestration wrapper for conversational workflow
+  - `prompts/adr/adr-criteria.json` - Decision routing criteria
+  - Inspired by Halo-Halo's single-responsibility prompt design
+  - **Action:** Pull latest Ubod, prompts auto-sync to `.github/prompts/ubod/adr/`
+
+- **Ubod Checkin System** - 4-prompt workflow for release management
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - ubod-meta/prompts/ubod-version-bump.prompt.md
+    - ubod-meta/prompts/ubod-migration-create.prompt.md
+    - ubod-meta/prompts/ubod-validate.prompt.md
+    - ubod-meta/prompts/ubod-commit.prompt.md
+    - ubod-meta/agents/ubod-checkin.agent.md
+  note: Use @ubod-checkin for guided releases
+  ```
+  - `/ubod-version-bump` - Calculate version (patch/minor/major), update CHANGELOG
+  - `/ubod-migration-create` - Create migration files for breaking changes
+  - `/ubod-validate` - Run 6 validation checks (sanitization, metadata, schema, etc.)
+  - `/ubod-commit` - Stage files, generate commit message, push to origin
+  - `@ubod-checkin` agent - Orchestration wrapper with conversational gates
+  - **Action:** Pull latest Ubod, use `@ubod-checkin` for guided releases
+
+- **ADR_SYSTEM_QUICK_REFERENCE.md** - Comprehensive guide to ADR workflow
+  ```yaml
+  action: REFERENCE_ONLY
+  file: ubod-meta/docs/ADR_SYSTEM_QUICK_REFERENCE.md
+  note: Documentation for ADR system usage
+  ```
+  - Quick start examples
+  - Prompt descriptions
+  - Workflow diagrams
+  - Decision criteria
+
+- **CHANGELOG Schema** - JSON Schema for validating CHANGELOG structure
+  ```yaml
+  action: REFERENCE_ONLY
+  file: ubod-meta/schemas/changelog-schema.json
+  note: Validates CHANGELOG.md entries programmatically
+  ```
+  - Defines version entry structure
+  - Specifies category types (Added, Fixed, Enhanced, etc.)
+  - Documents action types and metadata format
+  - Includes example entries
+
+### Changed
+
+- **ubod-upgrade.sh** - Now syncs subdirectories in prompts
+  ```yaml
+  action: AUTOMATED_MIGRATION
+  file: scripts/ubod-upgrade.sh
+  note: Handles adr/ subdirectory with 4 prompts + JSON file
+  ```
+  - Syncs subdirectories like `adr/` automatically
+  - Skips `deprecated/` subdirectory
+  - Handles all file types (*.prompt.md, *.json, etc.)
+  - No manual action needed - script handles on upgrade
+
+- **ubod-upgrade.prompt.md** - Documents new ADR and Checkin systems
+  ```yaml
+  action: REFERENCE_ONLY
+  file: ubod-meta/prompts/ubod-upgrade.prompt.md
+  note: Added Related Prompts section
+  ```
+  - Lists all 4 ADR prompts + agent
+  - Lists all 4 Checkin prompts + agent
+  - Explains design philosophy (single-responsibility prompts + orchestration)
+
+- **Deprecated Monolithic Implementations** - Replaced with modular 4-prompt systems
+  ```yaml
+  action: NO_ACTION
+  deprecated:
+    - templates/agents/adr-writer.agent.md (506 lines) → deprecated/
+    - ubod-meta/prompts/ubod-checkin.prompt.md (258 lines) → deprecated/
+  note: Moved to deprecated/ with comprehensive DEPRECATION_NOTICE.md
+  ```
+  - Old: Monolithic implementations (506 and 258 lines)
+  - New: 4 prompts (~100-400 lines each) + thin orchestration agent
+  - Design philosophy: Single-responsibility prompts + optional orchestration
+  - Both systems inspired by Halo-Halo's clean architecture
+
+### Fixed
+
+- **Agent Location** - Moved ADR agent to correct directory
+  ```yaml
+  action: AUTOMATED_MIGRATION
+  file: ubod-meta/agents/adr.agent.md
+  note: Universal agents belong in ubod-meta/ (auto-synced)
+  ```
+  - Moved from `templates/agents/` → `ubod-meta/agents/`
+  - Universal agents (no customization needed) belong in `ubod-meta/`
+  - Templates remain for app-specific customization
+
+---
+
 ## [1.7.1] - 2026-01-07
 
 ### Changed

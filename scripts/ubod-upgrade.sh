@@ -477,6 +477,7 @@ sync_agents() {
 
     mkdir -p "$target_dir"
 
+    # Sync root-level agent files
     for file in "$source_dir"/*.agent.md; do
         [ -f "$file" ] || continue
         local filename=$(basename "$file")
@@ -499,6 +500,10 @@ sync_agents() {
         fi
     done
 
+    # Note: Agent subdirectories not currently supported by VS Code
+    # All agents must be at .github/agents/ root level
+    # If we add subdirectory support in the future, add sync logic here
+
     log_success "Agents: $copied new, $updated updated, $skipped unchanged"
 }
 
@@ -514,6 +519,7 @@ sync_prompts() {
 
     mkdir -p "$target_dir"
 
+    # Sync root-level prompt files
     for file in "$source_dir"/*.prompt.md; do
         [ -f "$file" ] || continue
         local filename=$(basename "$file")
@@ -534,6 +540,43 @@ sync_prompts() {
         else
             ((skipped++))
         fi
+    done
+
+    # Sync subdirectories (e.g., adr/)
+    for subdir in "$source_dir"/*/; do
+        [ -d "$subdir" ] || continue
+        
+        # Skip deprecated directory
+        local dirname=$(basename "$subdir")
+        if [ "$dirname" = "deprecated" ]; then
+            continue
+        fi
+        
+        local target_subdir="$target_dir/$dirname"
+        mkdir -p "$target_subdir"
+        
+        # Sync all files in subdirectory
+        for file in "$subdir"/*; do
+            [ -f "$file" ] || continue
+            local filename=$(basename "$file")
+            local target="$target_subdir/$filename"
+            
+            if [ ! -f "$target" ]; then
+                log_action "Copy NEW: $dirname/$filename"
+                if [ "$DRY_RUN" = false ]; then
+                    cp "$file" "$target"
+                fi
+                ((copied++))
+            elif ! diff -q "$file" "$target" > /dev/null 2>&1; then
+                log_action "Update CHANGED: $dirname/$filename"
+                if [ "$DRY_RUN" = false ]; then
+                    cp "$file" "$target"
+                fi
+                ((updated++))
+            else
+                ((skipped++))
+            fi
+        done
     done
 
     log_success "Prompts: $copied new, $updated updated, $skipped unchanged"

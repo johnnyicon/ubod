@@ -1,0 +1,243 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/kanekoa/ubod/schemas/changelog-schema.json",
+  "title": "Ubod Changelog Schema",
+  "description": "JSON Schema for validating CHANGELOG.md structure and entries",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["versions"],
+  "properties": {
+    "versions": {
+      "type": "array",
+      "description": "List of version entries in chronological order (newest first)",
+      "items": {
+        "$ref": "#/definitions/versionEntry"
+      }
+    }
+  },
+  "definitions": {
+    "versionEntry": {
+      "type": "object",
+      "required": ["version", "date"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Semantic version number (X.Y.Z) or 'Unreleased'",
+          "pattern": "^(Unreleased|[0-9]+\\.[0-9]+\\.[0-9]+)$"
+        },
+        "date": {
+          "type": "string",
+          "description": "Release date in YYYY-MM-DD format (omit for Unreleased)",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "summary": {
+          "type": "string",
+          "description": "One-paragraph summary of what changed and why"
+        },
+        "categories": {
+          "type": "object",
+          "description": "Changes grouped by category",
+          "properties": {
+            "Added": {
+              "$ref": "#/definitions/categoryChanges"
+            },
+            "Fixed": {
+              "$ref": "#/definitions/categoryChanges"
+            },
+            "Enhanced": {
+              "$ref": "#/definitions/categoryChanges"
+            },
+            "Changed": {
+              "$ref": "#/definitions/categoryChanges"
+            },
+            "Deprecated": {
+              "$ref": "#/definitions/categoryChanges"
+            },
+            "Removed": {
+              "$ref": "#/definitions/categoryChanges"
+            }
+          }
+        },
+        "rootCause": {
+          "type": "string",
+          "description": "Optional: Technical details or root cause analysis for significant changes"
+        }
+      }
+    },
+    "categoryChanges": {
+      "type": "array",
+      "description": "List of changes in this category",
+      "items": {
+        "$ref": "#/definitions/change"
+      }
+    },
+    "change": {
+      "type": "object",
+      "required": ["name", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Feature/Fix name (bold in markdown)",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the change",
+          "minLength": 1
+        },
+        "metadata": {
+          "$ref": "#/definitions/changeMetadata"
+        },
+        "details": {
+          "type": "array",
+          "description": "List of detailed points about this change",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "changeMetadata": {
+      "type": "object",
+      "description": "YAML block with LLM-actionable metadata",
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "Action type for this change",
+          "enum": [
+            "REFERENCE_ONLY",
+            "TEMPLATE_CHANGE",
+            "AUTOMATED_MIGRATION",
+            "VALIDATION_CHECK",
+            "AUTO_FIX",
+            "DOCUMENTATION_FIX",
+            "BREAKING_CHANGE",
+            "PULL_LATEST",
+            "RUN_SCRIPT",
+            "NO_ACTION"
+          ]
+        },
+        "file": {
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Single file path affected"
+            },
+            {
+              "type": "array",
+              "description": "Multiple files affected",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "files": {
+          "type": "array",
+          "description": "List of files affected (alternative to 'file')",
+          "items": {
+            "type": "string"
+          }
+        },
+        "note": {
+          "type": "string",
+          "description": "Additional context for LLMs or maintainers"
+        },
+        "added": {
+          "type": "string",
+          "description": "What was added in this change"
+        },
+        "changed": {
+          "type": "string",
+          "description": "What was changed in this change"
+        },
+        "deprecated": {
+          "type": "string",
+          "description": "What was deprecated in this change"
+        },
+        "removed": {
+          "type": "string",
+          "description": "What was removed in this change"
+        },
+        "migration": {
+          "type": "string",
+          "description": "Migration file name if breaking change"
+        },
+        "script": {
+          "type": "string",
+          "description": "Script to run for this change"
+        },
+        "command": {
+          "type": "string",
+          "description": "Command to run for this change"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "versions": [
+        {
+          "version": "Unreleased",
+          "categories": {
+            "Added": [
+              {
+                "name": "New Feature",
+                "description": "Description of feature",
+                "details": [
+                  "Detail 1",
+                  "Detail 2"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "version": "1.8.0",
+          "date": "2026-01-10",
+          "summary": "Added ADR and Checkin systems with modular prompt architecture",
+          "categories": {
+            "Added": [
+              {
+                "name": "ADR System",
+                "description": "4-prompt workflow for documenting architectural decisions",
+                "metadata": {
+                  "action": "PULL_LATEST",
+                  "files": [
+                    "ubod-meta/prompts/adr/adr-gatekeeper.prompt.md",
+                    "ubod-meta/prompts/adr/adr-writer.prompt.md",
+                    "ubod-meta/prompts/adr/adr-commit.prompt.md",
+                    "ubod-meta/prompts/adr/adr-health.prompt.md",
+                    "ubod-meta/agents/adr.agent.md"
+                  ],
+                  "note": "Prompts auto-sync to .github/prompts/ubod/adr/"
+                },
+                "details": [
+                  "/adr-gatekeeper - Route decisions",
+                  "/adr-writer - Create MADR-formatted ADRs",
+                  "/adr-commit - Validate and commit",
+                  "@adr agent - Orchestration wrapper"
+                ]
+              }
+            ],
+            "Changed": [
+              {
+                "name": "Deprecated Monolithic Implementations",
+                "description": "Replaced with modular 4-prompt systems",
+                "metadata": {
+                  "action": "NO_ACTION",
+                  "deprecated": "adr-writer.agent.md, ubod-checkin.prompt.md",
+                  "note": "Moved to deprecated/ with DEPRECATION_NOTICE.md"
+                },
+                "details": [
+                  "Old: 506-line monolithic agent",
+                  "New: 4 prompts + thin orchestration"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

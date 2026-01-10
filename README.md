@@ -334,12 +334,104 @@ Please contribute back so others can benefit.
 
 MIT - Use freely, modify as needed, share improvements
 
+## ADR System
+
+Ubod includes a comprehensive Architecture Decision Record (ADR) system inspired by the Halo-Halo pattern catalog's clean, single-responsibility design.
+
+### Overview
+
+The ADR system helps you document **why** decisions were made, not just **what** was implemented. It uses a hybrid model: specialized prompts for explicit control, plus an orchestration agent for conversational workflow.
+
+### Components
+
+**Agent:** `templates/agents/adr.agent.md`
+- Conversational interface for ADR workflow
+- Orchestrates specialized prompts
+- Guides decision assessment through to commit
+- Use: `@adr "Document [decision]"`
+
+**Prompts:** `ubod-meta/prompts/adr/`
+- `/adr-gatekeeper` - Assess if decision warrants ADR, route to correct location, check for duplicates
+- `/adr-writer` - Create or update ADR file using MADR format
+- `/adr-commit` - Validate ADR, run final deduplication, commit to git
+- `/adr-health` - Scan ADR catalog for stale, broken, or conflicting records
+
+**Configuration:** `ubod-meta/prompts/adr/adr-criteria.json`
+- Decision tree for threshold assessment (what deserves an ADR?)
+- Impact level definitions (HIGH/MEDIUM/LOW)
+- Lifecycle states (PROPOSED → ACCEPTED → DEPRECATED/SUPERSEDED)
+- Monorepo routing rules (app-specific vs root-level)
+
+### Usage Patterns
+
+**Conversational Workflow** (via agent):
+```
+@adr "We just finished implementing retry logic"
+
+→ Agent assesses decisions
+→ Identifies HIGH/MEDIUM/LOW impact
+→ Suggests which warrant ADRs
+→ Creates ADR files
+→ Validates and commits
+```
+
+**Explicit Control** (via prompts):
+```
+/adr-gatekeeper      # Assess and route
+/adr-writer         # Create ADR file
+/adr-commit         # Validate & commit
+/adr-health         # Check catalog health
+```
+
+### Key Features
+
+- **Threshold Assessment** - Uses criteria.json to determine if decision warrants ADR
+- **Deduplication** - Checks twice (at write time + commit time) to prevent duplicates
+- **MADR Format** - Standard Markdown Any Decision Records structure
+- **Monorepo Routing** - Automatically determines app-specific vs root-level placement
+- **Lifecycle Management** - Tracks ADR states (PROPOSED → ACCEPTED → DEPRECATED)
+- **Validation** - Mandatory validation blocks commit if ADR malformed
+- **Health Checks** - Scan for stale ADRs, broken links, conflicts
+
+### When to Create ADRs
+
+**CREATE ADR when:**
+- ✅ Decision affects multiple components/layers (HIGH impact)
+- ✅ Non-obvious trade-offs made (HIGH impact)
+- ✅ Reversal would be costly (MEDIUM impact)
+- ✅ Future devs/AI need this context (MEDIUM impact)
+- ✅ Architectural boundary definition (HIGH impact)
+
+**DO NOT create ADR for:**
+- ❌ Coding style decisions (use linting config)
+- ❌ Obvious technology choices (use README)
+- ❌ Temporary workarounds (use TODO comments)
+- ❌ Bug fixes (unless reveals architectural issue)
+
+### Design Philosophy
+
+Inspired by Halo-Halo pattern catalog architecture:
+- **Single-Responsibility** - Each prompt does ONE thing well (~250 lines)
+- **Explicit Control** - Users can invoke prompts directly or use agent
+- **Thin Orchestration** - Agent is wrapper, not reimplementation
+- **Cross-Tool Compatible** - Works across GitHub Copilot, Claude Code, etc.
+- **Testable** - Each prompt independently testable
+
+### Migration from Old System
+
+The original monolithic `adr-writer.agent.md` (506 lines) has been replaced by this 4-prompt + orchestration system. See `templates/agents/deprecated/DEPRECATION_NOTICE.md` for details.
+
+**Old way:** `@adr-writer "Document decision"`  
+**New way:** `@adr "Document decision"` (or use prompts directly)
+
+---
+
 ## Questions?
 
 See [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md) for setup details or create an issue.
 
 ---
 
-**Last Updated:** January 6, 2026  
-**Status:** Version 1.3.2 - Ready for production use  
+**Last Updated:** January 10, 2026  
+**Status:** Version 1.4.0 - New ADR system with 4-prompt architecture  
 **Maintained By:** Bathala Kaluluwa Team

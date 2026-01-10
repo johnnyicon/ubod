@@ -333,7 +333,37 @@ grep -A 100 "migrations:" .ubod-version
 
 ## Related Prompts
 
+### Core Ubod Workflows
+
 - `/ubod-create-agents` - Generate agents for a new app
 - `/ubod-update-agent` - Update existing agents with new features
 - `/ubod-create-instruction` - Create new instruction file
 - `/ubod-update-instruction` - Update existing instruction file
+
+### ADR System (Architectural Decision Records)
+
+New in v1.4.0: 4-prompt workflow for documenting decisions
+
+- `/adr-gatekeeper` - Route decisions (local case vs upstream pattern vs ADR)
+- `/adr-writer` - Create MADR-formatted ADR files
+- `/adr-commit` - Validate and commit ADR with auto-generated message
+- `/adr-health` - Audit ADR catalog for stale/conflicting records
+- `@adr` - Orchestration agent (conversational wrapper for above prompts)
+
+**Or use the agent:** `@adr` for guided workflow
+
+### Ubod Checkin System (Release Management)
+
+New in v1.4.0: 4-prompt workflow for releasing Ubod updates
+
+- `/ubod-version-bump` - Calculate version (patch/minor/major), update CHANGELOG
+- `/ubod-migration-create` - Create migration files for breaking changes
+- `/ubod-validate` - Run 6 validation checks (sanitization, metadata, etc.)
+- `/ubod-commit` - Stage files, generate commit message, push to origin
+- `@ubod-checkin` - Orchestration agent (conversational wrapper for above prompts)
+
+**Or use the agent:** `@ubod-checkin` for guided workflow
+
+---
+
+**Design Philosophy:** Single-responsibility prompts (~100-400 lines) + optional orchestration agents for conversational convenience. Use prompts for explicit control, agents for guided workflows.

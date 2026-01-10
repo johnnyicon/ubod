@@ -1,0 +1,189 @@
+{
+  "threshold_criteria": {
+    "create_adr_when": [
+      {
+        "criteria": "Affects multiple components/layers",
+        "weight": "HIGH",
+        "description": "Decision impacts multiple parts of the system (client + server, model + controller, etc.)",
+        "examples": [
+          "Retry logic spans HTTP client + background job",
+          "Database choice affects all models and queries",
+          "Authentication strategy touches controllers, jobs, and API"
+        ]
+      },
+      {
+        "criteria": "Non-obvious trade-offs",
+        "weight": "HIGH",
+        "description": "Decision involves significant trade-offs that aren't immediately clear",
+        "examples": [
+          "Performance vs maintainability",
+          "Cost vs accuracy (AI model choices)",
+          "User control vs automation (modal vs auto-submit)",
+          "Eventual consistency vs immediate feedback"
+        ]
+      },
+      {
+        "criteria": "Reversal would be costly",
+        "weight": "MEDIUM",
+        "description": "Changing this decision later requires significant rework",
+        "examples": [
+          "Framework choice (Rails vs Django vs Node)",
+          "Database schema patterns (normalized vs denormalized)",
+          "Frontend architecture (Hotwire vs React vs Vue)",
+          "Authentication system (JWT vs sessions vs OAuth)"
+        ]
+      },
+      {
+        "criteria": "Future devs/AI need context",
+        "weight": "MEDIUM",
+        "description": "Decision deviates from standard practices or has non-obvious rationale",
+        "examples": [
+          "Intentional deviation from framework conventions",
+          "Why NOT use popular library X (chose alternative Y)",
+          "Custom implementation instead of gem/package",
+          "Specific version pinning with rationale"
+        ]
+      },
+      {
+        "criteria": "Framework-specific pattern",
+        "weight": "LOW",
+        "description": "Establishes pattern for using framework feature consistently",
+        "examples": [
+          "ViewComponent slot usage patterns",
+          "Stimulus controller lifecycle conventions",
+          "Background job retry strategies",
+          "API versioning approach"
+        ]
+      },
+      {
+        "criteria": "Architectural boundary definition",
+        "weight": "HIGH",
+        "description": "Defines how components interact or what's allowed to call what",
+        "examples": [
+          "Services can only call other services, not jobs directly",
+          "Jobs are idempotent, controllers are not",
+          "Models contain no business logic (only validations)",
+          "API clients must go through dedicated service layer"
+        ]
+      }
+    ],
+    "do_not_create_adr_for": [
+      "Coding style decisions (handled by linting rules)",
+      "Obvious technology choices (PostgreSQL for Rails app with existing Postgres infra)",
+      "Implementation details (variable naming, function signatures)",
+      "Temporary workarounds (marked as TODO, planned for removal)",
+      "Bug fixes (unless they reveal architectural issue)",
+      "Dependency updates (unless major version with breaking changes)",
+      "Configuration changes (environment variables, feature flags)"
+    ]
+  },
+  "impact_levels": {
+    "HIGH": {
+      "description": "Affects entire system or multiple apps (monorepo-wide)",
+      "examples": [
+        "Shared library decisions",
+        "Infrastructure choices",
+        "Cross-app authentication",
+        "Monorepo tooling"
+      ]
+    },
+    "MEDIUM": {
+      "description": "Affects single app or multiple related components",
+      "examples": [
+        "App-specific architecture patterns",
+        "Feature-level technology choices",
+        "Data modeling for feature"
+      ]
+    },
+    "LOW": {
+      "description": "Affects single component or feature implementation",
+      "examples": [
+        "Component API design",
+        "Single service refactoring",
+        "UI pattern choice for one feature"
+      ]
+    }
+  },
+  "lifecycle": {
+    "statuses": [
+      {
+        "status": "PROPOSED",
+        "description": "Draft ADR, decision not yet implemented",
+        "use_when": "Pre-implementation planning, RFC-style ADR"
+      },
+      {
+        "status": "ACCEPTED",
+        "description": "Active ADR, currently in use",
+        "use_when": "Post-implementation, decision is implemented and working"
+      },
+      {
+        "status": "DEPRECATED",
+        "description": "ADR is outdated, decision no longer applies",
+        "use_when": "Technology sunset, approach abandoned, no clear replacement"
+      },
+      {
+        "status": "SUPERSEDED",
+        "description": "Replaced by specific newer ADR",
+        "use_when": "New ADR explicitly replaces this one (include 'Supersedes: [link]' in frontmatter)"
+      },
+      {
+        "status": "AMENDED",
+        "description": "Original decision still valid, but context/trade-offs updated",
+        "use_when": "Core decision unchanged but new learnings, edge cases, or context discovered"
+      }
+    ],
+    "health_checks": {
+      "staleness_indicators": [
+        "Framework version mentioned is >2 major versions old",
+        "Referenced PRD is marked as deprecated/complete",
+        "Implementation file referenced no longer exists",
+        "Contradicts newer ADR without explicit superseding link",
+        "Technology mentioned is EOL or abandoned",
+        "Decision is >2 years old with no amendments (consider review)"
+      ],
+      "review_triggers": [
+        "Similar decision being made (dedupe search finds this ADR)",
+        "Referenced code is being refactored",
+        "Framework upgrade crosses major version boundary",
+        "Team size or structure changes significantly"
+      ],
+      "actions": [
+        "Update status to DEPRECATED (if no longer used)",
+        "Add SUPERSEDED link (if replaced by newer ADR)",
+        "Create amendment ADR (if core decision still valid but context changed)",
+        "Update examples/links (if references are stale)"
+      ]
+    }
+  },
+  "routing": {
+    "monorepo_paths": {
+      "app_specific": "apps/{app_name}/docs/ADR/",
+      "package_specific": "packages/{package_name}/docs/ADR/",
+      "monorepo_wide": "docs/ADR/",
+      "description": "App/package-specific decisions go in their respective docs/ADR/ directories. Only infrastructure, tooling, or truly cross-cutting decisions go in root docs/ADR/"
+    },
+    "single_app_paths": {
+      "default": "docs/ADR/",
+      "rails_convention": "docs/ADR/",
+      "description": "Single-app repos use docs/ADR/ at project root"
+    }
+  },
+  "sanitization": {
+    "required_for_public_repos": true,
+    "required_for_private_repos": false,
+    "remove_if_public": [
+      "API keys, tokens, credentials",
+      "Customer/client names (unless public)",
+      "Internal hostnames, domain names",
+      "Production URLs",
+      "Employee names (unless public maintainers)",
+      "PII (emails, phone numbers)"
+    ],
+    "replace_with_placeholders": {
+      "api_keys": "<API_KEY>",
+      "domains": "<INTERNAL_DOMAIN>",
+      "client_names": "<CLIENT_NAME>",
+      "urls": "<PRODUCTION_URL>"
+    }
+  }
+}
