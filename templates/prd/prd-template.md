@@ -1,3 +1,15 @@
+---
+title: {{Feature Name}}
+app: {{tala|nextjs-chat|rails-inertia}}
+status: {{active|archived|deferred}}
+priority: {{P0|P1|P2|P3}}
+created_date: YYYY-MM-DD
+target_date: YYYY-MM-DD
+archived_date: null  # Set when archived
+deferred_issues: []  # GitHub issue numbers
+tags: [{{mvp}}, {{rag}}, {{ui}}, ...]
+---
+
 # PRD_XX — [Feature Name]
 
 **Purpose:** One sentence on the specific capability or gap this PRD will close. Focus on user value and the operational reason this must exist now.
@@ -379,6 +391,47 @@ When adding UI elements that trigger remote actions, specify BOTH:
 - Phase 3: Frontend components
 - Phase 4: Integration + tests
 - Phase 5: Rollout
+
+---
+
+## Deferred Features (P2/P3)
+
+**INSTRUCTIONS:** When archiving this PRD, extract deferred items to GitHub Issues.
+
+**Format for each deferred item:**
+
+### [Feature Name] (P2/P3)
+
+**Why deferred:** [Brief reason]
+
+**Description:**
+[What it does]
+
+**Acceptance criteria:**
+- [ ] Criterion 1
+- [ ] Criterion 2
+
+**GitHub Issue:** [Add link when created: #123]
+
+**Template for GitHub Issue:**
+```
+Title: [Feature Name] (P2/P3 from {{PRD_NAME}})
+
+## Context
+Originally scoped in: {{path/to/prd}}
+Priority: P2 (or P3)
+Deferred because: [reason from above]
+
+## Description
+[Copy from above]
+
+## Acceptance Criteria
+[Copy from above]
+
+## Links
+- PRD: [Link to GitHub view of this file]
+- Related Issues: [Any dependencies]
+```
 
 ---
 

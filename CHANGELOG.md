@@ -15,6 +15,98 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.9.0] - 2026-01-10
+
+### Added
+
+- **PRD Tracking System** - Hybrid approach with YAML frontmatter for metadata
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - templates/prd/prd-template.md
+    - ubod-meta/docs/prd-tracking-workflow.md
+  note: PRD template includes YAML frontmatter for version/status tracking
+  ```
+  - YAML frontmatter in PRD template for structured metadata
+  - Tracks version, status, last_updated, related_prds, parent_prd
+  - Enables programmatic queries without external database
+  - LLM-readable format for automated cross-referencing
+  - Documented in `prd-tracking-workflow.md` with examples
+  - Research analysis in `ubod-meta/research/prd-tracking-strategy/`
+  - **Action:** Pull latest Ubod, update existing PRDs to include YAML frontmatter
+
+- **Deployment Model Documentation** - Direct reference via settings.json
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - ubod-meta/docs/deployment-model.md
+  note: Recommended approach for monorepo Ubod deployment
+  ```
+  - Documents settings.json approach for direct file references
+  - Explains why this is preferred over symlinks (portability, clarity)
+  - Includes VSCode configuration examples
+  - Provides troubleshooting guidance
+  - Research analysis in `ubod-meta/research/ubod-deployment-model/`
+  - **Action:** Reference when deploying Ubod to consuming repos
+
+- **Migration Script** - Migrate from symlinks to direct reference
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - scripts/migrate-to-direct-reference.sh
+  note: Automates migration from symlink-based to settings.json deployment
+  ```
+  - Converts `.github/copilot-instructions.md` symlink to settings.json entries
+  - Backs up existing settings.json before modification
+  - Validates paths exist before adding to settings
+  - Creates settings.json if it doesn't exist
+  - Removes symlink after successful migration
+  - **Action:** Run in consuming repos to migrate deployment model
+
+- **PRD Tracking Research** - LLM analysis of tracking strategies
+  ```yaml
+  action: REFERENCE_ONLY
+  files:
+    - ubod-meta/research/prd-tracking-strategy/llm-analysis-yaml-frontmatter.md
+    - ubod-meta/research/prd-tracking-strategy/llm-analysis-hybrid-approach.md
+    - ubod-meta/research/prd-tracking-strategy/llm-analysis-file-based-tracking.md
+    - ubod-meta/research/prd-tracking-strategy/README.md
+  note: Research supporting YAML frontmatter decision
+  ```
+  - Analysis of file-based vs. database tracking
+  - Evaluation of YAML frontmatter benefits
+  - Hybrid approach rationale (YAML + optional DB)
+  - LLM-actionable format comparison
+
+- **Deployment Model Research** - Symlink support analysis
+  ```yaml
+  action: REFERENCE_ONLY
+  files:
+    - ubod-meta/research/ubod-deployment-model/symlink-support-research.md
+    - ubod-meta/research/ubod-deployment-model/llm-analysis-deployment-comparison.md
+    - ubod-meta/research/ubod-deployment-model/README.md
+  note: Research supporting settings.json recommendation
+  ```
+  - GitHub Copilot symlink behavior analysis
+  - Cross-platform compatibility issues
+  - Settings.json advantages for monorepos
+  - Migration strategy recommendations
+
+### Enhanced
+
+- **PRD Template** - Added YAML frontmatter for metadata
+  ```yaml
+  action: AUTOMATED_MIGRATION
+  file: templates/prd/prd-template.md
+  note: Existing PRDs should be updated to include frontmatter
+  ```
+  - Added YAML frontmatter section with version, status, timestamps
+  - Structured metadata for programmatic querying
+  - Maintains backward compatibility with content structure
+  - **Migration:** Add frontmatter block to top of existing PRDs
+
+---
+
 ## [1.8.0] - 2026-01-10
 
 ### Added
