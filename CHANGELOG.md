@@ -15,6 +15,40 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.10.0] - 2026-01-18
+
+### Added
+
+- **Skill-Foundry Tool** - Complete infrastructure for creating portable Agent Skills
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - tools/skill-foundry/
+  note: Creates portable skills for VS Code and Claude Code
+  ```
+  - Meta-skill for creating other skills (`skill-foundry/SKILL.md`)
+  - Validation script (`scripts/validate.py`) - Checks portability and structure
+  - Scaffolding script (`scripts/scaffold.py`) - Generates skill directory structure
+  - **4 distilled reference documents:**
+    - `BEST_PRACTICES.md` - Anthropic's official skill authoring guidance
+    - `AGENT_PATTERNS.md` - Lessons from GitHub's 2500+ agent analysis
+    - `SKILL_ANATOMY.md` - Progressive disclosure and token efficiency
+    - `QUICK_START.md` - 5-minute tutorial for creating first skill
+  - Example skill (`examples/hello-world/`) - Minimal working example
+  - Comprehensive README and INSTALL documentation
+  - Self-documenting meta-skill with resource links
+
+**What this provides:**
+- Conversational skill creation via `@workspace /skill skill-foundry`
+- CLI scaffolding: `python scripts/scaffold.py my-skill "description"`
+- Portability validation across VS Code and Claude Code
+- Progressive disclosure architecture (Level 1/2/3 loading)
+- Token-efficient skill design patterns
+
+**Source Attribution:** Distilled from Anthropic Agent Skills, GitHub's agent analysis, VS Code docs, Claude Code docs
+
+---
+
 ## [1.9.0] - 2026-01-10
 
 ### Added
