@@ -15,6 +15,71 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.11.0] - 2026-01-18
+
+### Added
+
+- **Skill-Foundry Agent** - Conversational interface for creating portable Agent Skills
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - agents/skill-foundry-agent/AGENT.md
+  note: Guided skill creation with interactive prompts
+  ```
+  - Interactive skill creation workflow with clarifying questions
+  - Three creation methods: Interactive (guided), Quick (scaffold), Improvement (enhance existing)
+  - Validation integration (runs validate.py, explains results)
+  - Portability checks (verifies cross-platform compatibility)
+  - References skill-foundry tool resources (references/, scripts/, examples/)
+  - Schema-compliant: ROLE, COMMANDS, BOUNDARIES, SCOPE, WORKFLOW, DOMAIN CONTEXT
+  - Tools: `["read", "search", "edit"]`
+
+- **Skill-Foundry Deployment Scripts**
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - tools/skill-foundry/install.sh
+    - tools/skill-foundry/validate-all.sh
+    - tools/skill-foundry/update.sh
+  note: Deploy skill-foundry to consuming repos
+  ```
+  - `install.sh` - Deploy to consuming repo (minimal/full options)
+    - Minimal: Meta-skill + agent + template (~700 lines)
+    - Full: + scripts + references + examples (~2,000 lines)
+    - Options: `--full`, `--scripts`, `--references`, `--examples`, `--dry-run`
+  - `validate-all.sh` - Validate deployment and schema compliance
+    - Checks meta-skill structure and frontmatter
+    - Validates agent schema (ROLE, COMMANDS, BOUNDARIES, SCOPE, WORKFLOW)
+    - Tests Python scripts (syntax validation)
+    - Verifies all reference docs and examples present
+  - `update.sh` - Re-deploy after ubod updates
+    - Auto-detects installed components
+    - Preserves installation options (minimal vs full)
+    - Runs validation after update
+
+**Usage:**
+```bash
+# Install to consuming repo
+cd projects/ubod/tools/skill-foundry
+./install.sh --full  # Full installation (recommended for development)
+./install.sh         # Minimal installation (meta-skill + agent only)
+
+# Validate deployment
+./validate-all.sh --verbose
+
+# Update after ubod changes
+./update.sh
+```
+
+**Agent invocation:**
+- Type `@skill-foundry` in Copilot Chat
+- Ask: "Create a new skill for [purpose]"
+- Agent guides through metadata, structure, content, validation
+
+**Integration tested:** All automated tests pass (installation, validation, scripts, schema compliance)
+
+---
+
 ## [1.10.0] - 2026-01-18
 
 ### Added
