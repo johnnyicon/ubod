@@ -68,23 +68,44 @@ Invalid names:
 
 ## Description Best Practices
 
-The description is critical for skill discovery. Include:
+**The description is critical for skill discovery.** It's the primary "trigger surface" that determines whether Copilot loads your skill in response to a user query.
 
-1. **What the skill does** (actions/capabilities)
-2. **When to use it** (trigger conditions)
-3. **Key terms** users might mention
+### Key principles (from Jan 2026 research)
 
-### Good Example
+Based on official GitHub/VS Code documentation and the Agent Skills specification:
+
+- Descriptions are evaluated using **"match to description" logic**
+- Matching algorithm is implementation-specific (keywords vs embeddings vs LLM reasoning)
+- **You control reliability through description clarity**, not through the matching algorithm
+
+### What to include in descriptions
+
+1. **Explicit "Use when..."** phrasing (don't be subtle)
+2. **What the skill does** (actions/capabilities)  
+3. **When to use it** (trigger conditions - be specific)
+4. **Key terms** (synonyms and keywords you expect in user prompts)
+5. **Concrete examples** (2-4 specific use cases or trigger phrases)
+
+### Good Example (skill loads reliably)
 
 ```yaml
-description: Extract text and tables from PDF files, fill PDF forms, merge multiple PDFs. Use when working with PDF documents or when the user mentions PDFs, forms, or document extraction.
+description: >
+  Extract text and tables from PDF files, fill PDF forms, merge multiple PDFs.
+  Use when: working with PDF documents, extracting data, automating form filling,
+  or manipulating document structures. Keywords: PDF, extract, form, merge, document.
+  Examples: "Extract tables from PDF", "Fill PDF form", "Merge two PDFs".
 ```
 
-### Poor Example
+### Poor Example (skill may not load)
 
 ```yaml
 description: Helps with documents
 ```
+
+### Why this matters
+
+Better descriptions = higher probability skill loads across different LLM backends and matching strategies.  
+Reference: `SKILL_LOADING_RESEARCH.md` in this directory for detailed research on how Copilot discovers and loads skills.
 
 ---
 

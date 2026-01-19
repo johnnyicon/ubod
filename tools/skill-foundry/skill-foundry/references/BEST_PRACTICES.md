@@ -1,6 +1,25 @@
 # Skill Authoring Best Practices
 
-Distilled from Anthropic's official documentation and real-world testing.
+Distilled from Anthropic's official documentation and real-world testing (updated Jan 2026).
+
+---
+
+## How Skills Are Actually Loaded
+
+**Start by understanding the mechanism:**
+
+Skills are loaded via **"match to description"** logic. When you send a message:
+1. Copilot reads each skill's name + description (Level 1)
+2. Evaluates whether your request matches
+3. If matched, loads the SKILL.md body (Level 2) into context
+4. Optionally loads Level 3 references if the skill instructions request them
+
+**Key insight:** Your description is the "trigger surface." Write it carefully.
+
+For detailed research on skill loading, discovery, and technical details, see:
+**`SKILL_LOADING_RESEARCH.md`** in this directory.
+
+---
 
 ## Core Principle: The Context Window is a Public Good
 
