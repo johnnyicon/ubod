@@ -707,6 +707,64 @@ sync_schemas() {
     log_success "Schemas: $copied new, $updated updated, $skipped unchanged"
 }
 
+sync_skills() {
+    local tools_dir="$UBOD_DIR/tools"
+    local target_base_dir="$MONOREPO_DIR/.github/skills"
+    local copied=0
+    local updated=0
+    local skipped=0
+
+    log_info ""
+    log_info "Syncing skills from tools/..."
+
+    # Check if tools directory exists
+    if [ ! -d "$tools_dir" ]; then
+        log_warning "No tools directory found in Ubod (expected at: $tools_dir)"
+        return
+    fi
+
+    mkdir -p "$target_base_dir"
+
+    # Iterate through tools/*/skill-name/ pattern
+    # Example: tools/skill-foundry/skill-foundry/ -> .github/skills/skill-foundry/
+    for tool_dir in "$tools_dir"/*/; do
+        [ -d "$tool_dir" ] || continue
+        
+        local tool_name=$(basename "$tool_dir")
+        
+        # Look for skill directory inside (e.g., tools/skill-foundry/skill-foundry/)
+        local skill_dir="$tool_dir$tool_name"
+        
+        # Check if skill directory exists and has SKILL.md
+        if [ -d "$skill_dir" ] && [ -f "$skill_dir/SKILL.md" ]; then
+            local target_skill_dir="$target_base_dir/$tool_name"
+            
+            # Check if target exists
+            if [ ! -d "$target_skill_dir" ]; then
+                log_action "Copy NEW skill: $tool_name/"
+                if [ "$DRY_RUN" = false ]; then
+                    cp -r "$skill_dir" "$target_skill_dir"
+                fi
+                ((copied++))
+            else
+                # Check if any files changed
+                if ! diff -qr "$skill_dir" "$target_skill_dir" > /dev/null 2>&1; then
+                    log_action "Update CHANGED skill: $tool_name/"
+                    if [ "$DRY_RUN" = false ]; then
+                        # Use rsync to preserve structure and only update changed files
+                        rsync -a --delete "$skill_dir/" "$target_skill_dir/"
+                    fi
+                    ((updated++))
+                else
+                    ((skipped++))
+                fi
+            fi
+        fi
+    done
+
+    log_success "Skills: $copied new, $updated updated, $skipped unchanged"
+}
+
 check_copilot_instructions() {
     local copilot_file="$MONOREPO_DIR/.github/copilot-instructions.md"
     
@@ -743,6 +801,7 @@ run_file_sync() {
     sync_prompts
     sync_instructions
     sync_schemas
+    sync_skills
     check_copilot_instructions
 }
 
