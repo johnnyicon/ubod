@@ -15,6 +15,27 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.11.1] - 2026-01-19
+
+### Fixed
+
+- **Skill-Foundry Agent: Added Execute Tool Permission**
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - ubod-meta/agents/skill-foundry.agent.md
+  severity: patch
+  note: Agent can now run validation and scaffolding scripts
+  ```
+  - Fixed tools array: Added `"execute"` to enable script execution
+  - Full tools: `["read", "search", "edit", "execute"]`
+  - Agent can now run `validate.py` and `scaffold.py` scripts
+  - Moved from `templates/agents/` to `ubod-meta/agents/` for proper deployment
+  - Why: Previous version could only create skills but not validate or scaffold them
+  - Impact: Skill Foundry agent now fully functional in consumer repos
+
+---
+
 ## [1.11.0] - 2026-01-18
 
 ### Added
