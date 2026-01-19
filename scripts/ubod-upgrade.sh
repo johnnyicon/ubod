@@ -461,6 +461,44 @@ ensure_prompt_locations() {
     log_info "ℹ️  Reload VS Code for prompts to appear: Cmd+Shift+P → 'Reload Window'"
 }
 
+ensure_agent_skills_enabled() {
+    local settings_file="$MONOREPO_DIR/.vscode/settings.json"
+    
+    if [ ! -f "$settings_file" ]; then
+        log_info "No settings.json found - skipping agent skills setup"
+        return
+    fi
+    
+    # Check if chat.useAgentSkills exists
+    if grep -q '"chat.useAgentSkills"' "$settings_file" 2>/dev/null; then
+        return
+    fi
+    
+    log_info ""
+    log_action "Adding chat.useAgentSkills to settings.json..."
+    
+    if [ "$DRY_RUN" = true ]; then
+        log_info "[DRY RUN] Would add chat.useAgentSkills: true"
+        return
+    fi
+    
+    # Insert "chat.useAgentSkills": true before the last closing brace
+    local temp_file=$(mktemp)
+    awk '
+        /^}$/ && !added {
+            print "  \"chat.useAgentSkills\": true"
+            added = 1
+        }
+        { print }
+    ' "$settings_file" > "$temp_file"
+    
+    mv "$temp_file" "$settings_file"
+    
+    log_success "Added chat.useAgentSkills: true"
+    log_info "ℹ️  Note: Users must also enable this in their personal VS Code settings"
+    log_info "   Settings → Search 'chat.useAgentSkills' → Check the box"
+}
+
 # =============================================================================
 # File Syncing (merged from ubod-sync.sh)
 # =============================================================================
@@ -698,6 +736,7 @@ run_file_sync() {
     migrate_misplaced_agents
     validate_settings_json
     ensure_prompt_locations
+    ensure_agent_skills_enabled
     
     # Regular sync
     sync_agents

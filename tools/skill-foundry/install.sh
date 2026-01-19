@@ -197,7 +197,7 @@ install_agent() {
         return 1
     fi
     
-    log_action "Copy: agents/skill-foundry-agent/AGENT.md → .github/agents/skill-foundry-agent.agent.md"
+    log_action "Copy: agents/skill-foundry/AGENT.md → .github/agents/skill-foundry.agent.md"
     
     if [ "$DRY_RUN" = false ]; then
         mkdir -p "$target_dir"
@@ -317,7 +317,7 @@ validate_installation() {
     fi
     
     # Check agent
-    if [ -f "$MONOREPO_DIR/.github/agents/skill-foundry-agent.agent.md" ]; then
+    if [ -f "$MONOREPO_DIR/.github/agents/skill-foundry.agent.md" ]; then
         log_success "Agent deployed"
     else
         log_error "Agent missing"

@@ -146,7 +146,7 @@ validate_meta_skill() {
 validate_agent() {
     print_header "Validating Agent"
     
-    local agent_file="$MONOREPO_DIR/.github/agents/skill-foundry-agent.agent.md"
+    local agent_file="$MONOREPO_DIR/.github/agents/skill-foundry.agent.md"
     
     if [ ! -f "$agent_file" ]; then
         log_error "Agent not found: $agent_file"

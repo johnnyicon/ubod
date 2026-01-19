@@ -11,10 +11,14 @@ Agent Skills is an open standard maintained at [agentskills.io](https://agentski
 | Platform | Project Skills | Personal Skills |
 |----------|---------------|-----------------|
 | **Claude Code** | `.claude/skills/` | `~/.claude/skills/` |
-| **VS Code/Copilot** | `.github/skills/` (recommended) | `~/.copilot/skills/` (recommended) |
+| **VS Code/Copilot** | `.github/skills/` ✅ | `~/.copilot/skills/` ✅ |
 | **VS Code/Copilot** | `.claude/skills/` (legacy) | `~/.claude/skills/` (legacy) |
 
-**Key insight:** Both agents read from `.claude/skills/`, making it the ideal canonical location.
+**Key insights:**
+- Both agents read from `.claude/skills/`, making it a compatible location
+- VS Code prefers `.github/skills/` for repo-wide skills (works reliably)
+- App-level skills (e.g., `apps/myapp/.copilot/skills/`) are **not currently discovered** in VS Code
+- Users must enable `chat.useAgentSkills: true` in **both** User settings and Workspace settings
 
 ---
 

@@ -60,16 +60,6 @@ Use these prompts to maintain the Ubod framework itself:
 
 ---
 
-## 📚 Deep Guidance (Skills)
-
-Use these for comprehensive methodology:
-
-- **`@workspace /skill discovery-methodology`** - How to discover before implementing
-[ADD_YOUR_CUSTOM_SKILLS_HERE if any]
-
-**Location:** `.github/skills/*/SKILL.md`
-
----
 
 ## 🔧 Always-On Instructions
 
