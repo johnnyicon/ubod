@@ -1,6 +1,6 @@
 ---
-description: ADR Gatekeeper — Decide where to create ADR, check for duplicates, assess if decision warrants ADR
-name: adr-gatekeeper
+name: "ADR: Assess Decision"
+description: "Assess whether decision warrants ADR creation"
 ---
 
 # ADR Gatekeeper

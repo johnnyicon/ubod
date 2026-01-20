@@ -1,6 +1,6 @@
 ---
-description: ADR Health Check — Scan ADR catalog for stale, broken, or conflicting records
-name: adr-health
+name: "ADR: Catalog Health Check"
+description: "Scan ADR catalog for stale, broken, or conflicting records"
 ---
 
 # ADR Health Check

@@ -1,6 +1,6 @@
 ---
-description: ADR Commit — Validate, dedupe final check, generate commit message, and commit ADR files
-name: adr-commit
+name: "ADR: Commit & Validate"
+description: "Validate, dedupe, and commit ADR files to git"
 ---
 
 # ADR Commit
@@ -306,7 +306,55 @@ git log -1 --oneline
 
 ---
 
-## Step 6: Post-Commit Checks (Optional)
+## Step 6: Update ADR Index (Auto)
+
+**After successful commit, automatically update ADR index:**
+
+```markdown
+Updating ADR index...
+```
+
+**Invoke `/adr-index` for each committed ADR:**
+
+```bash
+# For each committed ADR file
+/adr-index {adr_file_path}
+```
+
+**Index update modes:**
+- If `INDEX.md` exists → UPDATE mode (append entries)
+- If `INDEX.md` missing → Prompt user to initialize
+
+**Success:**
+```markdown
+✅ **Index Updated**
+
+Added {N} entries to ADR index:
+- {adr1_title} (Category: {category})
+- {adr2_title} (Category: {category})
+
+Index now has {total_count} ADRs.
+```
+
+**If index missing:**
+```markdown
+ℹ️ **ADR Index Not Found**
+
+This repository doesn't have an ADR index yet.
+
+**Create index now?** (Y/N)
+
+[If Y] Running `/adr-index` to initialize...
+[If N] Skipping index update. Run `/adr-index` manually later.
+```
+
+**Error handling:**
+- If `/adr-index` fails, warn but don't block
+- User can manually refresh index later
+
+---
+
+## Step 7: Post-Commit Checks (Optional)
 
 **Suggest follow-up actions:**
 
@@ -320,7 +368,6 @@ git log -1 --oneline
 
 **Maintenance:**
 - [ ] Set reminder to review ADR in 6-12 months (lifecycle management)
-- [ ] Add to ADR index if maintaining one
 
 **Run `/adr-health` to check overall ADR catalog health?** (Y/N)
 ```

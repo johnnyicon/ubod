@@ -1,6 +1,6 @@
 ---
-description: ADR Writer — Create or update ADR file with full MADR format, validate against schema
-name: adr-writer
+name: "ADR: Create/Update Record"
+description: "Create or update ADR files in MADR format"
 ---
 
 # ADR Writer

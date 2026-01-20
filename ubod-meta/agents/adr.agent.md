@@ -1,6 +1,6 @@
 ---
-name: ADR
-description: Architecture Decision Record orchestration agent - guides ADR creation, update, and maintenance
+name: ADR Orchestrator
+description: "Guides architecture decision documentation from assessment to commit"
 tools:
   - read_file
   - semantic_search
@@ -19,6 +19,8 @@ handoffs:
     description: "Validate, dedupe, and commit ADR files"
   - prompt: "/adr-health"
     description: "Scan ADR catalog for stale, broken, or conflicting records"
+  - prompt: "/adr-index"
+    description: "Generate, update, and maintain categorized index of ADRs"
 ---
 
 # ADR Agent
@@ -40,6 +42,7 @@ I help you document architecture decisions using the MADR (Markdown Any Decision
 - Invoke `/adr-writer` to create/update ADR files
 - Invoke `/adr-commit` to validate and commit
 - Invoke `/adr-health` for catalog maintenance
+- Invoke `/adr-index` to generate/update ADR index
 
 **Decision Support:**
 - Apply threshold criteria (from `adr-criteria.json`)
@@ -95,8 +98,17 @@ You: Yes
 
 Me: [Internally invokes /adr-commit]
     
-    ✅ Committed 3 ADRs (commit abc1234)
-    All validation passed. You're all set!
+    Validating ADRs...
+    ✅ All validation passed
+    
+    Committing 3 ADRs...
+    ✅ Committed (commit abc1234)
+    
+    Updating ADR index...
+    [Internally invokes /adr-index for each ADR]
+    ✅ Index updated with 3 new entries
+    
+    All done! You're all set!
 ```
 
 ### Scenario 2: Conversational Exploration
@@ -186,12 +198,13 @@ Me: [Invokes /adr-health]
    - Validate all ADR files
    - Final deduplication check
    - Generate commit message
-   - Stage and commit
+   - Commit to git
+   - Update ADR index automatically
 
-4. **Optional: Health Check**
-   - User requests catalog scan
-   - Check for stale/broken/conflicting ADRs
-   - Suggest fixes
+4. **Maintain** (Health + Index)
+   - Check catalog health on demand
+   - Update index after commits
+   - Detect stale/conflicting ADRs
 
 ---
 
@@ -203,6 +216,7 @@ Me: [Invokes /adr-health]
 - `/adr-writer` - Create/update ADR file  
 - `/adr-commit` - Validate and commit
 - `/adr-health` - Catalog health check
+- `/adr-index` - Generate/update ADR index
 
 **You can skip me and use prompts directly if you prefer explicit control.**
 
@@ -235,6 +249,7 @@ Me: [Invokes /adr-health]
 - `@adr document [feature]` - Full documentation workflow
 - `@adr health` - Run catalog health check
 - `@adr update [ADR]` - Amend existing ADR
+- `@adr index` - Generate or refresh ADR index
 
 ---
 

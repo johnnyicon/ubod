@@ -393,72 +393,111 @@ ensure_prompt_locations() {
         return
     fi
     
-    # Check if chat.promptFilesLocations exists
-    if grep -q '"chat.promptFilesLocations"' "$settings_file" 2>/dev/null; then
-        return
-    fi
-    
     log_info ""
-    log_action "Adding chat.promptFilesLocations to settings.json..."
+    log_info "Checking chat.promptFilesLocations..."
     
-    if [ "$DRY_RUN" = true ]; then
-        log_info "[DRY RUN] Would add chat.promptFilesLocations"
-        return
-    fi
-    
-    # Detect existing prompt directories
+    # Collect all prompt directories (RECURSIVE - fixed for subdirectories)
     local prompt_dirs=()
     
-    # Check for .github/prompts
+    # Scan .github/prompts recursively
     if [ -d "$MONOREPO_DIR/.github/prompts" ]; then
-        prompt_dirs+=('    ".github/prompts": true')
+        while IFS= read -r -d '' dir; do
+            local rel_path="${dir#$MONOREPO_DIR/}"
+            prompt_dirs+=("$rel_path")
+        done < <(find "$MONOREPO_DIR/.github/prompts" -type d -print0)
     fi
     
-    # Check for app-specific prompts
+    # Scan app-specific prompts recursively
     for app_dir in "$MONOREPO_DIR"/apps/*/; do
+        [ -d "$app_dir" ] || continue
+        
         if [ -d "$app_dir/.copilot/prompts" ]; then
-            local rel_path=$(realpath --relative-to="$MONOREPO_DIR" "$app_dir/.copilot/prompts")
-            prompt_dirs+=("    \"$rel_path\": true")
-        fi
-        if [ -d "$app_dir/prompts" ]; then
-            local rel_path=$(realpath --relative-to="$MONOREPO_DIR" "$app_dir/prompts")
-            prompt_dirs+=("    \"$rel_path\": true")
+            while IFS= read -r -d '' dir; do
+                local rel_path="${dir#$MONOREPO_DIR/}"
+                prompt_dirs+=("$rel_path")
+            done < <(find "$app_dir/.copilot/prompts" -type d -print0)
         fi
     done
     
     if [ ${#prompt_dirs[@]} -eq 0 ]; then
-        log_info "No prompt directories found - skipping"
+        log_info "No prompt directories found"
         return
     fi
     
-    # Create the JSON block
-    local json_block=""
-    json_block+='  "chat.promptFilesLocations": {\n'
-    
-    for i in "${!prompt_dirs[@]}"; do
-        if [ $i -eq $((${#prompt_dirs[@]} - 1)) ]; then
-            json_block+="${prompt_dirs[$i]}\n"
-        else
-            json_block+="${prompt_dirs[$i]},\n"
+    # Check which paths are missing from settings.json
+    local missing_dirs=()
+    for dir in "${prompt_dirs[@]}"; do
+        if ! grep -q "\"$dir\":" "$settings_file" 2>/dev/null; then
+            missing_dirs+=("$dir")
         fi
     done
     
-    json_block+='  },'
+    if [ ${#missing_dirs[@]} -eq 0 ]; then
+        log_success "All prompt directories already in settings.json"
+        return
+    fi
     
-    # Insert before the last closing brace
-    local temp_file=$(mktemp)
-    awk -v json="$json_block" '
-        /^}$/ && !done {
-            printf "%s\n", json
-            done = 1
-        }
-        { print }
-    ' "$settings_file" > "$temp_file"
+    # Add missing directories
+    log_warning "Found ${#missing_dirs[@]} missing prompt directory paths"
+    for dir in "${missing_dirs[@]}"; do
+        log_info "  - $dir"
+    done
     
-    mv "$temp_file" "$settings_file"
+    if [ "$DRY_RUN" = true ]; then
+        log_action "[DRY RUN] Would add missing paths to chat.promptFilesLocations"
+        return
+    fi
     
-    log_success "Added chat.promptFilesLocations"
-    log_info "ℹ️  Reload VS Code for prompts to appear: Cmd+Shift+P → 'Reload Window'"
+    # Check if promptFilesLocations exists
+    if grep -q '"chat.promptFilesLocations"' "$settings_file"; then
+        # Existing section - add missing paths before closing brace
+        local temp_file=$(mktemp)
+        local in_section=0
+        
+        while IFS= read -r line; do
+            if [[ $line =~ ^[[:space:]]*\"chat.promptFilesLocations\":[[:space:]]*\{ ]]; then
+                in_section=1
+                echo "$line"
+            elif [[ $in_section -eq 1 && $line =~ ^[[:space:]]*\}[,]?$ ]]; then
+                # Insert new paths before closing brace
+                for dir in "${missing_dirs[@]}"; do
+                    echo "    \"$dir\": true,"
+                done
+                echo "$line"
+                in_section=0
+            else
+                echo "$line"
+            fi
+        done < "$settings_file" > "$temp_file"
+        
+        mv "$temp_file" "$settings_file"
+        
+    else
+        # No existing section - create new
+        local json_block='  "chat.promptFilesLocations": {\n'
+        for i in "${!prompt_dirs[@]}"; do
+            if [ $i -eq $((${#prompt_dirs[@]} - 1)) ]; then
+                json_block+="    \"${prompt_dirs[$i]}\": true\n"
+            else
+                json_block+="    \"${prompt_dirs[$i]}\": true,\n"
+            fi
+        done
+        json_block+='  },'
+        
+        local temp_file=$(mktemp)
+        awk -v json="$json_block" '
+            /^}$/ && !done {
+                printf "%s\n", json
+                done = 1
+            }
+            { print }
+        ' "$settings_file" > "$temp_file"
+        
+        mv "$temp_file" "$settings_file"
+    fi
+    
+    log_success "Added ${#missing_dirs[@]} prompt directory paths"
+    log_info "ℹ️  Reload VS Code window: Cmd+Shift+P → 'Reload Window'"
 }
 
 ensure_agent_skills_enabled() {
