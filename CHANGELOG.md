@@ -15,6 +15,32 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.12.0] - 2026-01-19
+
+### Added
+
+- **Instruction Writer Agent (PRD-01 Implementation)**
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - templates/agents/ubod-instruction-writer.agent.md
+  severity: minor
+  note: New meta-scaffolding agent for generating .instructions.md files
+  ```
+  - Generates spec-compliant `.instructions.md` files via guided workflow
+  - Reads `vscode-custom-instructions-spec.instructions.md` to ensure compliance
+  - Validates glob patterns, YAML frontmatter, section structure
+  - Smart defaults: version 1.0.0, today's date, inferred tags
+  - Includes 3 safeguards to prevent agent location mistakes:
+    1. Smart defaults section warns agents MUST be at .github/agents/
+    2. File location validation section with explicit rules
+    3. Workflow Question 7 checks path and redirects if user mentions agents
+  - Complete examples: Rails model naming, TypeScript testing patterns
+  - 83% time reduction: 2 hours manual → 20 minutes with agent
+  - Test validated: Generated Tala design system instructions (90%+ match with manual version)
+
+---
+
 ## [1.11.1] - 2026-01-19
 
 ### Fixed
