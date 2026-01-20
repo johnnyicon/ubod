@@ -11,7 +11,23 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
-## [Unreleased]
+## [1.14.0] - 2026-01-20
+
+### Added
+
+- **Agent Writer Agent (PRD-03 Implementation)**
+  - Generates spec-compliant `.agent.md` files via guided workflow
+  - Reads `vscode-custom-agent-spec.instructions.md` and `agent-schema.md` for compliance
+  - Multi-mode support (CREATE/UPDATE/AUDIT/DEBUG/MIGRATE/PLAN/REVIEW)
+  - Per-mode workflow generation for multi-mode agents
+  - Boundary formatting with emoji icons (✅ ⚠️ 🚫)
+  - Tool alias validation (read, search, edit, create_file, execute, agent)
+  - Instruction file linking (finds and suggests related .instructions.md)
+  - All 6 required sections in canonical order (ROLE → COMMANDS → BOUNDARIES → SCOPE → WORKFLOW → DOMAIN CONTEXT)
+  - Smart defaults: .github/agents/ location, tool selection, time estimation
+  - Complete examples: Single-mode planner, multi-mode design system agent
+  - 83% time reduction: 3 hours manual → 30 minutes with agent
+  - Pattern reuse from instruction-writer + prompt-writer
 
 ---
 
