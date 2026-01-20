@@ -15,6 +15,33 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.13.0] - 2026-01-19
+
+### Added
+
+- **Prompt Writer Agent (PRD-02 Implementation)**
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - templates/agents/ubod-prompt-writer.agent.md
+  severity: minor
+  note: New meta-scaffolding agent for generating .prompt.md files
+  ```
+  - Generates spec-compliant `.prompt.md` files via guided workflow
+  - Reads `vscode-custom-prompt-spec.instructions.md` to ensure compliance
+  - Iterative step collection (add/edit/reorder workflow steps with substeps)
+  - Tag suggestions extracted from workflow name/description
+  - Time estimation heuristic (5 minutes per step baseline)
+  - Validates frontmatter (name required for slash commands)
+  - Formats success criteria as checklists (`- [ ]`)
+  - Numbers workflow steps sequentially (1, 2, 3...)
+  - Smart defaults: .github/prompts/ location, estimated time, tags
+  - Complete examples: Component creation, debugging workflows
+  - 83% time reduction: 1.5 hours manual → 15 minutes with agent
+  - Pattern reuse from instruction-writer: spec parsing, validation, preview workflow
+
+---
+
 ## [1.12.0] - 2026-01-19
 
 ### Added
