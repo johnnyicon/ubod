@@ -2,9 +2,32 @@
 
 **A Comprehensive Guide to Skills, Prompts, Agents, and Instructions in GitHub Copilot**
 
-**Last Updated:** 2026-01-21
+**Version:** 3.0  
+**Last Updated:** 2026-01-21  
+**Audience:** GitHub Copilot users (beginner to advanced)  
+**Reading Time:** 20-30 minutes (full read) | 5 minutes (reference)
 
 > **📌 Note:** This guide is specifically for **GitHub Copilot's artifact system**. Other AI coding tools (Claude Code, Cursor, etc.) may organize things differently. The principles (DRY, separation of concerns, progressive disclosure) apply universally, but the specific features (auto-loading via `applyTo`, orchestration via `runSubagent`) are GitHub Copilot-specific.
+
+> 💡 **Tip:** This guide is long but scannable. **Beginners:** Read straight through. **Returning users:** Use Ctrl+F or jump to sections below.
+
+---
+
+## Quick Navigation
+
+- [The Problem This Solves](#the-problem-this-solves)
+- [Why This Guide Exists](#why-this-guide-exists)
+- [Part 1: The Big Picture](#part-1-the-big-picture)
+- [Part 2: Hard vs. Soft Boundaries](#part-2-the-critical-distinction-hard-vs-soft-boundaries)
+- [Part 3: Deep Dive Into Each Artifact](#part-3-deep-dive-into-each-artifact)
+- [Part 4: How They Work Together](#part-4-how-they-work-together)
+- [Part 5: Avoiding Common Mistakes](#part-5-avoiding-common-mistakes)
+- [Part 6: Decision Guide](#part-6-decision-guide)
+- [Part 7: When NOT to Create](#part-7-when-not-to-create-an-artifact)
+- [Getting Started: Your First Hour](#getting-started-your-first-hour)
+- [Part 8: FAQ](#part-8-frequently-asked-questions)
+- [Part 9: Summary](#part-9-summary)
+- [Appendix: Cheat Sheet](#appendix-one-page-cheat-sheet)
 
 ---
 
@@ -205,13 +228,35 @@ These are the ONLY things that are technically different:
 **Only two hard rules exist:**
 
 1. **Only instructions auto-load** based on `applyTo` file path patterns
-   - When you edit a file matching `apps/tala/app/components/**/*`, the relevant instruction is automatically in the LLM's context
+   - When you edit a file matching `apps/tala/app/components/**/*`, the relevant instruction is automatically in GitHub Copilot's context
    - You don't ask for it. It just happens.
 
 2. **Only agents work with `runSubagent`** for orchestration
    - An agent can call another agent programmatically
    - Prompts cannot be called by other agents
    - This enables multi-agent workflows
+
+**Real example of the difference:**
+
+**HARD boundary (system prevents it):**
+```javascript
+// This will ERROR - GitHub Copilot's system prevents it
+runSubagent({
+  agentName: "create-prd",  // ❌ This is a prompt, not an agent
+  prompt: "Create a PRD"
+})
+// Result: System error - prompts can't be called via runSubagent
+```
+
+**SOFT boundary (conventions discourage it):**
+```markdown
+# In a skill file (will WORK but violates conventions)
+## Workflow
+1. Do step one
+2. Do step two  
+3. Execute task
+```
+☝️ Skills **CAN** contain workflows (GitHub Copilot will read and follow them if you write them there), but by convention they **SHOULDN'T** (because it makes it unclear where workflows live—readers expect workflows in agents, not skills. This violates the separation of concerns principle).
 
 ### Soft Boundaries (Conventions)
 
@@ -879,7 +924,65 @@ description: Create a README file
 I'll help you create a README. What's the project name?
 ```
 
-### Mistake 5: Skipping Skills for "Simple" Knowledge
+### Mistake 5: Making Skills Too Specific
+
+**Wrong:**
+```markdown
+# Skill: Button Component Implementation
+When implementing ButtonComponent specifically in the Tala app:
+- Use exactly 3 variants: primary, secondary, tertiary
+- Place in app/components/ui/button_component.rb
+- Test in test/components/ui/button_component_test.rb
+```
+
+**Right:**
+```markdown
+# Skill: Component Implementation Patterns
+When implementing ANY component in Tala apps:
+- Use `type:` prop for variants
+- Place in app/components/{namespace}/{name}_component.rb
+- Test in test/components/{namespace}/{name}_component_test.rb
+- Create preview in test/components/previews/{namespace}/{name}_preview.rb
+```
+
+**Why this matters:** Skills should be reusable. If it only applies to one specific component, put it in that component's documentation instead. Skills are for **patterns**, not **instances**.
+
+### Mistake 6: Creating Artifacts Before Understanding the Problem
+
+**Wrong approach:**
+```markdown
+"I should create an agent, three skills, and two instructions 
+before I start coding."
+```
+
+**Better approach:**
+```markdown
+"I'll start coding and create artifacts when I notice patterns:
+- Repeating the same explanation → Skill
+- Applying same rules to specific paths → Instruction  
+- Doing same multi-step workflow → Agent
+- Guiding users through same task → Prompt
+"
+```
+
+**Why this matters:** Artifacts are for capturing patterns you've **already discovered**, not planning architecture you **haven't validated yet**. Code first, extract patterns second.
+
+**Ask yourself:**
+- Have I actually encountered this pattern 2+ times?
+- Do I fully understand the problem domain?
+- Is this solving a real pain point or theoretical future need?
+
+If you answered "no" to any of these, keep coding. Create the artifact when the need is crystal clear.
+- Third time I explain the same thing → Skill
+- Keep forgetting rules for certain files → Instruction  
+- Delegating the same task repeatedly → Agent"
+```
+
+**Why this matters:** Artifacts solve problems you've **already experienced**. Create them reactively (when you notice duplication or repetition), not proactively (before you have evidence you need them).
+
+The "Getting Started" section recommends starting with one skill and one prompt for this reason—you'll discover what other artifacts you need through actual use.
+
+### Mistake 7: Skipping Skills for "Simple" Knowledge
 
 **Wrong:**
 ```markdown
@@ -930,15 +1033,15 @@ Do I need this knowledge in multiple places?
 
 ### Decision Matrix
 
-| If you need... | Use this | Example | Why this and not others |
-|----------------|----------|---------|-------------------------|
-| Knowledge reused by multiple artifacts | **Skill** | "Component naming rules" used by 3 agents | Update once, fixes everywhere |
-| Auto-enforcement when editing certain files | **Instruction** | "Check for preview file when saving component" | Only instructions auto-load by path |
-| A task other agents can delegate to | **Agent** | "Design System agent" called by UI/UX Designer | Only agents work with runSubagent |
-| Complex multi-step workflow with orchestration | **Agent** | PRD Enricher calls Discovery → UI/UX → Verifier | Agents can call other agents |
-| Simple guided task user runs directly | **Prompt** | "/create-readme" guides through README creation | Simpler than agent when no orchestration |
-| Path-specific rules that reference a skill | **Instruction** | "Enforce design system for app/components/**/*" | Thin reference + auto-load |
-| Reusable expert with identity | **Agent** | "Tala Verifier" (role: QA specialist) | Agents have name, role, expertise |
+| If you need... | Use this | Quick Test | Example | Why this and not others |
+|----------------|----------|------------|---------|-------------------------|
+| Knowledge reused by multiple artifacts | **Skill** | "Will 2+ artifacts need this?" | "Component naming rules" used by 3 agents | Update once, fixes everywhere |
+| Auto-enforcement when editing certain files | **Instruction** | "Should this apply automatically when editing X files?" | "Check for preview file when saving component" | Only instructions auto-load by path |
+| A task other agents can delegate to | **Agent** | "Will other agents hire this expert?" | "Design System agent" called by UI/UX Designer | Only agents work with runSubagent |
+| Complex multi-step workflow with orchestration | **Agent** | "Does this need to delegate to specialists?" | PRD Enricher calls Discovery → UI/UX → Verifier | Agents can call other agents |
+| Simple guided task user runs directly | **Prompt** | "Will users run this directly without orchestration?" | "/create-readme" guides through README creation | Simpler than agent when no orchestration |
+| Path-specific rules that reference a skill | **Instruction** | "Does this apply to a file path pattern?" | "Enforce design system for app/components/**/*" | Thin reference + auto-load |
+| Reusable expert with identity | **Agent** | "Does this need a role and can delegate?" | "Tala Verifier" (role: QA specialist) | Agents have name, role, expertise |
 
 ### The "Which Artifact?" Checklist
 
@@ -1018,6 +1121,36 @@ Sometimes the answer is "just put it in code comments" or "keep it in one place"
 - ❌ Agents need to call it (use agent)
 - ❌ Needs path-based trigger (use instruction)
 - ❌ Just one question (use inline)
+
+---
+
+## Getting Started: Your First Hour
+
+**If you're just starting out, follow this order:**
+
+- [ ] **First 10 minutes:** Create one skill
+  - Pick knowledge used in 2+ places (or will be soon)
+  - Follow the template in Part 3 of this guide
+  - Keep it simple - just document one pattern
+  - Test: Can you reference it with `read_file(".github/skills/your-skill/SKILL.md")`?
+
+- [ ] **Next 20 minutes:** Create a prompt that uses your skill
+  - Pick a simple task you do regularly
+  - Load the skill with `read_file()` in the prompt
+  - Walk through the steps manually
+  - Test: Run it with `/your-prompt-name`
+
+- [ ] **Next 30 minutes:** Convert a repetitive task to an agent
+  - Find something you do weekly (code review checklist, PR creation, etc.)
+  - Write the workflow in agent format
+  - Have it load your skill for knowledge
+  - Test with `@your-agent-name`
+
+**Don't touch instructions yet.** Add them later when you notice yourself wanting "automatic" behavior for certain file paths.
+
+**Don't create complex agent orchestration yet.** Master single agents first. Add `runSubagent` when you find yourself copying agent workflows.
+
+**Remember:** Start with one skill and one prompt. Everything else can wait until you need it.
 
 ---
 
@@ -1220,6 +1353,36 @@ Check:
 
 ## Part 9: Summary
 
+### Visual Mental Model
+
+Here's the entire system in one diagram:
+
+```
+           📚 SKILLS (Knowledge Layer)
+                    ↓ loaded by
+        ┌───────────┼───────────┬────────────┐
+        │           │           │            │
+    📋 INST     🤖 AGENT    📝 PROMPT    👤 USER
+     (auto)      (hired)     (guide)    (direct)
+        │           │           │            │
+        ↓           ↓           ↓            ↓
+    Enforces   Orchestrates  Guides     Invokes
+    rules      workflows     steps      everything
+```
+
+**Read the diagram:**
+- **Skills** sit at the top (everyone reads from here for knowledge)
+- **Instructions** auto-load for certain file paths (no user action needed)
+- **Agents** can be hired by other agents (enables orchestration via `runSubagent`)
+- **Prompts** guide users directly (user follows steps)
+- **User** can invoke agents (`@name`) or prompts (`/name`) directly
+
+**Data flow:**
+1. All knowledge flows DOWN from skills (single source of truth)
+2. Users flow UP through prompts/agents (request assistance)
+3. Agents flow HORIZONTALLY to each other (delegation)
+4. Instructions flow AUTOMATICALLY (triggered by file edits)
+
 ### The Complete Picture (GitHub Copilot Artifacts)
 
 **Remember:** This is specific to GitHub Copilot. Other AI tools organize differently.
@@ -1262,3 +1425,179 @@ PROMPT = User guide (references skill)
 ---
 
 **Remember:** The goal is organized, maintainable AI assistance. Skills prevent duplication. Instructions provide automatic enforcement. Agents enable orchestration. Prompts guide users. Together, they create a system where knowledge is consistent and capabilities are clear.
+
+---
+
+## Appendix: One-Page Cheat Sheet
+
+### Quick Decision Tree
+
+```
+Start Here: What do you need?
+│
+├─ Knowledge used in multiple places?
+│  └─ → CREATE SKILL
+│     Location: .github/skills/{name}/SKILL.md
+│     Test: Can others reference it?
+│
+├─ Rules that apply to specific file paths?
+│  └─ → CREATE INSTRUCTION
+│     Location: .github/instructions/{name}.instructions.md
+│     Test: Does it auto-load when editing those files?
+│
+├─ Complex workflow that delegates to specialists?
+│  └─ → CREATE AGENT
+│     Location: .github/agents/{name}.agent.md
+│     Test: Can it call runSubagent?
+│
+└─ Simple guided task for users?
+   └─ → CREATE PROMPT
+      Location: .github/prompts/{name}.prompt.md
+      Test: Can users run /name?
+```
+
+### The Two Hard Constraints
+
+| Constraint | What It Means | Why It Matters |
+|------------|---------------|----------------|
+| **Instructions auto-load** | `applyTo: "path/**/*"` triggers automatic context loading | Only way to get automatic enforcement |
+| **Agents use runSubagent** | `runSubagent(name: "agent-name")` enables orchestration | Only way to do agent-to-agent delegation |
+
+### File Location Quick Reference
+
+```
+.github/
+├── skills/
+│   └── {skill-name}/
+│       └── SKILL.md              # Knowledge (single source of truth)
+│
+├── instructions/
+│   └── {name}.instructions.md   # Auto-loading rules (path-based)
+│
+├── agents/
+│   └── {name}.agent.md          # Orchestration workflows (callable)
+│
+└── prompts/
+    └── {name}.prompt.md         # User-facing guides (simple)
+```
+
+### Frontmatter Quick Reference
+
+**Skill:**
+```yaml
+---
+name: skill-name
+description: One-line summary
+---
+```
+
+**Instruction:**
+```yaml
+---
+applyTo: "path/to/files/**/*"
+---
+```
+
+**Agent:**
+```yaml
+---
+name: Agent Display Name
+description: What this agent does
+---
+```
+
+**Prompt:**
+```yaml
+---
+description: User-facing task description
+---
+```
+
+### Common Patterns Quick Reference
+
+| Pattern | Code Example | File Type |
+|---------|--------------|----------|
+| **Load skill** | `read_file(".github/skills/name/SKILL.md")` | Any |
+| **Call agent** | `runSubagent(name: "agent-name", description: "...", prompt: "...")` | Agent only |
+| **User invokes agent** | `@agent-name` in chat | N/A |
+| **User invokes prompt** | `/prompt-name` in chat | N/A |
+| **Auto-load instruction** | Edit file matching `applyTo` pattern | Automatic |
+
+### The DRY Architecture in 3 Lines
+
+```
+1. Write knowledge ONCE in skills
+2. Reference skills from instructions/agents/prompts
+3. Never copy-paste knowledge between artifacts
+```
+
+### Red Flags (When You're Doing It Wrong)
+
+| Red Flag | What It Means | Fix |
+|----------|---------------|-----|
+| Copying same text into multiple files | Knowledge duplication | Extract to skill |
+| Instruction over 50 lines | Workflow in wrong place | Move logic to agent |
+| Agent with no delegation | Could be simpler | Consider prompt |
+| Skill with "Step 1, 2, 3" | Workflow in wrong place | Move to agent |
+| Creating artifacts before coding | Premature abstraction | Code first, extract later |
+
+### Quick Validation Checklist
+
+**Before committing any artifact, check:**
+
+- [ ] **DRY:** Is knowledge duplicated anywhere?
+- [ ] **Location:** Is it in the right `.github/` subfolder?
+- [ ] **Frontmatter:** Does it have required YAML?
+- [ ] **Purpose:** Does it match its artifact type (knowledge/rules/workflow/guide)?
+- [ ] **Tested:** Did you actually test the invocation method?
+- [ ] **Named:** Does the file name match conventions (`{name}.agent.md`, `SKILL.md`, etc.)?
+
+### When NOT to Create Artifacts
+
+| Scenario | What to Do Instead |
+|----------|--------------------|
+| One-time task | Just do it inline |
+| Knowledge only needed once | Keep it in that file |
+| Still figuring out the pattern | Wait until you see it 2+ times |
+| Simple one-liner rule | Add to existing instruction |
+| Testing an idea | Prototype first, extract later |
+
+### Emergency Debugging
+
+**Instruction not auto-loading?**
+- Check `applyTo` path matches file you're editing
+- Verify frontmatter has `---` delimiters
+- Restart Copilot (reload window)
+
+**Agent not callable via runSubagent?**
+- Check file is in `.github/agents/` folder
+- Verify filename ends with `.agent.md`
+- Check agent name matches in frontmatter
+
+**Prompt not appearing with /name?**
+- Check file is in `.github/prompts/` folder
+- Verify filename ends with `.prompt.md`
+- Restart Copilot (reload window)
+
+**Skill not loading?**
+- Verify path in `read_file()` is correct
+- Check file is named `SKILL.md` (all caps)
+- Verify it's in `.github/skills/{name}/` folder
+
+### The 80/20 Rule
+
+**80% of your needs:**
+- 1-2 skills (core knowledge)
+- 2-3 instructions (path enforcement)
+- 1 orchestrator agent (delegation)
+
+**20% edge cases:**
+- Multiple specialized agents
+- Domain-specific skills
+- Complex instruction sets
+
+**Start simple. Add complexity only when needed.**
+
+---
+
+**End of Cheat Sheet** — Save this page for quick reference when creating artifacts.
