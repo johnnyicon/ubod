@@ -20,6 +20,7 @@
 - [Part 4: Traceability and Announcements](#part-4-traceability-and-announcements)
 - [Part 5: Case Study — PRD Enrichment](#part-5-case-study--prd-enrichment)
 - [Part 6: Common Patterns](#part-6-common-patterns)
+- [Part 6.5: Testing Orchestration Reliability](#part-65-testing-orchestration-reliability)
 - [Part 7: Debugging Orchestration](#part-7-debugging-orchestration)
 - [Appendix: Orchestration Cheat Sheet](#appendix-orchestration-cheat-sheet)
 
@@ -252,7 +253,67 @@ Copilot: "Here's the enriched PRD"
 - No visibility into what each specialist contributed
 - Hard to debug when something goes wrong
 
-### The Solution: Agent Announcements
+### The Solution: Multi-Layer Traceability
+
+**Three levels of traceability improvements:**
+
+#### Level 1: Basic Agent Announcements
+
+Add **ANNOUNCEMENTS** sections to each agent with clear markers (covered below).
+
+#### Level 2: Caller Identity in Prompts
+
+**Problem:** Sub-agents don't know who invoked them.
+
+**Solution:** Orchestrators include caller identity in `runSubagent` prompts:
+
+```javascript
+runSubagent(
+  agentName: "Discovery Planner",
+  prompt: "You are being invoked by PRD Enricher.
+           
+           Task: Map existing patterns for drag-and-drop feature..."
+)
+```
+
+Sub-agents detect and announce the caller:
+
+```markdown
+### Caller Detection
+
+Check the prompt for "You are being invoked by [Agent Name]".
+
+If found, announce:
+```
+🔍 **DISCOVERY PLANNER RESPONDING TO: PRD Enricher**
+
+Invoked by: PRD Enricher
+Task: [Restate task]
+Status: ACTIVE
+```
+```
+
+#### Level 3: Skill Loading Announcements
+
+**Problem:** No visibility into which skills are loaded and when.
+
+**Solution:** Add announcement section to skill files:
+
+```markdown
+## SKILL LOADED ANNOUNCEMENT
+
+> **When this skill is loaded, display:**
+>
+> 📚 **SKILL LOADED: Discovery Methodology**
+>
+> **Providing knowledge for:** Evidence-first development, codebase exploration
+> **Available sections:** Discovery Workflow, Verification Checklists, Patterns
+> **Loaded because:** Starting new work or need to understand existing code
+```
+
+**Note:** Skills are passive files. The LLM decides when to display this. It won't auto-trigger, but provides a template for consistent announcements.
+
+### Agent Announcements
 
 Add **ANNOUNCEMENTS** sections to each agent with clear markers:
 
@@ -551,6 +612,76 @@ Parse Input
 ```
 
 **Use when:** Task type determines which specialists are needed.
+
+---
+
+## Part 6.5: Testing Orchestration Reliability
+
+### The Testing Harness
+
+Before using orchestration in production workflows, validate it works:
+
+**Test Agents:**
+- **Test Orchestrator** — Minimal orchestrator that invokes Test Responder
+- **Test Responder** — Returns "TEST SUCCESS" to verify round-trip works
+
+**Location:** `.github/agents/test-orchestrator.agent.md` and `test-responder.agent.md`
+
+### Running Reliability Tests
+
+**Single test:**
+```
+@Test Orchestrator run a test
+```
+
+**Expected output:**
+```
+🧪 **TEST ORCHESTRATOR ACTIVE**
+Purpose: Verify runSubagent orchestration mechanism
+...
+
+📤 **HANDOFF: Test Responder**
+...
+
+🤖 **TEST RESPONDER ACTIVE**
+Invoked by: Test Orchestrator
+...
+
+TEST SUCCESS
+
+✅ **TEST PASSED**
+Orchestration is working correctly!
+```
+
+**10-run reliability test:**
+
+Run `@Test Orchestrator` 10 times and track results:
+
+| Test # | Pass/Fail | Notes |
+|--------|-----------|-------|
+| 1-10   | Track each | |
+
+**Reliability interpretation:**
+- **10/10 passes** = Orchestration is reliable ✅
+- **7-9/10 passes** = Mostly reliable, investigate failures ⚠️
+- **0-6/10 passes** = Not reliable, debug needed ❌
+
+### When to Use the Testing Harness
+
+**Before:**
+- Deploying orchestration to production workflows
+- Making changes to orchestration infrastructure
+- Debugging complex orchestration failures
+
+**To diagnose:**
+- Is the problem with `runSubagent` itself or my workflow?
+- Are agent names matching correctly?
+- Are announcements working as expected?
+
+**Benefits:**
+- Isolates orchestration mechanism from complex domain logic
+- Fast feedback (< 1 minute per test)
+- Establishes baseline reliability before complex work
 
 ---
 
