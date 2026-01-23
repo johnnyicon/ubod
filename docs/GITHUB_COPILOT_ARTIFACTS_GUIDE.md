@@ -785,7 +785,7 @@ User: "@prd-enricher Enrich my PRD with design system context"
 │ PRD Enricher Agent (Orchestrator)                                │
 │                                                                  │
 │ Step 1: Load context                                             │
-│   read_file(".github/agents/AGENT_INDEX.md")                     │
+│   read_file(".github/agents/agents-registry.yaml")               │
 │   read_file("prds/tala/my-feature/01_prd.md")                    │
 │                                                                  │
 │ Step 2: Invoke Discovery Agent                                   │

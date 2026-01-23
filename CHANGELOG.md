@@ -11,6 +11,84 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.5.0] - 2026-01-22
+
+### Added
+
+- **Agent Registry System for Dynamic Routing**
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - templates/prompts/agent-registry-update.prompt.md
+    - templates/agents/app-orchestrator.agent.md
+    - ubod-meta/schemas/agent-registry-schema.md
+    - ubod-meta/docs/case-studies/tala-orchestrator.md
+  severity: minor
+  note: Enables semantic routing and hybrid orchestration patterns
+  ```
+  - **Agent Registry Update Prompt** (`templates/prompts/agent-registry-update.prompt.md`)
+    - Auto-generates `agents-registry.yaml` from agent frontmatter metadata
+    - Extracts domains, keywords, complexity from agent files
+    - Categorizes agents by domain (planning, design, implementation, verification, documentation)
+    - Generates routing patterns with confidence levels
+    - Configurable: `APP_PREFIX`, `EXCLUDE_PATTERNS`, registry path
+    - 8-step workflow: scan → extract → categorize → generate → validate → write
+    - Supports INITIALIZE (first-time) and REFRESH (rescan) modes
+    - **Action:** Use `/agent-registry-update` to generate registry for your app
+  
+  - **Router Agent Template** (`templates/agents/app-orchestrator.agent.md`)
+    - Hybrid orchestrator template: routes to specialists OR handles directly
+    - Semantic routing via agents-registry.yaml (keyword matching)
+    - Confidence-based decisions: high (90%+), medium (60-89%), low (<60%)
+    - Built-in discovery methodology (always-on search-first workflow)
+    - Transparent announcements (explains routing decisions)
+    - Stuck detection with escalation
+    - Customization points: `{{APP}}`, `{{TECH_STACK}}`, routing patterns
+    - **Action:** Customize template for your app, test routing accuracy
+  
+  - **Agent Registry Schema** (`ubod-meta/schemas/agent-registry-schema.md`)
+    - Complete YAML format specification (900+ lines)
+    - Field-by-field documentation: agent-id, file, name, description, domains, keywords, complexity, tools
+    - 15 common domain values documented (prd, discovery, architecture, ui/ux, design-system, implementation, testing, etc.)
+    - Routing pattern structure with confidence levels
+    - Semantic matching algorithm in TypeScript
+    - Routing decision tree (ASCII diagram)
+    - Validation rules checklist (9 checkpoints)
+    - Extensibility patterns (custom fields, custom routing logic)
+    - **Action:** Reference when implementing dynamic routing
+  
+  - **Tala Orchestrator Case Study** (`ubod-meta/docs/case-studies/tala-orchestrator.md`)
+    - Reference implementation documentation (1,100+ lines)
+    - Architecture: 10-agent ecosystem (1 orchestrator + 9 specialists)
+    - Semantic routing algorithm with confidence thresholds
+    - Metrics: 92% routing accuracy, 23/23 tests passing
+    - Lessons learned: what worked, what didn't, anti-patterns
+    - Code examples: loading registry, matching keywords, routing decisions
+    - Recommendations for new implementations
+    - **Action:** Use as reference when building hybrid orchestrators
+
+### Changed
+
+- **Multi-Agent Orchestration Guide** (`docs/MULTI_AGENT_ORCHESTRATION_GUIDE.md`)
+  - Added Part 3.5: Agent Discovery & Routing (Advanced)
+  - Documents agent registry system for dynamic routing
+  - Semantic routing pattern with confidence thresholds
+  - Registry YAML structure example with agents, categories, routing patterns
+  - When to use registry-based routing (hybrid orchestrators, 5+ agents)
+  - Reference to Tala case study
+  - **Action:** Read Part 3.5 when building orchestrators with dynamic routing
+
+- **Orchestration Design Skill** (`templates/skills/orchestration-design/SKILL.md`)
+  - Added Step 3: Routing Strategy (Optional)
+  - Fixed routing vs dynamic routing decision tree
+  - Semantic matching implementation example (TypeScript)
+  - Confidence threshold guidance: high (90%+), medium (60-89%), low (<60%)
+  - When to skip routing (fixed workflows, <5 agents, not user-facing)
+  - Reference to Tala case study for full implementation
+  - **Action:** Use Step 3 when designing hybrid orchestrators
+
+---
+
 ## [1.4.0] - 2026-01-22
 
 ### Added

@@ -75,7 +75,61 @@ Step 4: Verification (needs all previous)
 
 **Output:** Dependency graph showing order
 
-### Step 3: Agent Scaffolding (10 min)
+### Step 3: Routing Strategy (5 min) — OPTIONAL
+
+**For hybrid orchestrators (route OR handle directly):**
+
+If building an orchestrator that needs to dynamically select specialists based on user request:
+
+**Option A: Fixed Routing (Simple)**
+- Orchestrator always calls same specialists in same order
+- Example: PRD Enricher always calls (1) Discovery → (2) UI Designer → (3) Verifier
+- **Use when:** Workflow is always the same
+
+**Option B: Dynamic Routing (Advanced)**
+- Orchestrator matches request keywords to specialist domains
+- Routes complex requests to specialists, handles simple requests directly
+- Example: Tala Orchestrator routes "design UI" → UI Designer, handles "what's in model?" directly
+- **Use when:** Orchestrator is user-facing entry point with varying request types
+
+**If using dynamic routing, create agent registry:**
+
+1. **Generate registry** using `/agent-registry-update` prompt
+   - Scans all agent files
+   - Extracts domains and keywords from frontmatter
+   - Generates `agents-registry.yaml` with routing patterns
+
+2. **Implement semantic matching** in orchestrator:
+   ```typescript
+   // Load registry
+   const registry = YAML.parse(await read_file(".github/agents/agents-registry.yaml"));
+   
+   // Extract keywords from user request
+   const keywords = extractKeywords(userRequest);
+   
+   // Match against agent keywords
+   const bestMatch = findBestMatch(keywords, registry.agents);
+   
+   // Route based on confidence
+   if (bestMatch.confidence >= 0.9) {
+     return await runSubagent({ agentName: bestMatch.agentId, ... }); // HIGH: auto-route
+   } else if (bestMatch.confidence >= 0.6) {
+     return await ask(`Route to ${bestMatch.agent.name}?`); // MEDIUM: confirm
+   } else {
+     return handleDirectly(); // LOW: handle without specialist
+   }
+   ```
+
+3. **Confidence thresholds** (empirically validated):
+   - High (90%+): Auto-route without confirmation
+   - Medium (60-89%): Ask confirmation before routing
+   - Low (<60%): Show options or handle directly
+
+**Reference:** See `ubod-meta/docs/case-studies/tala-orchestrator.md` for full implementation (92% routing accuracy)
+
+**Skip routing if:** Fixed workflow, <5 agents, or not user-facing
+
+### Step 4: Agent Scaffolding (10 min)
 
 For each specialist, define:
 

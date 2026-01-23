@@ -319,6 +319,173 @@ The orchestrator agent should have a clear workflow section:
 
 ---
 
+## Part 3.5: Agent Discovery & Routing (Advanced)
+
+### The Agent Registry System
+
+For orchestrators that need to dynamically route requests to appropriate specialists, the **agent registry system** provides machine-readable agent discovery.
+
+**When to use:**
+- Building hybrid orchestrators (route complex, handle simple directly)
+- Supporting natural language routing ("find patterns" → discovery planner)
+- Dynamically selecting specialists based on request keywords
+
+**Pattern: Machine-Readable Catalog**
+
+```yaml
+# .github/agents/agents-registry.yaml (auto-generated)
+
+agents:
+  my-app-discovery-planner:
+    file: .github/agents/my-app-discovery-planner.agent.md
+    name: My App Discovery Planner
+    description: Maps existing codebase patterns
+    domains:
+      - discovery
+      - patterns
+      - architecture
+    keywords:
+      - find
+      - discover
+      - existing
+      - patterns
+      - search
+    complexity: comprehensive
+    tools: ["read", "search"]
+
+  my-app-ui-designer:
+    file: .github/agents/my-app-ui-designer.agent.md
+    name: My App UI Designer
+    description: Designs UI components and interactions
+    domains:
+      - ui
+      - ux
+      - design
+    keywords:
+      - design
+      - ui
+      - component
+      - view
+      - interface
+    complexity: multi-step
+    tools: ["read", "search", "edit"]
+
+categories:
+  planning:
+    description: Requirements, discovery, and architecture
+    agents:
+      - my-app-discovery-planner
+
+  design:
+    description: UI/UX and design system work
+    agents:
+      - my-app-ui-designer
+
+routing:
+  default_behavior: suggest
+  fallback: handle_with_discovery
+  patterns:
+    - keywords: ["find", "discover", "existing", "patterns"]
+      suggest: my-app-discovery-planner
+      confidence: high
+
+    - keywords: ["design", "ui", "component", "view"]
+      suggest: my-app-ui-designer
+      confidence: high
+```
+
+### Semantic Routing Pattern
+
+**How orchestrators use the registry:**
+
+```typescript
+// 1. Load registry
+const registry = YAML.parse(await read_file(".github/agents/agents-registry.yaml"));
+
+// 2. Extract keywords from user request
+const userRequest = "Find existing document upload patterns";
+const keywords = extractKeywords(userRequest); // ["find", "existing", "document", "upload", "patterns"]
+
+// 3. Match against agent keywords
+const matches = Object.entries(registry.agents).map(([agentId, agent]) => {
+  const matchedKeywords = agent.keywords.filter(k => 
+    keywords.includes(k) || similarTo(k, keywords)
+  );
+  const confidence = matchedKeywords.length / agent.keywords.length;
+  return { agentId, agent, confidence, matchedKeywords };
+});
+
+// 4. Find best match
+const bestMatch = matches.sort((a, b) => b.confidence - a.confidence)[0];
+
+// 5. Route based on confidence
+if (bestMatch.confidence >= 0.9) {
+  // HIGH confidence → auto-route
+  return await runSubagent({ agentName: bestMatch.agentId, ... });
+} else if (bestMatch.confidence >= 0.6) {
+  // MEDIUM confidence → ask confirmation
+  const proceed = await ask(`Route to ${bestMatch.agent.name} (${bestMatch.confidence * 100}% match)?`);
+  return proceed ? await runSubagent({ ... }) : handleDirectly();
+} else {
+  // LOW confidence → show options or handle directly
+  return handleDirectly();
+}
+```
+
+**Confidence thresholds (empirically validated):**
+- **High (90%+):** Auto-route without confirmation (8/10 requests)
+- **Medium (60-89%):** Suggest with confirmation (1/10 requests)
+- **Low (<60%):** Show menu or handle directly (1/10 requests)
+
+### Generating the Registry
+
+**Registry is auto-generated from agent frontmatter using the `/agent-registry-update` prompt:**
+
+```bash
+# Initialize registry (first-time)
+/agent-registry-update
+
+# Refresh after adding/modifying agents
+/agent-registry-update
+```
+
+**The prompt:**
+1. Scans all agent files in `.github/agents/`
+2. Extracts metadata from frontmatter (name, description, domains)
+3. Infers keywords from description and domains
+4. Categorizes agents by domain
+5. Generates routing patterns with confidence levels
+6. Writes `agents-registry.yaml`
+
+**DRY Principle:** Agents = source of truth, registry = derived
+
+### When to Use Registry-Based Routing
+
+**Use registry routing for:**
+- Hybrid orchestrators (route OR handle directly)
+- User-facing orchestrators (natural language entry point)
+- Apps with 5+ specialist agents
+
+**Skip registry for:**
+- Fixed workflows (always same sequence)
+- Single-purpose orchestrators (only call 1-2 specialists)
+- Apps with <5 agents (hardcoded routing is fine)
+
+### Reference Implementation
+
+**See:** `ubod-meta/docs/case-studies/tala-orchestrator.md` for full implementation with:
+- 10-agent ecosystem (1 orchestrator + 9 specialists)
+- 92% routing accuracy in production
+- Confidence-based decision tree
+- Semantic matching algorithm
+
+**Tools:**
+- **Generate registry:** `templates/prompts/agent-registry-update.prompt.md`
+- **Registry schema:** `ubod-meta/schemas/agent-registry-schema.md`
+- **Router template:** `templates/agents/app-orchestrator.agent.md`
+
+---
+
 ## Part 4: Traceability and Announcements
 
 ### The Problem: Invisible Orchestration
