@@ -147,7 +147,7 @@ The `runSubagent` tool is what enables orchestration. It's **only available to a
 ```javascript
 // Orchestrator agent can do this:
 runSubagent({
-  agentName: "Tala Discovery Planner",
+  agentName: "{{PROJECT_NAME}} Discovery Planner",
   prompt: "Map existing patterns for drag-and-drop functionality",
   description: "Find codebase patterns"
 })
@@ -194,8 +194,8 @@ runSubagent({
 ```
 
 **agentName must match exactly:**
-- ✅ `"Tala Discovery Planner"` (exact match)
-- ❌ `"tala-discovery-planner"` (kebab-case won't work)
+- ✅ `"{{PROJECT_NAME}} Discovery Planner"` (exact match)
+- ❌ `"{{project-name}}-discovery-planner"` (kebab-case won't work)
 - ❌ `"Discovery Planner"` (partial name won't work)
 
 ### What Sub-agents Return
@@ -469,7 +469,7 @@ Deliverable: [What was produced]
 With announcements, the user sees:
 
 ```
-🤖 **TALA PRD ENRICHER AGENT ACTIVE**
+🤖 **{{PROJECT_NAME}} PRD ENRICHER AGENT ACTIVE**
 
 I am the PRD enrichment orchestrator. I will:
 1. Parse the base PRD and identify gaps
@@ -481,7 +481,7 @@ Starting enrichment workflow...
 
 ---
 
-📤 **HANDOFF: Tala Discovery Planner**
+📤 **HANDOFF: {{PROJECT_NAME}} Discovery Planner**
 
 Reason: Need to map existing codebase patterns for drag-and-drop
 Task: Find document_selection API, existing drag patterns, Turbo Streams
@@ -491,7 +491,7 @@ Invoking agent now...
 
 ---
 
-📥 **RECEIVED FROM: Tala Discovery Planner**
+📥 **RECEIVED FROM: {{PROJECT_NAME}} Discovery Planner**
 
 Key Findings:
 - document_selection_controller.js uses getSelectedIds() API
@@ -503,7 +503,7 @@ Merging into PRD...
 
 ---
 
-📤 **HANDOFF: Tala UI/UX Designer**
+📤 **HANDOFF: {{PROJECT_NAME}} UI/UX Designer**
 
 Reason: Need UI design decisions for drag-and-drop interactions
 Task: Design visual states, CSS classes, animations, gotchas
@@ -513,7 +513,7 @@ Invoking agent now...
 
 ---
 
-📥 **RECEIVED FROM: Tala UI/UX Designer**
+📥 **RECEIVED FROM: {{PROJECT_NAME}} UI/UX Designer**
 
 Key Findings:
 - Dragging state: opacity-50, cursor-grabbing, scale-95
@@ -526,7 +526,7 @@ Merging into PRD...
 
 ---
 
-✅ **TALA PRD ENRICHER COMPLETE**
+✅ **{{PROJECT_NAME}} PRD ENRICHER COMPLETE**
 
 Enrichments Applied:
 - Architecture: Mapped existing patterns
@@ -545,7 +545,7 @@ PRD Status: READY FOR IMPLEMENTATION
 **Input:** A base PRD for drag-and-drop folder moving (~686 lines)
 - High-level requirements
 - No codebase-specific patterns
-- No Tala component decisions
+- No {{PROJECT_NAME}} component decisions
 - No verification checklist
 
 **Goal:** Enrich to implementation-ready (~1,693 lines)
@@ -557,18 +557,18 @@ PRD Status: READY FOR IMPLEMENTATION
 ### The Orchestration Flow
 
 ```
-User: "Use the Tala PRD Enricher to enrich the drag-and-drop PRD"
+User: "Use the {{PROJECT_NAME}} PRD Enricher to enrich the drag-and-drop PRD"
                     │
                     ↓
         ┌───────────────────────┐
-        │  Tala PRD Enricher    │
+        │  {{PROJECT_NAME}} PRD Enricher    │
         │     (Orchestrator)    │
         └───────────────────────┘
                     │
                     │ runSubagent
                     ↓
         ┌───────────────────────┐
-        │ Tala Discovery Planner│
+        │ {{PROJECT_NAME}} Discovery Planner│
         │                       │
         │ Task: Map existing    │
         │ patterns for drag     │
@@ -578,7 +578,7 @@ User: "Use the Tala PRD Enricher to enrich the drag-and-drop PRD"
                     │          drag patterns, ADRs
                     ↓
         ┌───────────────────────┐
-        │  Tala UI/UX Designer  │
+        │  {{PROJECT_NAME}} UI/UX Designer  │
         │                       │
         │ Task: Design drag UI  │
         │ approach with patterns│
@@ -588,7 +588,7 @@ User: "Use the Tala PRD Enricher to enrich the drag-and-drop PRD"
                     │          gotchas, QA script
                     ↓
         ┌───────────────────────┐
-        │    Tala Verifier      │
+        │    {{PROJECT_NAME}} Verifier      │
         │                       │
         │ Task: Check PRD       │
         │ completeness          │
@@ -842,7 +842,7 @@ Error: Could not find agent "discovery-planner"
 **Fix:** Use exact agent name from frontmatter:
 ```yaml
 ---
-name: Tala Discovery Planner  # ← Use this exactly
+name: {{PROJECT_NAME}} Discovery Planner  # ← Use this exactly
 ---
 ```
 
@@ -894,7 +894,7 @@ runSubagent({
 runSubagent({
   prompt: `Check this PRD for completeness:
            
-           File: prds/tala/mvp/20260121_folders/03_drag_and_drop.md
+           File: prds/{{project_name}}/{{feature_set}}/20260121_folders/03_drag_and_drop.md
            
            Verify:
            1. All acceptance criteria are testable

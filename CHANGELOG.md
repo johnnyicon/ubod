@@ -11,6 +11,73 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **Multi-Agent Orchestration Templates (Production-Ready)**
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - templates/agents/orchestration-designer.agent.md
+    - templates/agents/test-orchestrator.agent.md
+    - templates/agents/test-responder.agent.md
+    - templates/prompts/orchestration-design.prompt.md
+    - templates/skills/orchestration-design/SKILL.md
+    - templates/docs/MULTI_AGENT_ORCHESTRATION_GUIDE.md
+  severity: minor
+  note: Universal orchestration methodology for any multi-agent workflow
+  ```
+  - **Orchestration Designer Agent** - Interactive agent for designing orchestrations
+    - Task decomposition guidance (identify 2-5 specialist domains)
+    - Dependency mapping workflow (define execution order)
+    - Agent scaffolding templates (orchestrator + specialists)
+    - Announcement best practices (🤖📤📥✅ markers)
+    - Test harness integration (validates reliability)
+    - Schema compliance validation (ROLE → COMMANDS → BOUNDARIES → SCOPE → WORKFLOW → DOMAIN CONTEXT)
+    - Caller identity patterns (specialists detect orchestrator)
+  - **Orchestration Design Prompt** - Setup workflow for creating orchestrations
+    - 5-phase guided workflow (Discovery → Decomposition → Scaffolding → Testing → Documentation)
+    - Interactive questions about task complexity and dependencies
+    - Generates orchestrator + specialist agent files with templates
+    - Includes announcement templates and caller identity patterns
+    - Optional test harness and documentation generation
+  - **Orchestration Design Skill** - Step-by-step methodology reference
+    - Progressive disclosure: Quick Start (5 min) → Full Methodology (20 min)
+    - Task analysis checklist (when to orchestrate vs single agent)
+    - Dependency mapping process (define execution order)
+    - Agent scaffolding templates (orchestrator + specialist structures)
+    - Testing harness patterns (test-orchestrator + test-responder)
+    - Debugging orchestration failures (common issues + fixes)
+    - Performance considerations (latency, tokens, monitoring)
+    - Depth limits guidance (avoid depth > 2 orchestrations)
+  - **Multi-Agent Orchestration Guide** - Comprehensive reference documentation (10/10 completeness)
+    - Part 1: Orchestration Fundamentals (what/when/why)
+      - Visual comparison diagrams (orchestrated vs monolithic)
+      - When NOT to Orchestrate section (anti-patterns, red flags)
+    - Part 2: The runSubagent Tool (how orchestration works)
+      - Synchronous execution model
+      - Orchestration depth limits (depth 0-3+ guidance)
+    - Part 3: Designing Orchestration Workflows (step-by-step)
+    - Part 4: Traceability and Announcements (multi-layer visibility)
+      - Level 1: Basic announcements (🤖📤📥✅)
+      - Level 2: Caller identity in prompts
+      - Level 3: Skill loading announcements
+    - Part 5: Case Study — PRD Enrichment (real-world example)
+    - Part 6: Common Patterns (discovery → design → verify, etc.)
+      - Performance considerations (latency, tokens, monitoring health)
+    - Part 6.5: Testing Orchestration Reliability (test harness)
+    - Part 7: Debugging Orchestration (troubleshooting guide)
+    - Appendix: Orchestration Cheat Sheet
+    - Production-tested: 23/23 tests passed (100% reliability in bathala-kaluluwa)
+  - **Test Harness Templates** - Validate orchestration mechanism
+    - Test Orchestrator: Minimal orchestrator for reliability testing
+    - Test Responder: Returns "TEST SUCCESS" to verify round-trip
+    - Reliability target: 10/10 passes before production
+    - Isolates orchestration mechanism from complex domain logic
+
+---
+
 ## [1.14.0] - 2026-01-20
 
 ### Added
