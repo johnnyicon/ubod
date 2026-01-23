@@ -11,7 +11,7 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
-## [Unreleased]
+## [1.4.0] - 2026-01-22
 
 ### Added
 
