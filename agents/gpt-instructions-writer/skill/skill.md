@@ -48,7 +48,7 @@ version: 1.0.0
 **Execution model:**
 - **No file-reading tools** (file refs are non-functional syntax)
 - Knowledge base: auto-retrieved via semantic search
-- System instructions: token-constrained (~8K max)
+- **System instructions: 8,000 character hard limit** (not tokens, not words — characters)
 - Retrieval is probabilistic (not guaranteed like explicit file reads)
 
 **Constraints:**
@@ -56,6 +56,7 @@ version: 1.0.0
 - Behavioral rules must be in instructions (not just Knowledge)
 - Examples/templates can live in Knowledge
 - Token efficiency is critical
+- **If over 8,000 chars: move detailed examples, templates, and verbose structures to Knowledge files**
 
 ---
 
@@ -178,7 +179,7 @@ Before delivering GPT instructions, verify:
 - [ ] **Non-negotiables explicit?** (Hook-first, no meta-narration, etc.)
 - [ ] **Knowledge references clear?** (What to consult when)
 - [ ] **File manifest included?** (Documents Knowledge structure)
-- [ ] **Token count reasonable?** (~7,500 words max for system instructions)
+- [ ] **Character count under 8,000?** (Run `wc -c` to verify)
 
 If any fail: compress differently or add back critical controls.
 
@@ -237,34 +238,99 @@ When writing, reference voice patterns and templates from knowledge base.
 
 ---
 
-## Token Budget Guidelines
+## Character Budget Guidelines
 
-**Target: ~7,500 words for system instructions**
+**Hard limit: 8,000 characters for GPT system instructions**
 
-Breakdown:
-- Identity + job description: ~100 words
-- Knowledge instruction: ~50 words
-- Voices: ~100 words
-- Commands: ~50 words
-- Boundaries: ~200 words
-- Scope: ~100 words
-- Workflows: ~400 words (primary mode + 2-3 specialized modes)
-- Output defaults: ~100 words
-- Guardrails: ~300 words
-- Privacy/naming: ~50 words (if applicable)
-- File manifest: ~50 words
+This is a GPT platform constraint. Not tokens, not words — characters (including spaces and punctuation).
 
-**If over budget:**
-- Move examples to Knowledge
+**Target: ~4,000-6,000 characters** (leaves room for iteration)
+
+**If over 8,000 characters:**
+- Move detailed examples to Knowledge files
 - Convert prose to bullets
 - Combine similar rules
 - Reference Knowledge for details ("See Knowledge for platform templates")
+- Remove verbose explanations ("Here's why..." → cut)
 
-**Never cut to save tokens:**
+**Never cut to save characters:**
 - Voice bans (behavioral controls)
 - Output format specs
-- Validation checklist items
+- Validation checklist items (can compress, not remove)
 - Non-negotiables
+
+**Validation:** Run `wc -c filename.md` to check character count before delivery.
+
+---
+
+## Conversion Learnings (Patterns to Apply)
+
+These patterns emerged from real-world feedback on GPT instructions:
+
+### 1. Assumption Defaults > Ask Lists
+
+**Problem:** Long "ask first" lists cause the GPT to stall every request with questions.
+
+**Fix:** Convert blocking questions to if/then defaults with placeholders.
+
+| If Missing... | Default To... |
+|---------------|---------------|
+| URL | Use `[link]` placeholder, note "Drop link when ready" |
+| Handles | Write "(tag @guest + @org)" reminder |
+| Asset type | Assume clip unless context suggests full episode |
+
+**Rule:** Only ask when missing info truly blocks the task.
+
+---
+
+### 2. Opt-in > Default-on for Marketer-Coded Behaviors
+
+**Problem:** Default-on behaviors like "include 3-6 hashtags" can push outputs into "social marketer" territory, contradicting operator-warm voice.
+
+**Fix:** Make hashtags, emojis, and other marketer tells opt-in or default to minimal (0-3).
+
+---
+
+### 3. Retrieval Fallback Clause
+
+**Problem:** "Auto-retrieved by topic" implies guaranteed retrieval, which GPT cannot promise.
+
+**Fix:** Always include fallback language:
+```
+If knowledge files are not retrieved or unavailable, proceed with defaults from these instructions and state assumptions.
+```
+
+---
+
+### 4. Brittle Style Bans Need Context
+
+**Problem:** Hard style bans (like "no em-dashes") may be intentional (user-specified) or overly rigid (loss of useful pacing tool).
+
+**Fix:** When converting, ask: "Is this ban user-specified or inferred?" If user-specified, keep it hard. If inferred, soften to "avoid overuse."
+
+**Exception:** If user explicitly wants a hard ban, preserve it exactly.
+
+---
+
+### 5. Implied Asset Assumptions
+
+**Problem:** Platform rules may assume source material that doesn't exist (e.g., "YouTube timestamps" requires time markers in transcript).
+
+**Fix:** Add conditionals:
+```
+Provide timestamps only when source includes time markers; otherwise suggest 3-5 chapter titles.
+```
+
+---
+
+### 6. Review/Analyze Commands Need Output Shape
+
+**Problem:** Commands like "Review Copy" lack specificity on what to return.
+
+**Fix:** Specify output format for each command:
+```
+Review Copy: scorecard + 1 improved rewrite + 1 punchier rewrite
+```
 
 ---
 
@@ -281,4 +347,4 @@ For deeper guidance, reference these files:
 
 ---
 
-*Version 1.0.0 | Last updated: February 1, 2026*
+*Version 1.1.0 | Last updated: February 2, 2026*

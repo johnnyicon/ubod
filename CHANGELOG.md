@@ -11,6 +11,32 @@ All notable changes to Ubod will be documented in this file.
 
 ---
 
+## [1.6.0] - 2026-02-02
+
+### Added
+
+- **GPT Instructions Writer Agent**
+  ```yaml
+  action: PULL_LATEST
+  files:
+    - agents/gpt-instructions-writer/agent.md
+    - agents/gpt-instructions-writer/skill/skill.md
+    - agents/gpt-instructions-writer/skill/references/kane-voice-deep-guide.md
+    - agents/gpt-instructions-writer/skill/references/examples/
+  severity: minor
+  note: Convert ubod agents to production-ready GPT system instructions
+  ```
+  - **GPT Instructions Writer Agent** - Convert any ubod agent to ChatGPT Custom GPT instructions
+    - Character budget management (8,000 character hard limit)
+    - Semantic compression: preserve behaviors in <8K chars
+    - Knowledge file references (point to attached files instead of inline)
+    - Conversion learnings: 6 patterns for adapting ubod format to GPT constraints
+    - Full methodology for converting agent.md → gpt-instructions.md
+    - Examples included: SG2GG Copywriter GPT (v2.1.0, 4,586 chars)
+    - **Action:** Use when converting any ubod agent to ChatGPT GPT format
+
+---
+
 ## [1.5.0] - 2026-01-22
 
 ### Added
