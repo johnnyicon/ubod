@@ -127,6 +127,9 @@ detect_environment() {
     if [[ "$SCRIPT_DIR" == *"/projects/ubod/scripts"* ]]; then
         UBOD_DIR="$(dirname "$SCRIPT_DIR")"
         MONOREPO_DIR="$(dirname "$(dirname "$UBOD_DIR")")"
+    elif [[ "$SCRIPT_DIR" == *"/.ubod/scripts"* ]]; then
+        UBOD_DIR="$(dirname "$SCRIPT_DIR")"
+        MONOREPO_DIR="$(dirname "$UBOD_DIR")"
     elif [[ "$SCRIPT_DIR" == *"/ubod/scripts"* ]]; then
         UBOD_DIR="$(dirname "$SCRIPT_DIR")"
         MONOREPO_DIR="$(dirname "$UBOD_DIR")"

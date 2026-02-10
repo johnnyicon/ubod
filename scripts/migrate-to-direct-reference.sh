@@ -5,7 +5,19 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+
+# Detect ubod and repo root locations
+if [[ "$SCRIPT_DIR" == *"/.ubod/scripts"* ]]; then
+    UBOD_DIR="$(dirname "$SCRIPT_DIR")"
+    REPO_ROOT="$(dirname "$UBOD_DIR")"
+elif [[ "$SCRIPT_DIR" == *"/projects/ubod/scripts"* ]]; then
+    UBOD_DIR="$(dirname "$SCRIPT_DIR")"
+    REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+else
+    echo "❌ Error: Cannot detect ubod location"
+    echo "   Expected .ubod or projects/ubod"
+    exit 1
+fi
 
 echo "🔄 Migrating to Ubod Direct Reference Model"
 echo ""
@@ -16,9 +28,9 @@ echo "  3. Updates .vscode/settings.json"
 echo "  4. Keeps agents (still needs copying)"
 echo ""
 
-# Check if ubod submodule exists
-if [ ! -d "$REPO_ROOT/projects/ubod" ]; then
-    echo "❌ Error: projects/ubod not found"
+# Verify ubod directory exists
+if [ ! -d "$UBOD_DIR" ]; then
+    echo "❌ Error: ubod directory not found at $UBOD_DIR"
     echo "   Run: git submodule update --init --recursive"
     exit 1
 fi
